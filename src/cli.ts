@@ -1,7 +1,9 @@
-import { resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { runAudit, type AuditOptions } from "./audit/index.js";
 import { loadConfigFile, resolveConfig, type ConfigOverrides } from "./config.js";
+import { exportQueues } from "./contact/export.js";
+import { runContacts, type ContactOptions } from "./contact/index.js";
 import { LeadStore } from "./db.js";
 import { runDiscovery, SOURCES } from "./discovery/index.js";
 import { exportCsv } from "./export.js";
@@ -14,13 +16,15 @@ Usage: npm run cli -- <command> [flags]
 Commands:
   discover    Stage 1: query discovery sources and store leads (deduped)
   audit       Stage 2: audit leads that have a website (mobile, Playwright + Lighthouse)
-  export      Write the CSV sorted by lead_score
-  run         discover + audit + export
+  contacts    Stage 3: find and verify emails for high-scoring leads with their own site
+  export      Write leads.csv, email_queue.csv and fallback_queue.csv
+  run         discover + audit + contacts + export
   failures    Show recent per-lead failures
   stats       Show row counts
 
 Region (override config/region.json):
-  --country <code>            ISO country code, e.g. NG
+  --country <name>            e.g. Nigeria
+  --country-code <code>       ISO code, e.g. NG
   --city <name>
   --radius-km <n>
   --language <code>           e.g. en
@@ -45,6 +49,11 @@ Audit:
   --delay-ms <n>              min gap between requests to one host (default 3000)
   --user-agent <token>        robots.txt product token (default LeadScout)
   --csv-every <n>             rewrite the CSV every n audited sites (default 5, 0 = only at the end)
+
+Contacts (needs HUNTER_API_KEY and ZEROBOUNCE_API_KEY):
+  --min-score <n>             only leads scoring at least n (default: contact_min_score, 60)
+  --recontact                 redo leads already processed
+  --max-verify <n>            most addresses verified per lead (default 3; each costs a credit)
 
   --verbose                   debug logging
 `;
@@ -76,6 +85,10 @@ async function main() {
             "delay-ms": { type: "string", default: "3000" },
             "user-agent": { type: "string", default: "LeadScout" },
             "csv-every": { type: "string", default: "5" },
+            "country-code": { type: "string" },
+            "min-score": { type: "string" },
+            recontact: { type: "boolean", default: false },
+            "max-verify": { type: "string", default: "3" },
             verbose: { type: "boolean", default: false },
         },
     });
@@ -89,9 +102,11 @@ async function main() {
 
     const store = new LeadStore(resolve(values.db));
     try {
-        const needsConfig = ["discover", "audit", "run"].includes(command);
+        const needsConfig = ["discover", "audit", "contacts", "export", "run"].includes(command);
         const overrides: ConfigOverrides = {
             country: values.country,
+            country_code: values["country-code"],
+            min_score: values["min-score"],
             city: values.city,
             radius_km: values["radius-km"],
             language: values.language,
@@ -115,15 +130,28 @@ async function main() {
             userAgentToken: values["user-agent"],
         };
 
+        const contactOpts: ContactOptions = {
+            minScore: config?.contact_min_score ?? 60,
+            recontact: values.recontact,
+            limit: auditOpts.limit,
+            ids: auditOpts.ids,
+            maxVerify: Math.max(1, Number(values["max-verify"]) || 3),
+            perHostDelayMs: auditOpts.perHostDelayMs,
+            userAgentToken: auditOpts.userAgentToken,
+            timeoutMs: Math.min(auditOpts.timeoutMs, 20_000),
+        };
+
         const out = resolve(values.out);
-        // Keep the CSV current while long stages run. A failed write (e.g. the
+        const queues = { email: join(dirname(out), "email_queue.csv"), fallback: join(dirname(out), "fallback_queue.csv") };
+        // Keep the CSVs current while long stages run. A failed write (e.g. the
         // file is locked by a spreadsheet app) is logged and retried next time.
         const writeCsv = (why: string) => {
             try {
                 const n = exportCsv(store, out);
-                log.info(`csv: wrote ${n} lead(s) to ${values.out} (${why})`);
+                const q = config ? exportQueues(store, config, queues) : null;
+                log.info(`csv: wrote ${n} lead(s) to ${values.out}${q ? `, ${q.email} to email_queue.csv, ${q.fallback} to fallback_queue.csv` : ""} (${why})`);
             } catch (err) {
-                log.warn(`csv: could not write ${values.out}: ${errMessage(err)}`);
+                log.warn(`csv: could not write CSVs: ${errMessage(err)}`);
             }
         };
         const csvEvery = Math.max(0, Number(values["csv-every"]) || 0);
@@ -131,7 +159,7 @@ async function main() {
             if (csvEvery && done % csvEvery === 0 && done < total) writeCsv(`${done}/${total} audited`);
         };
         // Ctrl+C: everything audited so far is already saved, so write the CSV and stop.
-        if (["discover", "audit", "run"].includes(command)) {
+        if (["discover", "audit", "contacts", "run"].includes(command)) {
             process.once("SIGINT", () => {
                 log.warn("interrupted; writing CSV with progress so far");
                 writeCsv("interrupted");
@@ -153,17 +181,24 @@ async function main() {
                 writeCsv("audit done");
                 break;
             }
-            case "export": {
-                const n = exportCsv(store, out);
-                log.info(`export: wrote ${n} lead(s) to ${values.out}`);
+            case "contacts": {
+                const c = await runContacts(store, config!, contactOpts);
+                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped`);
+                writeCsv("contacts done");
                 break;
             }
+            case "export":
+                writeCsv("export");
+                break;
             case "run": {
                 const d = await runDiscovery(store, config!);
                 log.info(`discover: ${d.seen} results, ${d.inserted} new, ${d.merged} merged, ${d.failures} failure(s)`);
                 writeCsv("discovery done");
                 const a = await runAudit(store, config!, auditOpts, onLeadDone);
                 log.info(`audit: ${a.attempted} attempted ${JSON.stringify(a.byStatus)}`);
+                writeCsv("audit done");
+                const c = await runContacts(store, config!, contactOpts);
+                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped`);
                 writeCsv("finished");
                 break;
             }

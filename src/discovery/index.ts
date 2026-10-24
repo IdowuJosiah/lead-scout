@@ -53,6 +53,7 @@ export async function runDiscovery(store: LeadStore, config: RegionConfig): Prom
                             source: source.name,
                             source_ref: found.sourceRef,
                             dedupe_key: dedupeKey(found.name, found.address, site),
+                            country: config.country_code,
                         });
                         if (inserted) summary.inserted++;
                         else summary.merged++;

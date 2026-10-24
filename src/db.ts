@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS leads (
     high_priority   INTEGER NOT NULL DEFAULT 0,
     lead_score      INTEGER,
     score_breakdown TEXT,
-    evidence        TEXT
+    evidence        TEXT,
+    country         TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS leads_source_ref ON leads(source, source_ref) WHERE source_ref IS NOT NULL;
 
@@ -63,6 +64,45 @@ CREATE TABLE IF NOT EXISTS failures (
     message      TEXT NOT NULL,
     occurred_at  TEXT NOT NULL
 );
+
+-- Stage 3. Every email address found for a lead, and where it came from.
+CREATE TABLE IF NOT EXISTS contacts (
+    lead_id        INTEGER NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+    email          TEXT NOT NULL,
+    email_source   TEXT NOT NULL,
+    source_detail  TEXT,
+    email_type     TEXT NOT NULL,
+    own_domain     INTEGER NOT NULL,
+    found_at       TEXT NOT NULL,
+    PRIMARY KEY (lead_id, email)
+);
+
+-- Verification results, cached per address so re-runs don't pay twice.
+CREATE TABLE IF NOT EXISTS email_verifications (
+    email        TEXT PRIMARY KEY,
+    status       TEXT NOT NULL,
+    sub_status   TEXT,
+    provider     TEXT NOT NULL,
+    verified_at  TEXT NOT NULL
+);
+
+-- One outcome per lead: an email to queue, or a fallback channel.
+CREATE TABLE IF NOT EXISTS contact_results (
+    lead_id              INTEGER PRIMARY KEY REFERENCES leads(id) ON DELETE CASCADE,
+    processed_at         TEXT NOT NULL,
+    outcome              TEXT NOT NULL,
+    email                TEXT,
+    email_type           TEXT,
+    email_source         TEXT,
+    verification_status  TEXT,
+    risk_flag            TEXT,
+    channel              TEXT,
+    channel_value        TEXT,
+    channel_note         TEXT,
+    reason               TEXT,
+    contact_evidence     TEXT,
+    error                TEXT
+);
 `;
 
 export interface LeadRow {
@@ -82,6 +122,8 @@ export interface LeadRow {
     lead_score: number | null;
     score_breakdown: string | null;
     evidence: string | null;
+    /** ISO code of the region config the lead was discovered under. */
+    country: string | null;
 }
 
 export type AuditStatus =
@@ -137,6 +179,47 @@ export interface NewLead {
     source: string;
     source_ref: string | null;
     dedupe_key: string;
+    country?: string | null;
+}
+
+export type EmailSource = "mailto" | "page_text" | "hunter";
+export type EmailType = "personal" | "role" | "free_provider";
+
+export interface ContactRecord {
+    email: string;
+    email_source: EmailSource;
+    /** Page URL for site finds; Hunter details for API finds. */
+    source_detail: string | null;
+    email_type: EmailType;
+    own_domain: boolean;
+}
+
+export interface VerificationRecord {
+    email: string;
+    /** Provider status, e.g. valid | invalid | catch-all | unknown | spamtrap | abuse | do_not_mail. */
+    status: string;
+    sub_status: string | null;
+    provider: string;
+    verified_at: string;
+}
+
+export interface ContactResult {
+    lead_id: number;
+    processed_at: string;
+    /** email = goes to email_queue; fallback = fallback_queue; failed = retried next run. */
+    outcome: "email" | "fallback" | "failed";
+    email: string | null;
+    email_type: EmailType | null;
+    email_source: EmailSource | null;
+    verification_status: string | null;
+    risk_flag: string | null;
+    channel: "whatsapp" | "phone" | "none" | null;
+    channel_value: string | null;
+    channel_note: string | null;
+    /** Why there is no queued email (fallback) or what went wrong (failed). */
+    reason: string | null;
+    contact_evidence: string | null;
+    error: string | null;
 }
 
 const toSql = (v: unknown): SQLInputValue => {
@@ -160,6 +243,9 @@ export class LeadStore {
         this.db = new DatabaseSync(path);
         this.db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
         this.db.exec(SCHEMA);
+        // Databases created before stage 3 lack leads.country.
+        const cols = this.db.prepare("PRAGMA table_info(leads)").all() as { name: string }[];
+        if (!cols.some((c) => c.name === "country")) this.db.exec("ALTER TABLE leads ADD COLUMN country TEXT");
     }
 
     close() {
@@ -189,6 +275,7 @@ export class LeadStore {
                         website_url = @website_url,
                         website_domain = COALESCE(website_domain, @website_domain),
                         source_ref = COALESCE(source_ref, @source_ref),
+                        country = COALESCE(country, @country),
                         high_priority = @high_priority,
                         updated_at = @now
                      WHERE id = @id`,
@@ -204,6 +291,7 @@ export class LeadStore {
                         // Only fill source_ref when it is ours (same source) and not already taken.
                         source_ref: existing.source === lead.source ? lead.source_ref : null,
                         high_priority: website ? 0 : 1,
+                        country: lead.country,
                         now,
                     }),
                 );
@@ -213,11 +301,11 @@ export class LeadStore {
         const res = this.db
             .prepare(
                 `INSERT INTO leads (dedupe_key, name, category, address, phone, website_url, website_domain,
-                                    source, source_ref, discovered_at, updated_at, high_priority)
+                                    source, source_ref, discovered_at, updated_at, high_priority, country)
                  VALUES (@dedupe_key, @name, @category, @address, @phone, @website_url, @website_domain,
-                         @source, @source_ref, @now, @now, @high_priority)`,
+                         @source, @source_ref, @now, @now, @high_priority, @country)`,
             )
-            .run(params({ ...lead, now, high_priority: lead.website_url ? 0 : 1 }));
+            .run(params({ ...lead, country: lead.country ?? null, now, high_priority: lead.website_url ? 0 : 1 }));
         return { id: Number(res.lastInsertRowid), inserted: true };
     }
 
@@ -274,6 +362,70 @@ export class LeadStore {
             .run(score, breakdown, evidence, id);
     }
 
+    // ---- Stage 3: contacts ----
+
+    /** Leads eligible for contact finding: scored high enough and with a loaded site. */
+    leadsForContact(opts: { minScore: number; recontact: boolean; limit?: number; ids?: number[] }): { lead: LeadRow; audit: AuditRow }[] {
+        const where = ["l.lead_score >= @min", "a.status = 'ok'"];
+        if (!opts.recontact) where.push("(r.lead_id IS NULL OR r.outcome = 'failed')");
+        if (opts.ids?.length) where.push(`l.id IN (${opts.ids.map(Number).join(",")})`);
+        const rows = this.db
+            .prepare(
+                `SELECT l.id FROM leads l JOIN audits a ON a.lead_id = l.id LEFT JOIN contact_results r ON r.lead_id = l.id
+                 WHERE ${where.join(" AND ")} ORDER BY l.lead_score DESC, l.id${opts.limit ? ` LIMIT ${Number(opts.limit)}` : ""}`,
+            )
+            .all({ min: opts.minScore }) as { id: number }[];
+        const lead = this.db.prepare("SELECT * FROM leads WHERE id = ?");
+        const audit = this.db.prepare("SELECT * FROM audits WHERE lead_id = ?");
+        return rows.map(({ id }) => ({ lead: lead.get(id) as unknown as LeadRow, audit: audit.get(id) as unknown as AuditRow }));
+    }
+
+    replaceContacts(leadId: number, contacts: ContactRecord[], now = new Date().toISOString()) {
+        this.db.prepare("DELETE FROM contacts WHERE lead_id = ?").run(leadId);
+        const ins = this.db.prepare(
+            `INSERT OR IGNORE INTO contacts (lead_id, email, email_source, source_detail, email_type, own_domain, found_at)
+             VALUES (@lead_id, @email, @email_source, @source_detail, @email_type, @own_domain, @now)`,
+        );
+        for (const c of contacts) {
+            const { email, email_source, source_detail, email_type, own_domain } = c;
+            ins.run(params({ email, email_source, source_detail, email_type, own_domain, lead_id: leadId, now }));
+        }
+    }
+
+    getVerification(email: string): VerificationRecord | null {
+        return (this.db.prepare("SELECT * FROM email_verifications WHERE email = ?").get(email) as unknown as VerificationRecord | undefined) ?? null;
+    }
+
+    saveVerification(v: VerificationRecord) {
+        this.db
+            .prepare(
+                `INSERT INTO email_verifications (email, status, sub_status, provider, verified_at)
+                 VALUES (@email, @status, @sub_status, @provider, @verified_at)
+                 ON CONFLICT(email) DO UPDATE SET status = excluded.status, sub_status = excluded.sub_status,
+                     provider = excluded.provider, verified_at = excluded.verified_at`,
+            )
+            .run(params(v));
+    }
+
+    saveContactResult(r: ContactResult) {
+        const cols = Object.keys(r);
+        this.db
+            .prepare(
+                `INSERT INTO contact_results (${cols.join(", ")}) VALUES (${cols.map((c) => `@${c}`).join(", ")})
+                 ON CONFLICT(lead_id) DO UPDATE SET ${cols
+                     .filter((c) => c !== "lead_id")
+                     .map((c) => `${c} = excluded.${c}`)
+                     .join(", ")}`,
+            )
+            .run(params(r));
+    }
+
+    contactResults(): { lead: LeadRow; result: ContactResult }[] {
+        const rows = this.db.prepare("SELECT * FROM contact_results ORDER BY lead_id").all() as unknown as ContactResult[];
+        const lead = this.db.prepare("SELECT * FROM leads WHERE id = ?");
+        return rows.map((result) => ({ lead: lead.get(result.lead_id) as unknown as LeadRow, result }));
+    }
+
     counts() {
         const one = (sql: string) => Number((this.db.prepare(sql).get() as { n: number }).n);
         return {
@@ -282,6 +434,8 @@ export class LeadStore {
             audited: one("SELECT COUNT(*) AS n FROM audits WHERE status != 'failed'"),
             failedAudits: one("SELECT COUNT(*) AS n FROM audits WHERE status = 'failed'"),
             failures: one("SELECT COUNT(*) AS n FROM failures"),
+            emailQueue: one("SELECT COUNT(*) AS n FROM contact_results WHERE outcome = 'email'"),
+            fallbackQueue: one("SELECT COUNT(*) AS n FROM contact_results WHERE outcome = 'fallback'"),
         };
     }
 }

@@ -192,7 +192,7 @@ describe("scoring", () => {
 });
 
 describe("evidence", () => {
-    const lead = { id: 1, dedupe_key: "k", name: "Brand", category: "fashion", address: null, phone: null, website_url: "https://shop.example/", website_domain: "shop.example", source: "google_places", source_ref: "p1", discovered_at: "", updated_at: "", high_priority: 0, lead_score: null, score_breakdown: null, evidence: null };
+    const lead = { id: 1, dedupe_key: "k", name: "Brand", category: "fashion", address: null, phone: null, website_url: "https://shop.example/", website_domain: "shop.example", source: "google_places", source_ref: "p1", discovered_at: "", updated_at: "", high_priority: 0, lead_score: null, score_breakdown: null, evidence: null, country: "NG" };
 
     it("states only recorded facts", () => {
         const e = buildEvidence(lead, audit({ lighthouse_score: null, payment_providers: null, has_cart: 0, has_checkout: 0, platform: "custom", platform_signal: "no known platform signature matched" }));

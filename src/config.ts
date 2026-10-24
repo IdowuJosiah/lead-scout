@@ -12,8 +12,20 @@ export interface PaymentProvider {
     matchText: boolean;
 }
 
+/** When outreach may be sent, in the region's own timezone. */
+export interface SendWindow {
+    /** e.g. "Mon-Fri" */
+    days: string;
+    /** "HH:MM", 24h */
+    start: string;
+    end: string;
+}
+
 export interface RegionConfig {
+    /** Country name, used in searches (e.g. "Nigeria"). */
     country: string;
+    /** ISO 3166-1 alpha-2 (e.g. "NG"). Used for Places regionCode and phone parsing. */
+    country_code: string;
     city: string;
     radius_km: number;
     language: string;
@@ -26,6 +38,17 @@ export interface RegionConfig {
     lng?: number;
     /** Per-source options, keyed by source name. */
     source_options?: Record<string, Record<string, unknown>>;
+
+    // Outreach (stage 3)
+    /** Short free-text note on the legal basis for contacting businesses here. */
+    legal_basis: string;
+    /** Whether cold email may be sent to leads in this region. Must be set explicitly. */
+    allowed_to_email: boolean | null;
+    /** IANA timezone, e.g. "Africa/Lagos". */
+    timezone: string;
+    send_window: SendWindow;
+    /** Stage 3 only processes leads scoring at least this. */
+    contact_min_score: number;
 }
 
 /** Domains for well-known providers, so config can list plain names. */
@@ -74,6 +97,8 @@ export function loadConfigFile(path: string): Record<string, unknown> {
 /** Flag values from the CLI that may override config keys. */
 export interface ConfigOverrides {
     country?: string;
+    country_code?: string;
+    min_score?: string;
     city?: string;
     radius_km?: string;
     language?: string;
@@ -90,6 +115,8 @@ const splitList = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolea
 export function resolveConfig(raw: Record<string, unknown>, o: ConfigOverrides = {}): RegionConfig {
     const merged: Record<string, unknown> = { ...raw };
     if (o.country !== undefined) merged.country = o.country;
+    if (o.country_code !== undefined) merged.country_code = o.country_code;
+    if (o.min_score !== undefined) merged.contact_min_score = Number(o.min_score);
     if (o.city !== undefined) merged.city = o.city;
     if (o.radius_km !== undefined) merged.radius_km = Number(o.radius_km);
     if (o.language !== undefined) merged.language = o.language;
@@ -122,6 +149,28 @@ export function resolveConfig(raw: Record<string, unknown>, o: ConfigOverrides =
     const providers = Array.isArray(merged.payment_providers) ? merged.payment_providers : [];
     const sources = Array.isArray(merged.sources) && merged.sources.length ? merged.sources : ["google_places"];
 
+    // Older configs used a 2-letter "country" as the code.
+    const countryCode = String(merged.country_code ?? (country.length === 2 ? country : "")).trim().toUpperCase();
+    if (!/^[A-Z]{2}$/.test(countryCode)) errors.push("country_code must be a 2-letter ISO code, e.g. NG");
+
+    const timezone = typeof merged.timezone === "string" ? merged.timezone.trim() : "UTC";
+    try {
+        new Intl.DateTimeFormat("en", { timeZone: timezone });
+    } catch {
+        errors.push(`timezone "${timezone}" is not a valid IANA timezone (e.g. Africa/Lagos)`);
+    }
+    const sw = (merged.send_window ?? { days: "Mon-Fri", start: "09:00", end: "17:00" }) as Partial<SendWindow>;
+    const hhmm = /^([01]\d|2[0-3]):[0-5]\d$/;
+    if (typeof sw.days !== "string" || !sw.days.trim() || !hhmm.test(String(sw.start)) || !hhmm.test(String(sw.end))) {
+        errors.push('send_window must look like { "days": "Mon-Fri", "start": "09:00", "end": "17:00" }');
+    }
+    const allowed = merged.allowed_to_email;
+    if (allowed != null && typeof allowed !== "boolean") errors.push("allowed_to_email must be true or false");
+    const minScore = merged.contact_min_score ?? 60;
+    if (typeof minScore !== "number" || !Number.isFinite(minScore) || minScore < 0 || minScore > 100) {
+        errors.push("contact_min_score must be a number from 0 to 100");
+    }
+
     const lat = merged.lat;
     const lng = merged.lng;
     const hasCentre = typeof lat === "number" && typeof lng === "number" && Number.isFinite(lat) && Number.isFinite(lng);
@@ -131,6 +180,7 @@ export function resolveConfig(raw: Record<string, unknown>, o: ConfigOverrides =
 
     return {
         country,
+        country_code: countryCode,
         city,
         radius_km: radius as number,
         language,
@@ -140,5 +190,10 @@ export function resolveConfig(raw: Record<string, unknown>, o: ConfigOverrides =
         sources: sources.map(String),
         ...(hasCentre ? { lat: lat as number, lng: lng as number } : {}),
         source_options: (merged.source_options as RegionConfig["source_options"]) ?? {},
+        legal_basis: typeof merged.legal_basis === "string" ? merged.legal_basis.trim() : "",
+        allowed_to_email: typeof allowed === "boolean" ? allowed : null,
+        timezone,
+        send_window: { days: String(sw.days).trim(), start: String(sw.start), end: String(sw.end) },
+        contact_min_score: minScore as number,
     };
 }

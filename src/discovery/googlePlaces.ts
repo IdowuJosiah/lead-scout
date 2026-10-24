@@ -99,7 +99,7 @@ export class GooglePlacesSource implements DiscoverySource {
             this.centre = { lat: config.lat, lng: config.lng };
         } else {
             const res = await this.post(
-                { textQuery: `${config.city}, ${config.country}`, languageCode: config.language, regionCode: config.country, pageSize: 1 },
+                { textQuery: `${config.city}, ${config.country}`, languageCode: config.language, regionCode: config.country_code, pageSize: 1 },
                 "places.location,places.formattedAddress",
                 ctx,
             );
@@ -122,7 +122,7 @@ export class GooglePlacesSource implements DiscoverySource {
                 {
                     textQuery: `${keyword} in ${config.city}`,
                     languageCode: config.language,
-                    regionCode: config.country,
+                    regionCode: config.country_code,
                     pageSize: 20,
                     locationRestriction: { rectangle: boundingBox(centre, config.radius_km) },
                     ...(pageToken ? { pageToken } : {}),

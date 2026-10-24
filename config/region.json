@@ -1,9 +1,11 @@
 {
-  "country": "NG",
+  "country": "Nigeria",
+  "country_code": "NG",
   "city": "Lagos",
   "radius_km": 25,
   "language": "en",
   "currency": "NGN",
+  "timezone": "Africa/Lagos",
   "search_keywords": ["fashion", "skincare", "jewelry", "perfume", "hair extensions", "bags"],
   "payment_providers": [
     "Paystack",
@@ -12,5 +14,10 @@
     "PayPal",
     { "name": "Monnify", "domains": ["monnify.com"] }
   ],
-  "sources": ["google_places"]
+  "sources": ["google_places"],
+
+  "contact_min_score": 60,
+  "allowed_to_email": true,
+  "legal_basis": "B2B outreach to publicly listed business contacts under legitimate interest (Nigeria Data Protection Act 2023). Identify yourself, keep it relevant to their business, include an opt-out and honour removal requests. Confirm this yourself before sending.",
+  "send_window": { "days": "Mon-Fri", "start": "09:00", "end": "17:00" }
 }
