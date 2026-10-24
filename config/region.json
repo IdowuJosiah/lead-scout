@@ -1,0 +1,16 @@
+{
+  "country": "NG",
+  "city": "Lagos",
+  "radius_km": 25,
+  "language": "en",
+  "currency": "NGN",
+  "search_keywords": ["fashion", "skincare", "jewelry", "perfume", "hair extensions", "bags"],
+  "payment_providers": [
+    "Paystack",
+    "Flutterwave",
+    "Stripe",
+    "PayPal",
+    { "name": "Monnify", "domains": ["monnify.com"] }
+  ],
+  "sources": ["google_places"]
+}

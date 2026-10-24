@@ -1,0 +1,28 @@
+{
+  "name": "lead-scout",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Finds small-to-medium brands that need an ecommerce site and audits their current web presence.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.19"
+  },
+  "scripts": {
+    "cli": "tsx --no-warnings=ExperimentalWarning src/cli.ts",
+    "discover": "npm run cli -- discover",
+    "audit": "npm run cli -- audit",
+    "export": "npm run cli -- export",
+    "typecheck": "tsc --noEmit",
+    "test": "node --no-warnings=ExperimentalWarning --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "lighthouse": "^13.5.0",
+    "playwright": "1.63.0",
+    "robots-parser": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}
