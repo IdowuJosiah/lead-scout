@@ -234,7 +234,12 @@ export interface AuditSummary {
 }
 
 /** Audit every pending lead. One lead's failure is logged and never stops the run. */
-export async function runAudit(store: LeadStore, config: RegionConfig, opts: AuditOptions): Promise<AuditSummary> {
+export async function runAudit(
+    store: LeadStore,
+    config: RegionConfig,
+    opts: AuditOptions,
+    onLeadDone?: (done: number, total: number) => void,
+): Promise<AuditSummary> {
     const leads = store.leadsToAudit({ reaudit: opts.reaudit, limit: opts.limit, ids: opts.ids });
     const summary: AuditSummary = { attempted: 0, byStatus: {} };
     log.info(`audit: ${leads.length} lead(s) to audit`);
@@ -263,6 +268,7 @@ export async function runAudit(store: LeadStore, config: RegionConfig, opts: Aud
             const line = `[${i + 1}/${leads.length}] #${lead.id} ${lead.name} (${lead.website_url}): ${rec.status}${rec.error ? ` - ${rec.error}` : ""}`;
             if (rec.status === "failed") log.warn(line);
             else log.info(line);
+            onLeadDone?.(i + 1, leads.length);
         }
     } finally {
         await auditor.close();

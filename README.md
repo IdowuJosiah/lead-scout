@@ -117,6 +117,12 @@ Leads that couldn't be inspected get **no score**, not a guess.
 
 ## Output: `output/leads.csv`
 
+The CSV is kept up to date while the tool runs. It is written after
+discovery, again every 5 audited sites (change this with `--csv-every <n>`,
+or use `0` for only at the end), and when the run finishes. Pressing
+**Ctrl+C** also writes it before stopping. Everything audited so far is saved,
+and the next `audit` run continues from where it stopped.
+
 Sorted by `lead_score` descending, with unscored leads last. Columns include
 the audit fields, `screenshot_path`, `score_breakdown` and `evidence`.
 

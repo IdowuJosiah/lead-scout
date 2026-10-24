@@ -4,7 +4,7 @@ import { runAudit, type AuditOptions } from "./audit/index.js";
 import { loadConfigFile, resolveConfig, type ConfigOverrides } from "./config.js";
 import { LeadStore } from "./db.js";
 import { runDiscovery, SOURCES } from "./discovery/index.js";
-import { exportCsv, rescoreAll } from "./export.js";
+import { exportCsv } from "./export.js";
 import { errMessage, log, setLogLevel } from "./log.js";
 
 const HELP = `lead-scout - find brands that need an ecommerce site, and audit them
@@ -44,6 +44,7 @@ Audit:
   --timeout-ms <n>            page load timeout (default 30000)
   --delay-ms <n>              min gap between requests to one host (default 3000)
   --user-agent <token>        robots.txt product token (default LeadScout)
+  --csv-every <n>             rewrite the CSV every n audited sites (default 5, 0 = only at the end)
 
   --verbose                   debug logging
 `;
@@ -74,6 +75,7 @@ async function main() {
             "timeout-ms": { type: "string", default: "30000" },
             "delay-ms": { type: "string", default: "3000" },
             "user-agent": { type: "string", default: "LeadScout" },
+            "csv-every": { type: "string", default: "5" },
             verbose: { type: "boolean", default: false },
         },
     });
@@ -113,31 +115,56 @@ async function main() {
             userAgentToken: values["user-agent"],
         };
 
+        const out = resolve(values.out);
+        // Keep the CSV current while long stages run. A failed write (e.g. the
+        // file is locked by a spreadsheet app) is logged and retried next time.
+        const writeCsv = (why: string) => {
+            try {
+                const n = exportCsv(store, out);
+                log.info(`csv: wrote ${n} lead(s) to ${values.out} (${why})`);
+            } catch (err) {
+                log.warn(`csv: could not write ${values.out}: ${errMessage(err)}`);
+            }
+        };
+        const csvEvery = Math.max(0, Number(values["csv-every"]) || 0);
+        const onLeadDone = (done: number, total: number) => {
+            if (csvEvery && done % csvEvery === 0 && done < total) writeCsv(`${done}/${total} audited`);
+        };
+        // Ctrl+C: everything audited so far is already saved, so write the CSV and stop.
+        if (["discover", "audit", "run"].includes(command)) {
+            process.once("SIGINT", () => {
+                log.warn("interrupted; writing CSV with progress so far");
+                writeCsv("interrupted");
+                store.close();
+                process.exit(130);
+            });
+        }
+
         switch (command) {
             case "discover": {
                 const s = await runDiscovery(store, config!);
-                rescoreAll(store);
                 log.info(`discover: ${s.seen} results, ${s.inserted} new, ${s.merged} merged into existing, ${s.failures} failure(s)`);
+                writeCsv("discovery done");
                 break;
             }
             case "audit": {
-                const s = await runAudit(store, config!, auditOpts);
-                rescoreAll(store);
+                const s = await runAudit(store, config!, auditOpts, onLeadDone);
                 log.info(`audit: ${s.attempted} attempted ${JSON.stringify(s.byStatus)}`);
+                writeCsv("audit done");
                 break;
             }
             case "export": {
-                const n = exportCsv(store, resolve(values.out));
+                const n = exportCsv(store, out);
                 log.info(`export: wrote ${n} lead(s) to ${values.out}`);
                 break;
             }
             case "run": {
                 const d = await runDiscovery(store, config!);
                 log.info(`discover: ${d.seen} results, ${d.inserted} new, ${d.merged} merged, ${d.failures} failure(s)`);
-                const a = await runAudit(store, config!, auditOpts);
+                writeCsv("discovery done");
+                const a = await runAudit(store, config!, auditOpts, onLeadDone);
                 log.info(`audit: ${a.attempted} attempted ${JSON.stringify(a.byStatus)}`);
-                const n = exportCsv(store, resolve(values.out));
-                log.info(`export: wrote ${n} lead(s) to ${values.out}`);
+                writeCsv("finished");
                 break;
             }
             case "failures": {

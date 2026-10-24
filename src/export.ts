@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { AuditRow, LeadRow, LeadStore } from "./db.js";
 import { buildEvidence } from "./evidence.js";
@@ -91,6 +91,9 @@ export function exportCsv(store: LeadStore, path: string): number {
         lines.push(COLUMNS.map((c) => csvCell(r[c])).join(","));
     }
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, `${lines.join("\r\n")}\r\n`, "utf8");
+    // Write then rename, so a reader never sees a half-written file.
+    const tmp = `${path}.tmp`;
+    writeFileSync(tmp, `${lines.join("\r\n")}\r\n`, "utf8");
+    renameSync(tmp, path);
     return rows.length;
 }
