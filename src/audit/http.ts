@@ -1,5 +1,17 @@
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
+import type { LookupFunction } from "node:net";
+
+/** Hostname -> IP overrides, for tests that serve "brand.ng" from localhost. */
+const hostOverrides = new Map<string, string>();
+export function overrideHost(host: string, ip: string | null) {
+    if (ip) hostOverrides.set(host, ip);
+    else hostOverrides.delete(host);
+}
+const overrideLookup = (ip: string): LookupFunction => (_host, options, cb) => {
+    if (options.all) (cb as unknown as (e: null, a: { address: string; family: number }[]) => void)(null, [{ address: ip, family: 4 }]);
+    else cb(null, ip, 4);
+};
 
 /**
  * Small GET client for robots.txt. Unlike fetch it tolerates invalid TLS
@@ -16,7 +28,8 @@ export function httpGet(
     return new Promise((resolve, reject) => {
         const u = new URL(url);
         const request = u.protocol === "https:" ? httpsRequest : httpRequest;
-        const req = request(u, { method: "GET", headers: opts.headers, timeout: opts.timeoutMs, rejectUnauthorized: false }, (res) => {
+        const ip = hostOverrides.get(u.hostname);
+        const req = request(u, { method: "GET", headers: opts.headers, timeout: opts.timeoutMs, rejectUnauthorized: false, ...(ip ? { lookup: overrideLookup(ip) } : {}) }, (res) => {
             const status = res.statusCode ?? 0;
             const location = res.headers.location;
             if (status >= 300 && status < 400 && location && redirectsLeft > 0) {

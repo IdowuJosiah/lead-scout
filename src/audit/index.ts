@@ -2,11 +2,22 @@ import { createServer } from "node:net";
 import { join } from "node:path";
 import { chromium, type Browser } from "playwright";
 import type { RegionConfig } from "../config.js";
-import type { AuditRecord, LeadRow, LeadStore } from "../db.js";
+import { AUDIT_VERSION, isDeadError, type AuditRecord, type LeadRow, type LeadStore } from "../db.js";
 import { errMessage, log } from "../log.js";
 import { RateLimiter } from "../rateLimit.js";
-import { classifyUrl, parseWebsite } from "../url.js";
-import { countWhatsappLinks, detectCommerce, detectPaymentProviders, detectPlatform, linkInBioHost, localCurrencySeen } from "./detect.js";
+import { classifyUrl, hostMatches, parseWebsite, WHATSAPP_HOSTS } from "../url.js";
+import {
+    countWhatsappLinks,
+    detectCommerce,
+    detectParked,
+    detectPasswordProtected,
+    detectPaymentProviders,
+    detectPlatform,
+    linkInBioHost,
+    localCurrencySeen,
+    shopPageLinks,
+    type Detection,
+} from "./detect.js";
 import { lighthouseMobileScore } from "./lighthouse.js";
 import { loadPage } from "./page.js";
 import { RobotsChecker } from "./robots.js";
@@ -14,6 +25,8 @@ import { probeHttps, type SslResult } from "./ssl.js";
 
 export interface AuditOptions {
     reaudit: boolean;
+    /** Also re-audit rows made by an older audit version. */
+    upgrade?: boolean;
     limit?: number;
     ids?: number[];
     lighthouse: boolean;
@@ -72,6 +85,18 @@ const blank = (lead: LeadRow): AuditRecord => ({
     local_currency_seen: null,
     screenshot_path: null,
     error: null,
+    password_protected: null,
+    password_signal: null,
+    commerce_pages: null,
+    unreachable_runs: 0,
+    audit_version: AUDIT_VERSION,
+});
+
+/** A failed load is "dead" only when the error proves the site doesn't exist. */
+const loadFailure = (rec: AuditRecord, error: string, decidingError = error): AuditRecord => ({
+    ...rec,
+    status: isDeadError(decidingError) ? "dead" : "unreachable",
+    error,
 });
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
@@ -114,8 +139,8 @@ export class Auditor {
         if (cls.kind === "social") {
             return { ...rec, status: "social_profile", link_in_bio_only: true, link_in_bio_host: cls.host };
         }
-        if (cls.kind === "whatsapp") {
-            return { ...rec, status: "whatsapp_link", whatsapp_order_only: true };
+        if (cls.kind === "messaging") {
+            return { ...rec, status: "messaging_link", link_in_bio_host: cls.host, whatsapp_order_only: !!hostMatches(url.hostname, WHATSAPP_HOSTS) };
         }
         if (cls.kind === "link_in_bio") {
             rec.link_in_bio_only = true;
@@ -129,13 +154,14 @@ export class Auditor {
             verdict = await this.robots.check(url.href);
         } catch (err) {
             // Many small sites only speak plain HTTP: fall back once before giving up.
-            if (url.protocol !== "https:") return { ...rec, status: "unreachable", error: `robots.txt request failed: ${errMessage(err)}` };
+            if (url.protocol !== "https:") return loadFailure(rec, `robots.txt request failed: ${errMessage(err)}`);
             httpsFailure = errMessage(err);
             url.protocol = "http:";
             try {
                 verdict = await this.robots.check(url.href);
             } catch (err2) {
-                return { ...rec, status: "unreachable", error: `robots.txt request failed over HTTPS (${httpsFailure}) and HTTP (${errMessage(err2)})` };
+                // Dead only if plain HTTP also proves it (HTTPS alone is often just not set up).
+                return loadFailure(rec, `robots.txt request failed over HTTPS (${httpsFailure}) and HTTP (${errMessage(err2)})`, errMessage(err2));
             }
             rec.requested_url = url.href;
             log.debug(`lead ${lead.id}: HTTPS failed (${httpsFailure}); auditing ${url.href}`);
@@ -157,7 +183,7 @@ export class Auditor {
         }
         if (load.kind === "cert_error") throw new Error(`certificate error persisted with ignoreHTTPSErrors: ${load.code}`);
         if (load.kind === "unreachable") {
-            return { ...rec, status: "unreachable", error: load.error, ssl: ssl?.ssl ?? null, ssl_detail: ssl?.detail ?? null };
+            return { ...loadFailure(rec, load.error), ssl: ssl?.ssl ?? null, ssl_detail: ssl?.detail ?? null };
         }
 
         rec.final_url = load.finalUrl;
@@ -172,9 +198,12 @@ export class Auditor {
             // Usually a bot wall, which says nothing about the brand's site.
             return { ...rec, status: "blocked", error: `HTTP ${status} returned to the audit browser (likely bot protection)` };
         }
-        if (status >= 400) return { ...rec, status: "unreachable", error: `homepage returned HTTP ${status}` };
+        // 404/410 mean the page is gone ("dead"); 5xx is usually temporary.
+        if (status >= 400) return loadFailure(rec, `homepage returned HTTP ${status}`);
 
         const s = load.snapshot;
+        const parked = detectParked(s);
+        if (parked) return { ...rec, status: "dead", error: `parked domain: ${parked}` };
         const finalLib = linkInBioHost(load.finalUrl);
         if (finalLib) {
             rec.link_in_bio_only = true;
@@ -183,6 +212,35 @@ export class Auditor {
         const platform = detectPlatform(s);
         const commerce = detectCommerce(s);
         const providers = detectPaymentProviders(s, this.config.payment_providers);
+        const password = detectPasswordProtected(s);
+        rec.password_protected = password.value;
+        rec.password_signal = password.value ? password.signal : null;
+
+        // No cart on the homepage: look at a few of the site's own shop pages before concluding.
+        const extraPages: string[] = [];
+        if (!commerce.hasCart && !commerce.hasCheckout && !password.value) {
+            for (const pageUrl of shopPageLinks(s, 3)) {
+                const path = new URL(pageUrl).pathname;
+                const allowed = await this.robots.check(pageUrl).then((v) => v.allowed, () => false);
+                if (!allowed) continue;
+                await this.limiter.wait(new URL(pageUrl).host);
+                const sub = await loadPage(browser, pageUrl, { ...loadOpts, screenshotPath: null, ignoreHttpsErrors: true }).catch(() => null);
+                if (sub?.kind !== "loaded" || (sub.httpStatus ?? 0) >= 400) continue;
+                extraPages.push(path);
+                const c = detectCommerce(sub.snapshot);
+                if (c.hasCart || c.hasCheckout) {
+                    commerce.hasCart ||= c.hasCart;
+                    commerce.hasCheckout ||= c.hasCheckout;
+                    commerce.signals.push(...c.signals.map((sig) => `${sig} on ${path}`));
+                }
+                const seen = new Set(providers.map((p) => p.value));
+                for (const p of detectPaymentProviders(sub.snapshot, this.config.payment_providers)) {
+                    if (!seen.has(p.value)) providers.push({ value: p.value, signal: `${p.signal} on ${path}` } as Detection);
+                }
+                if (commerce.hasCart || commerce.hasCheckout) break;
+            }
+        }
+        rec.commerce_pages = JSON.stringify(extraPages);
         const wa = countWhatsappLinks(s);
         const currency = localCurrencySeen(s, this.config.currency);
 
@@ -212,7 +270,11 @@ export class Auditor {
         rec.ssl = ssl.ssl;
         rec.ssl_detail = ssl.detail;
 
-        if (this.opts.lighthouse) {
+        if (this.opts.lighthouse && load.timedOut) {
+            // A page that didn't finish loading for us gets no Lighthouse score:
+            // a separate run that happens to load would contradict the timeout.
+            rec.lighthouse_error = "skipped: page load timed out";
+        } else if (this.opts.lighthouse) {
             const final = new URL(load.finalUrl);
             const allowed = final.origin === url.origin ? true : await this.robots.check(final.href).then((v) => v.allowed, () => false);
             if (!allowed) rec.lighthouse_error = "skipped: robots.txt disallows the redirected URL";
@@ -240,7 +302,7 @@ export async function runAudit(
     opts: AuditOptions,
     onLeadDone?: (done: number, total: number) => void,
 ): Promise<AuditSummary> {
-    const leads = store.leadsToAudit({ reaudit: opts.reaudit, limit: opts.limit, ids: opts.ids });
+    const leads = store.leadsToAudit({ reaudit: opts.reaudit, upgrade: opts.upgrade, limit: opts.limit, ids: opts.ids });
     const summary: AuditSummary = { attempted: 0, byStatus: {} };
     log.info(`audit: ${leads.length} lead(s) to audit`);
     if (!leads.length) return summary;
@@ -255,9 +317,13 @@ export async function runAudit(
             } catch (err) {
                 rec = { ...blank(lead), error: errMessage(err) };
             }
+            if (rec.status === "unreachable") {
+                const prev = store.getAudit(lead.id);
+                rec.unreachable_runs = (prev?.status === "unreachable" ? (prev.unreachable_runs ?? 1) : 0) + 1;
+            }
             try {
                 store.saveAudit(rec);
-                if (rec.status === "failed" || rec.status === "unreachable") {
+                if (rec.status === "failed" || rec.status === "unreachable" || rec.status === "dead") {
                     store.logFailure(lead.id, "audit", `${rec.status}: ${rec.error}`);
                 }
             } catch (err) {

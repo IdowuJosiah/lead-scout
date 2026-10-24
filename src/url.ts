@@ -38,10 +38,54 @@ export const LINK_IN_BIO_HOSTS = [
 
 export const WHATSAPP_HOSTS = ["wa.me", "api.whatsapp.com", "web.whatsapp.com", "chat.whatsapp.com", "wa.link", "whatsapp.com"];
 
-/** Hosts shared by many unrelated businesses: dedupe on host + first path segment. */
-const SHARED_HOSTS = [...SOCIAL_HOSTS, ...LINK_IN_BIO_HOSTS, ...WHATSAPP_HOSTS, "sites.google.com", "business.site"];
+/** Chat links: the listed "website" opens a conversation, not a site. */
+export const MESSAGING_HOSTS = [...WHATSAPP_HOSTS, "t.me", "telegram.me", "m.me", "signal.me"];
 
-export type UrlKind = "website" | "social" | "link_in_bio" | "whatsapp";
+/**
+ * Storefronts and sites that live on a platform's domain rather than the
+ * brand's own: marketplaces, social-commerce shops, and free builder subdomains.
+ */
+export const HOSTED_STOREFRONT_HOSTS = [
+    // social commerce / storefront builders popular in Africa
+    "bumpa.shop",
+    "selar.co",
+    "selar.com",
+    "paystack.shop",
+    "paystack.com",
+    "flutterwave.store",
+    "catlog.shop",
+    "mainstack.me",
+    "mainstack.com",
+    // marketplaces
+    "jumia.com.ng",
+    "jumia.com",
+    "konga.com",
+    "jiji.ng",
+    "etsy.com",
+    "amazon.com",
+    "ebay.com",
+    "takealot.com",
+    // platform subdomains
+    "myshopify.com",
+    "bigcartel.com",
+    "square.site",
+    "company.site",
+    "wixsite.com",
+    "wordpress.com",
+    "blogspot.com",
+    "weebly.com",
+    "godaddysites.com",
+    "business.site",
+    "sites.google.com",
+    "squarespace.com",
+    "gumroad.com",
+];
+
+/** Hosts shared by many unrelated businesses: dedupe on host + first path segment. */
+const SHARED_HOSTS = [...SOCIAL_HOSTS, ...LINK_IN_BIO_HOSTS, ...MESSAGING_HOSTS, "sites.google.com", "business.site", "paystack.com", "selar.co", "jiji.ng", "jumia.com.ng", "konga.com", "etsy.com"];
+
+/** What the listed website URL is, from the URL alone (dead_listing needs an audit). */
+export type UrlKind = "owned_site" | "social" | "messaging" | "link_in_bio" | "hosted_storefront";
 
 export function hostMatches(host: string, list: readonly string[]): string | null {
     const h = host.toLowerCase().replace(/^www\./, "");
@@ -76,13 +120,15 @@ export function websiteDomain(u: URL): string {
 
 export function classifyUrl(u: URL): { kind: UrlKind; host: string | null } {
     const host = u.hostname;
-    const wa = hostMatches(host, WHATSAPP_HOSTS);
-    if (wa) return { kind: "whatsapp", host: wa };
+    const chat = hostMatches(host, MESSAGING_HOSTS);
+    if (chat) return { kind: "messaging", host: chat };
     const social = hostMatches(host, SOCIAL_HOSTS);
     if (social) return { kind: "social", host: social };
     const lib = hostMatches(host, LINK_IN_BIO_HOSTS);
     if (lib) return { kind: "link_in_bio", host: lib };
-    return { kind: "website", host: null };
+    const hosted = hostMatches(host, HOSTED_STOREFRONT_HOSTS);
+    if (hosted) return { kind: "hosted_storefront", host: hosted };
+    return { kind: "owned_site", host: null };
 }
 
 const normText = (s: string) =>

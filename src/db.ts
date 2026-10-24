@@ -77,6 +77,13 @@ CREATE TABLE IF NOT EXISTS contacts (
     PRIMARY KEY (lead_id, email)
 );
 
+-- Hunter domain-search results, cached per domain so re-runs don't pay twice.
+CREATE TABLE IF NOT EXISTS hunter_cache (
+    domain      TEXT PRIMARY KEY,
+    emails      TEXT NOT NULL,
+    fetched_at  TEXT NOT NULL
+);
+
 -- Verification results, cached per address so re-runs don't pay twice.
 CREATE TABLE IF NOT EXISTS email_verifications (
     email        TEXT PRIMARY KEY,
@@ -124,14 +131,22 @@ export interface LeadRow {
     evidence: string | null;
     /** ISO code of the region config the lead was discovered under. */
     country: string | null;
+    /** From Google Places, when the source provides them. */
+    rating?: number | null;
+    user_ratings_total?: number | null;
+    business_status?: string | null;
+    /** Computed: owned_site, social, messaging, link_in_bio, hosted_storefront, dead_listing, none. */
+    website_class?: string | null;
 }
 
 export type AuditStatus =
     | "ok" // page loaded and was inspected
-    | "unreachable" // DNS/connection/HTTP error or timeout before any response
+    | "dead" // proven not to exist: DNS failure, connection refused, HTTP 404/410, parked domain
+    | "unreachable" // transient: timeout, 5xx, reset. Retried; scored only after failing on 2 runs
     | "robots_disallowed" // robots.txt forbids fetching the page; nothing loaded
     | "social_profile" // listed website is a social profile; not loaded
-    | "whatsapp_link" // listed website is a WhatsApp chat link; not loaded
+    | "messaging_link" // listed website is a WhatsApp/Telegram/Messenger chat link; not loaded
+    | "whatsapp_link" // older name for messaging_link
     | "blocked" // site answered 401/403/429 (bot wall); nothing about the store measured
     | "failed"; // our own error; nothing reliable measured
 
@@ -162,11 +177,23 @@ export interface AuditRecord {
     local_currency_seen: boolean | null;
     screenshot_path: string | null;
     error: string | null;
+    /** Store behind a password page (e.g. Shopify "opening soon"). */
+    password_protected?: boolean | null;
+    password_signal?: string | null;
+    /** JSON array of extra shop pages checked for cart/checkout. */
+    commerce_pages?: string | null;
+    /** Consecutive audit runs that ended "unreachable". */
+    unreachable_runs?: number | null;
+    /** Audit logic version that produced this row (see AUDIT_VERSION). */
+    audit_version?: number | null;
 }
+
+/** Bump when the audit gains checks, so old rows can be refreshed with --upgrade. */
+export const AUDIT_VERSION = 2;
 
 /** Row shape as read back from SQLite (booleans become 0/1). */
 export type AuditRow = {
-    [K in keyof AuditRecord]: AuditRecord[K] extends boolean | null ? number | null : AuditRecord[K];
+    [K in keyof AuditRecord]-?: NonNullable<AuditRecord[K]> extends boolean ? number | null : AuditRecord[K] | (undefined extends AuditRecord[K] ? null : never);
 };
 
 export interface NewLead {
@@ -180,6 +207,9 @@ export interface NewLead {
     source_ref: string | null;
     dedupe_key: string;
     country?: string | null;
+    rating?: number | null;
+    user_ratings_total?: number | null;
+    business_status?: string | null;
 }
 
 export type EmailSource = "mailto" | "page_text" | "hunter";
@@ -235,6 +265,14 @@ const mergeCategories = (a: string | null, b: string | null) => {
     return set.size ? [...set].join(", ") : null;
 };
 
+/** Error text that proves a site doesn't exist (vs. a transient failure). */
+export const DEAD_ERROR_PATTERNS = ["ERR_NAME_NOT_RESOLVED", "ENOTFOUND", "ERR_CONNECTION_REFUSED", "ECONNREFUSED", "ERR_ADDRESS_UNREACHABLE", "returned HTTP 404", "returned HTTP 410", "parked domain"];
+const DEAD_ERROR_SQL = DEAD_ERROR_PATTERNS.map((p) => `error LIKE '%${p}%'`).join(" OR ");
+
+export function isDeadError(error: string): boolean {
+    return DEAD_ERROR_PATTERNS.some((p) => error.includes(p));
+}
+
 export class LeadStore {
     readonly db: DatabaseSync;
 
@@ -243,9 +281,28 @@ export class LeadStore {
         this.db = new DatabaseSync(path);
         this.db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
         this.db.exec(SCHEMA);
-        // Databases created before stage 3 lack leads.country.
-        const cols = this.db.prepare("PRAGMA table_info(leads)").all() as { name: string }[];
-        if (!cols.some((c) => c.name === "country")) this.db.exec("ALTER TABLE leads ADD COLUMN country TEXT");
+        this.migrate();
+    }
+
+    /** Bring databases made by older versions up to the current schema. */
+    private migrate() {
+        const addColumns = (table: string, defs: Record<string, string>) => {
+            const have = new Set((this.db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]).map((c) => c.name));
+            for (const [name, type] of Object.entries(defs)) {
+                if (!have.has(name)) this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
+            }
+        };
+        addColumns("leads", { country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT" });
+        const auditCols = new Set((this.db.prepare("PRAGMA table_info(audits)").all() as { name: string }[]).map((c) => c.name));
+        addColumns("audits", { password_protected: "INTEGER", password_signal: "TEXT", commerce_pages: "TEXT", unreachable_runs: "INTEGER", audit_version: "INTEGER" });
+        if (!auditCols.has("audit_version")) {
+            // Version-1 rows lumped every load failure into "unreachable". Split out the
+            // ones whose recorded error proves the site doesn't exist; the rest count as
+            // one transient failure, so they are retried and not scored yet.
+            this.db.exec(`UPDATE audits SET status = 'dead' WHERE status = 'unreachable' AND (${DEAD_ERROR_SQL})`);
+            this.db.exec("UPDATE audits SET unreachable_runs = 1 WHERE status = 'unreachable'");
+            this.db.exec("UPDATE audits SET audit_version = 1");
+        }
     }
 
     close() {
@@ -276,6 +333,9 @@ export class LeadStore {
                         website_domain = COALESCE(website_domain, @website_domain),
                         source_ref = COALESCE(source_ref, @source_ref),
                         country = COALESCE(country, @country),
+                        rating = COALESCE(@rating, rating),
+                        user_ratings_total = COALESCE(@user_ratings_total, user_ratings_total),
+                        business_status = COALESCE(@business_status, business_status),
                         high_priority = @high_priority,
                         updated_at = @now
                      WHERE id = @id`,
@@ -292,6 +352,9 @@ export class LeadStore {
                         source_ref: existing.source === lead.source ? lead.source_ref : null,
                         high_priority: website ? 0 : 1,
                         country: lead.country,
+                        rating: lead.rating,
+                        user_ratings_total: lead.user_ratings_total,
+                        business_status: lead.business_status,
                         now,
                     }),
                 );
@@ -301,22 +364,47 @@ export class LeadStore {
         const res = this.db
             .prepare(
                 `INSERT INTO leads (dedupe_key, name, category, address, phone, website_url, website_domain,
-                                    source, source_ref, discovered_at, updated_at, high_priority, country)
+                                    source, source_ref, discovered_at, updated_at, high_priority, country,
+                                    rating, user_ratings_total, business_status)
                  VALUES (@dedupe_key, @name, @category, @address, @phone, @website_url, @website_domain,
-                         @source, @source_ref, @now, @now, @high_priority, @country)`,
+                         @source, @source_ref, @now, @now, @high_priority, @country,
+                         @rating, @user_ratings_total, @business_status)`,
             )
-            .run(params({ ...lead, country: lead.country ?? null, now, high_priority: lead.website_url ? 0 : 1 }));
+            .run(
+                params({
+                    ...lead,
+                    country: lead.country ?? null,
+                    rating: lead.rating ?? null,
+                    user_ratings_total: lead.user_ratings_total ?? null,
+                    business_status: lead.business_status ?? null,
+                    now,
+                    high_priority: lead.website_url ? 0 : 1,
+                }),
+            );
         return { id: Number(res.lastInsertRowid), inserted: true };
     }
 
     /** Leads with a website that need auditing. */
-    leadsToAudit(opts: { reaudit: boolean; limit?: number; ids?: number[] }): LeadRow[] {
+    leadsToAudit(opts: { reaudit: boolean; upgrade?: boolean; limit?: number; ids?: number[] }): LeadRow[] {
         const where = ["l.website_url IS NOT NULL"];
-        if (!opts.reaudit) where.push("(a.lead_id IS NULL OR a.status = 'failed')");
+        if (!opts.reaudit) {
+            const pending = [
+                "a.lead_id IS NULL",
+                "a.status = 'failed'",
+                // transient failures get a second chance before they are scored
+                "(a.status = 'unreachable' AND COALESCE(a.unreachable_runs, 1) < 2)",
+            ];
+            if (opts.upgrade) pending.push(`COALESCE(a.audit_version, 1) < ${AUDIT_VERSION}`);
+            where.push(`(${pending.join(" OR ")})`);
+        }
         if (opts.ids?.length) where.push(`l.id IN (${opts.ids.map(Number).join(",")})`);
         const sql = `SELECT l.* FROM leads l LEFT JOIN audits a ON a.lead_id = l.id
                      WHERE ${where.join(" AND ")} ORDER BY l.id${opts.limit ? ` LIMIT ${Number(opts.limit)}` : ""}`;
         return this.db.prepare(sql).all() as unknown as LeadRow[];
+    }
+
+    getAudit(leadId: number): AuditRow | null {
+        return (this.db.prepare("SELECT * FROM audits WHERE lead_id = ?").get(leadId) as unknown as AuditRow | undefined) ?? null;
     }
 
     saveAudit(a: AuditRecord) {
@@ -356,10 +444,20 @@ export class LeadStore {
         return leads.map((lead) => ({ lead, audit: audits.get(lead.id) ?? null }));
     }
 
-    saveScore(id: number, score: number | null, breakdown: string | null, evidence: string) {
+    saveScore(id: number, score: number | null, breakdown: string | null, evidence: string, websiteClass: string) {
         this.db
-            .prepare("UPDATE leads SET lead_score = ?, score_breakdown = ?, evidence = ? WHERE id = ?")
-            .run(score, breakdown, evidence, id);
+            .prepare("UPDATE leads SET lead_score = ?, score_breakdown = ?, evidence = ?, website_class = ? WHERE id = ?")
+            .run(score, breakdown, evidence, websiteClass, id);
+    }
+
+    getHunterCache(domain: string): { emails: string; fetched_at: string } | null {
+        return (this.db.prepare("SELECT emails, fetched_at FROM hunter_cache WHERE domain = ?").get(domain) as { emails: string; fetched_at: string } | undefined) ?? null;
+    }
+
+    saveHunterCache(domain: string, emailsJson: string, now = new Date().toISOString()) {
+        this.db
+            .prepare("INSERT INTO hunter_cache (domain, emails, fetched_at) VALUES (?, ?, ?) ON CONFLICT(domain) DO UPDATE SET emails = excluded.emails, fetched_at = excluded.fetched_at")
+            .run(domain, emailsJson, now);
     }
 
     // ---- Stage 3: contacts ----

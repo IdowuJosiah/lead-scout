@@ -209,3 +209,63 @@ export function localCurrencySeen(s: PageSnapshot, currency: string): Detection<
     if (sym) return { value: true, signal: `"${sym}" in page text` };
     return { value: false, signal: `no "${code}" code or symbol in page text` };
 }
+
+/**
+ * Store behind a password page: Shopify's /password "opening soon" page, or
+ * any page whose main content is a password form with password wording.
+ */
+export function detectPasswordProtected(s: PageSnapshot): Detection<boolean> {
+    let path = "";
+    try {
+        path = new URL(s.finalUrl).pathname;
+    } catch {
+        /* keep empty */
+    }
+    if (/^\/password\/?$/i.test(path)) return { value: true, signal: "redirected to /password" };
+    if (s.html.includes("template-password")) return { value: true, signal: '"template-password" in page source (Shopify password page)' };
+    if (s.formActions.some((a) => /\/password\/?(\?|$)/i.test(a))) return { value: true, signal: "form posts to /password" };
+    const hasPasswordInput = /<input[^>]+type\s*=\s*["']?password/i.test(s.html);
+    const wording = /(enter (the )?(store |shop |site )?password|password[- ]protected|this (store|shop|site) is (private|password protected)|opening soon)/i.exec(s.text);
+    if (hasPasswordInput && wording) return { value: true, signal: `password field and "${wording[0]}" on page` };
+    return { value: false, signal: "no password page" };
+}
+
+const PARKING_HOSTS = ["sedoparking.com", "sedo.com", "dan.com", "afternic.com", "hugedomains.com", "parkingcrew.net", "bodis.com", "above.com", "undeveloped.com", "parklogic.com"];
+const PARKED_TEXT = /(this domain (name )?(is|may be) for sale|buy this domain|domain is parked|parked free|courtesy of godaddy|this domain has expired|renew (this|your) domain)/i;
+
+/** A parked or for-sale domain: the listed website doesn't exist as a business site. */
+export function detectParked(s: PageSnapshot): string | null {
+    const host = hostOf(s.finalUrl);
+    const parkHost = hostMatches(host, PARKING_HOSTS);
+    if (parkHost) return `redirected to ${parkHost}`;
+    const req = PARKING_HOSTS.map((d) => requestedHost(s, d)).find(Boolean);
+    if (req) return `page loads from ${req}`;
+    const m = PARKED_TEXT.exec(s.text.slice(0, 5000));
+    return m ? `"${m[0]}" on page` : null;
+}
+
+const SHOP_PATH = /\/(shop|store|products?|collections?|catalog(ue)?|categor(y|ies)|product-category|buy|order-online|menu)(\/|$|\?|#)/i;
+
+/** Same-site links that look like shop/product listings, best first. */
+export function shopPageLinks(s: PageSnapshot, max = 3): string[] {
+    let origin = "";
+    try {
+        origin = new URL(s.finalUrl).origin;
+    } catch {
+        return [];
+    }
+    const out = new Set<string>();
+    for (const l of s.links) {
+        let u: URL;
+        try {
+            u = new URL(l.href, s.finalUrl);
+        } catch {
+            continue;
+        }
+        if (u.origin !== origin || !SHOP_PATH.test(u.pathname)) continue;
+        u.hash = "";
+        if (u.href !== s.finalUrl) out.add(u.href);
+        if (out.size >= max) break;
+    }
+    return [...out];
+}

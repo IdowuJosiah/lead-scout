@@ -2,13 +2,13 @@ import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { AuditRow, LeadRow, LeadStore } from "./db.js";
 import { buildEvidence } from "./evidence.js";
-import { priorityOf, scoreLead } from "./scoring.js";
+import { compareLeads, priorityOf, scoreLead } from "./scoring.js";
 
 /** Recompute score + evidence for every lead from what is stored. Idempotent. */
 export function rescoreAll(store: LeadStore) {
     for (const { lead, audit } of store.allLeadsWithAudits()) {
-        const { score, breakdown } = scoreLead(lead, audit);
-        store.saveScore(lead.id, score, breakdown, buildEvidence(lead, audit));
+        const { score, breakdown, websiteClass } = scoreLead(lead, audit);
+        store.saveScore(lead.id, score, breakdown, buildEvidence(lead, audit), websiteClass);
     }
 }
 
@@ -20,6 +20,10 @@ const COLUMNS = [
     "address",
     "phone",
     "website_url",
+    "website_class",
+    "google_rating",
+    "google_reviews",
+    "business_status",
     "source",
     "audit_status",
     "load_time_ms",
@@ -27,6 +31,7 @@ const COLUMNS = [
     "platform",
     "has_cart",
     "has_checkout",
+    "password_protected",
     "payment_providers",
     "link_in_bio_only",
     "whatsapp_order_only",
@@ -59,6 +64,10 @@ function row(lead: LeadRow, audit: AuditRow | null): Record<(typeof COLUMNS)[num
         address: lead.address,
         phone: lead.phone,
         website_url: lead.website_url,
+        website_class: lead.website_class,
+        google_rating: lead.rating,
+        google_reviews: lead.user_ratings_total,
+        business_status: lead.business_status,
         source: lead.source,
         audit_status: lead.website_url ? (audit?.status ?? "pending") : "no_website",
         load_time_ms: audit?.load_time_ms,
@@ -66,6 +75,7 @@ function row(lead: LeadRow, audit: AuditRow | null): Record<(typeof COLUMNS)[num
         platform: audit?.platform,
         has_cart: bool(audit?.has_cart),
         has_checkout: bool(audit?.has_checkout),
+        password_protected: bool(audit?.password_protected),
         payment_providers: providers,
         link_in_bio_only: bool(audit?.link_in_bio_only),
         whatsapp_order_only: bool(audit?.whatsapp_order_only),
@@ -79,12 +89,12 @@ function row(lead: LeadRow, audit: AuditRow | null): Record<(typeof COLUMNS)[num
     };
 }
 
-/** Write leads.csv sorted by lead_score (desc, unscored last). Overwrites the file. */
+/** Write leads.csv sorted by lead_score (desc, unscored last), then Google review count. Overwrites the file. */
 export function exportCsv(store: LeadStore, path: string): number {
     rescoreAll(store);
     const rows = store
         .allLeadsWithAudits()
-        .sort((a, b) => (b.lead.lead_score ?? -1) - (a.lead.lead_score ?? -1) || a.lead.name.localeCompare(b.lead.name));
+        .sort((a, b) => compareLeads(a.lead, b.lead));
     const lines = [COLUMNS.join(",")];
     for (const { lead, audit } of rows) {
         const r = row(lead, audit);

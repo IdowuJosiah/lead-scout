@@ -7,7 +7,7 @@ import { LeadStore, type AuditRecord, type AuditRow } from "../src/db.js";
 import { buildEvidence } from "../src/evidence.js";
 import { csvCell } from "../src/export.js";
 import { boundingBox, haversineKm } from "../src/discovery/googlePlaces.js";
-import { scoreLead, priorityOf, WEIGHTS } from "../src/scoring.js";
+import { compareLeads, scoreLead, priorityOf, WEIGHTS } from "../src/scoring.js";
 import { classifyUrl, dedupeKey, parseWebsite } from "../src/url.js";
 
 const snap = (o: Partial<PageSnapshot>): PageSnapshot => ({
@@ -49,6 +49,11 @@ const audit = (o: Partial<AuditRow>): AuditRow => ({
     local_currency_seen: 1,
     screenshot_path: "output/screenshots/1-shop-example.png",
     error: null,
+    password_protected: 0,
+    password_signal: null,
+    commerce_pages: "[]",
+    unreachable_runs: 0,
+    audit_version: 2,
     ...o,
 });
 
@@ -64,8 +69,11 @@ describe("url", () => {
     it("classifies social, link-in-bio and WhatsApp URLs", () => {
         assert.deepEqual(classifyUrl(new URL("https://www.instagram.com/brand")), { kind: "social", host: "instagram.com" });
         assert.deepEqual(classifyUrl(new URL("https://linktr.ee/brand")), { kind: "link_in_bio", host: "linktr.ee" });
-        assert.equal(classifyUrl(new URL("https://wa.me/2348000000000")).kind, "whatsapp");
-        assert.equal(classifyUrl(new URL("https://brand.com")).kind, "website");
+        assert.equal(classifyUrl(new URL("https://wa.me/2348000000000")).kind, "messaging");
+        assert.equal(classifyUrl(new URL("https://t.me/brand")).kind, "messaging");
+        assert.equal(classifyUrl(new URL("https://brand.bumpa.shop")).kind, "hosted_storefront");
+        assert.equal(classifyUrl(new URL("https://jiji.ng/shop/brand")).kind, "hosted_storefront");
+        assert.equal(classifyUrl(new URL("https://brand.com")).kind, "owned_site");
     });
 
     it("dedupes by domain, but not across shared hosts", () => {
@@ -158,36 +166,74 @@ describe("detect", () => {
 });
 
 describe("scoring", () => {
+    const site = { website_url: "https://shop.example/" };
+
     it("no website scores 100", () => {
         assert.equal(scoreLead({ website_url: null }, null).score, 100);
     });
 
     it("orders the cases as specified", () => {
-        const site = { website_url: "https://shop.example/" };
         const good = scoreLead(site, audit({})).score!;
         const slow = scoreLead(site, audit({ load_time_ms: 11_000, lighthouse_score: 30 })).score!;
         const noCheckout = scoreLead(site, audit({ has_cart: 0, has_checkout: 0, payment_providers: "[]" })).score!;
-        const bio = scoreLead(site, audit({ status: "social_profile", link_in_bio_only: 1 })).score!;
+        const insta = scoreLead({ website_url: "https://instagram.com/brand" }, null).score!;
         assert.equal(good, WEIGHTS.baseline);
         assert.equal(priorityOf(good), "low");
         assert.equal(priorityOf(slow), "medium");
         assert.equal(priorityOf(noCheckout), "high");
-        assert.ok(good < slow && slow < noCheckout && noCheckout < bio && bio < 100);
+        assert.ok(good < slow && slow < noCheckout && noCheckout < insta && insta < 100);
+    });
+
+    it("classifies the listed website and scores each class", () => {
+        const s = (url: string, a: Parameters<typeof audit>[0] | null = null) => scoreLead({ website_url: url }, a ? audit(a) : null);
+        assert.equal(s("https://instagram.com/brand").websiteClass, "social");
+        assert.equal(s("https://wa.me/2348000000000").websiteClass, "messaging");
+        assert.equal(s("https://t.me/brandshop").score, WEIGHTS.baseline + WEIGHTS.messagingOnly);
+        assert.equal(s("https://linktr.ee/brand").score, WEIGHTS.baseline + WEIGHTS.linkInBioOnly);
+        const hosted = s("https://brand.bumpa.shop/", { final_url: "https://brand.bumpa.shop/" });
+        assert.equal(hosted.websiteClass, "hosted_storefront");
+        assert.equal(hosted.score, WEIGHTS.baseline + WEIGHTS.hostedStorefront);
+        const dead = s("https://gone.example/", { status: "dead", error: "net::ERR_NAME_NOT_RESOLVED" });
+        assert.deepEqual([dead.websiteClass, dead.score], ["dead_listing", WEIGHTS.baseline + WEIGHTS.deadListing]);
+        assert.equal(s("https://brand.example/", { final_url: "https://instagram.com/brand" }).websiteClass, "social", "own domain redirecting to Instagram");
+        const locked = s("https://brand.example/", { password_protected: 1, has_cart: 0, has_checkout: 0 });
+        assert.equal(locked.score, WEIGHTS.baseline + WEIGHTS.passwordProtected);
     });
 
     it("does not score what was not measured", () => {
-        const site = { website_url: "https://shop.example/" };
         assert.equal(scoreLead(site, null).score, null);
         assert.equal(scoreLead(site, audit({ status: "robots_disallowed" })).score, null);
         assert.equal(scoreLead(site, audit({ status: "failed" })).score, null);
         assert.equal(scoreLead(site, audit({ status: "blocked" })).score, null);
         // link-in-bio is known from the URL even when robots.txt blocks loading
-        assert.equal(scoreLead(site, audit({ status: "robots_disallowed", link_in_bio_only: 1 })).score, WEIGHTS.baseline + WEIGHTS.linkInBioOnly);
+        assert.equal(scoreLead({ website_url: "https://linktr.ee/brand" }, audit({ status: "robots_disallowed" })).score, WEIGHTS.baseline + WEIGHTS.linkInBioOnly);
+        assert.equal(scoreLead({ website_url: "https://x.example/", business_status: "CLOSED_PERMANENTLY" }, null).score, null);
+    });
+
+    it("scores a transient failure only once it repeats", () => {
+        assert.equal(scoreLead(site, audit({ status: "unreachable", unreachable_runs: 1 })).score, null);
+        assert.equal(scoreLead(site, audit({ status: "unreachable", unreachable_runs: 2 })).score, WEIGHTS.baseline + WEIGHTS.siteUnreachable);
+    });
+
+    it("ignores Lighthouse when the page load timed out", () => {
+        const s = scoreLead(site, audit({ load_timed_out: 1, load_time_ms: null, lighthouse_score: 20 }));
+        assert.equal(s.score, WEIGHTS.baseline + WEIGHTS.loadTimedOut);
+        assert.doesNotMatch(s.breakdown!, /lighthouse/);
     });
 
     it("primary gaps do not stack", () => {
-        const s = scoreLead({ website_url: "x" }, audit({ has_cart: 0, has_checkout: 0, whatsapp_links: 2, whatsapp_order_only: 1, lighthouse_score: 95, payment_providers: "[]" }));
+        const s = scoreLead(site, audit({ has_cart: 0, has_checkout: 0, whatsapp_links: 2, whatsapp_order_only: 1, lighthouse_score: 95, payment_providers: "[]" }));
         assert.equal(s.score, WEIGHTS.baseline + WEIGHTS.whatsappOrderOnly);
+    });
+
+    it("breaks score ties by Google review count", () => {
+        const rows = [
+            { name: "A", lead_score: 65, user_ratings_total: 3 },
+            { name: "B", lead_score: 65, user_ratings_total: 240 },
+            { name: "C", lead_score: 90, user_ratings_total: null },
+            { name: "D", lead_score: null, user_ratings_total: 999 },
+        ];
+        assert.deepEqual(rows.sort(compareLeads).map((r) => r.name), ["C", "B", "A", "D"]);
     });
 });
 

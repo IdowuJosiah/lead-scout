@@ -32,6 +32,9 @@ export class JsonFileSource implements DiscoverySource {
                 phone: s("phone"),
                 website: s("website"),
                 sourceRef: s("id"),
+                rating: typeof r.rating === "number" ? r.rating : null,
+                userRatingsTotal: typeof r.user_ratings_total === "number" ? r.user_ratings_total : null,
+                businessStatus: s("business_status"),
             };
         }
     }

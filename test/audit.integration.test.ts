@@ -15,6 +15,8 @@ import { dedupeKey, parseWebsite, websiteDomain } from "../src/url.js";
  * Lighthouse is exercised when LIGHTHOUSE=1, since it adds ~20s per site.
  */
 
+const a2 = (store: LeadStore, id: number) => store.getAudit(id)!;
+
 type Route = (path: string) => { status?: number; body: string; delayMs?: number; type?: string };
 
 function serve(route: Route): Promise<{ server: Server; url: string }> {
@@ -51,6 +53,17 @@ const SITES: Record<string, Route> = {
                 },
     private: (p) => (p === "/robots.txt" ? { body: "User-agent: *\nDisallow: /\n", type: "text/plain" } : { body: "<h1>secret</h1>" }),
     broken: (p) => (p === "/robots.txt" ? { status: 404, body: "" } : { status: 500, body: "Internal error" }),
+    locked: (p) =>
+        p === "/robots.txt"
+            ? { status: 404, body: "" }
+            : { body: '<html><body><p>Opening soon</p><form method="post" action="/password"><input type="password" name="password"><button>Enter</button></form></body></html>' },
+    deep: (p) =>
+        p === "/robots.txt"
+            ? { status: 404, body: "" }
+            : p.startsWith("/shop")
+              ? { body: '<html><body><h1>Shop</h1><button class="add">Add to cart</button><script src="https://js.paystack.co/v1/inline.js"></script></body></html>' }
+              : { body: '<html><body><h1>Deep Brand</h1><a href="/shop/">Shop now</a></body></html>' },
+    parked: (p) => (p === "/robots.txt" ? { status: 404, body: "" } : { body: "<html><body><h1>brand.ng</h1><p>This domain is for sale! Buy this domain today.</p></body></html>" }),
 };
 
 describe("audit (end to end)", { timeout: 300_000 }, () => {
@@ -98,6 +111,9 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
             private: add("Private", urls.private!),
             broken: add("Broken", urls.broken!),
             dead: add("Dead", urls.dead!),
+            locked: add("Locked", urls.locked!),
+            deep: add("Deep", urls.deep!),
+            parked: add("Parked", urls.parked!),
             insta: add("Insta", "https://instagram.com/somebrand"),
             none: add("NoSite", null),
         };
@@ -120,7 +136,7 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
             userAgentToken: "LeadScoutTest",
         };
         const summary = await runAudit(store, config, opts);
-        assert.equal(summary.attempted, 6, "no-website lead is not audited");
+        assert.equal(summary.attempted, 9, "no-website lead is not audited");
 
         const byId = new Map(store.allLeadsWithAudits().map((r) => [r.lead.id, r]));
         const a = (k: keyof typeof ids) => byId.get(ids[k])!.audit!;
@@ -141,20 +157,31 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
 
         assert.equal(a("private").status, "robots_disallowed");
         assert.equal(a("private").screenshot_path, null, "nothing fetched past robots.txt");
-        assert.equal(a("broken").status, "unreachable");
-        assert.equal(a("dead").status, "unreachable");
+        assert.equal(a("broken").status, "unreachable", "HTTP 500 is treated as transient");
+        assert.equal(a("broken").unreachable_runs, 1);
+        assert.equal(a("dead").status, "dead", "connection refused proves the listing is dead");
         assert.match(a("dead").error!, /robots\.txt request failed/);
         assert.equal(a("insta").status, "social_profile");
+        assert.equal(a("locked").password_protected, 1);
+        assert.match(a("locked").password_signal!, /password/);
+        assert.equal(a("deep").has_cart, 1, "cart found on /shop/, not the homepage");
+        assert.match(a("deep").cart_signal!, /on \/shop\//);
+        assert.deepEqual(JSON.parse(a("deep").commerce_pages!), ["/shop/"]);
+        assert.equal(a("parked").status, "dead");
+        assert.match(a("parked").error!, /parked domain/);
 
-        // Re-running does nothing new; --reaudit replaces rows rather than adding.
+        // Re-running retries only the transient failure; its second failure is then scored.
+        assert.equal((await runAudit(store, config, opts)).attempted, 1);
+        assert.equal(a2(store, ids.broken).unreachable_runs, 2);
         assert.equal((await runAudit(store, config, opts)).attempted, 0);
+        // --reaudit replaces rows rather than adding.
         await runAudit(store, config, { ...opts, reaudit: true, ids: [ids.store] });
-        assert.equal(store.allLeadsWithAudits().filter((r) => r.audit).length, 6);
+        assert.equal(store.allLeadsWithAudits().filter((r) => r.audit).length, 9);
 
         const out = join(dir, "leads.csv");
-        assert.equal(exportCsv(store, out), 7);
+        assert.equal(exportCsv(store, out), 10);
         const lines = readFileSync(out, "utf8").trim().split("\r\n");
-        assert.equal(lines.length, 8);
+        assert.equal(lines.length, 11);
         assert.match(lines[1]!, /^100,high,NoSite,/);
         const scores = lines.slice(1).map((l) => (l.startsWith(",") ? -1 : Number(l.split(",")[0])));
         assert.deepEqual(scores, [...scores].sort((x, y) => y - x), "sorted by lead_score desc");

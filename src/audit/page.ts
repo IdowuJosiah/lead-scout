@@ -48,7 +48,8 @@ export type PageLoad =
 export interface LoadOptions {
     timeoutMs: number;
     userAgentSuffix: string;
-    screenshotPath: string;
+    /** null: no screenshot (used for extra shop pages). */
+    screenshotPath: string | null;
     ignoreHttpsErrors: boolean;
 }
 
@@ -95,12 +96,14 @@ export async function loadPage(browser: Browser, url: string, opts: LoadOptions)
 
         let screenshotPath: string | null = opts.screenshotPath;
         let screenshotError: string | null = null;
-        try {
-            mkdirSync(dirname(opts.screenshotPath), { recursive: true });
-            await page.screenshot({ path: opts.screenshotPath, timeout: 15_000 });
-        } catch (err) {
-            screenshotPath = null;
-            screenshotError = (err as Error).message.split("\n")[0]!;
+        if (opts.screenshotPath) {
+            try {
+                mkdirSync(dirname(opts.screenshotPath), { recursive: true });
+                await page.screenshot({ path: opts.screenshotPath, timeout: 15_000 });
+            } catch (err) {
+                screenshotPath = null;
+                screenshotError = (err as Error).message.split("\n")[0]!;
+            }
         }
 
         return {

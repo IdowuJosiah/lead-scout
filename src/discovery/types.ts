@@ -12,6 +12,11 @@ export interface DiscoveredLead {
     website: string | null;
     /** Stable id within the source (e.g. a Google place id), if it has one. */
     sourceRef: string | null;
+    /** Average review rating, review count and open/closed state, when the source has them. */
+    rating?: number | null;
+    userRatingsTotal?: number | null;
+    /** OPERATIONAL | CLOSED_TEMPORARILY | CLOSED_PERMANENTLY */
+    businessStatus?: string | null;
 }
 
 export interface DiscoveryContext {

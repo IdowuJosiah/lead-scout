@@ -19,6 +19,9 @@ const FIELDS = [
     "places.internationalPhoneNumber",
     "places.websiteUri",
     "places.location",
+    "places.rating",
+    "places.userRatingCount",
+    "places.businessStatus",
     "nextPageToken",
 ].join(",");
 
@@ -30,6 +33,9 @@ interface Place {
     internationalPhoneNumber?: string;
     websiteUri?: string;
     location?: { latitude: number; longitude: number };
+    rating?: number;
+    userRatingCount?: number;
+    businessStatus?: string;
 }
 
 interface SearchResponse {
@@ -143,6 +149,9 @@ export class GooglePlacesSource implements DiscoverySource {
                     phone: p.internationalPhoneNumber ?? p.nationalPhoneNumber ?? null,
                     website: p.websiteUri ?? null,
                     sourceRef: p.id,
+                    rating: p.rating ?? null,
+                    userRatingsTotal: p.userRatingCount ?? null,
+                    businessStatus: p.businessStatus ?? null,
                 };
             }
             pageToken = res.nextPageToken;

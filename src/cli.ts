@@ -1,9 +1,11 @@
 import { dirname, join, resolve } from "node:path";
+import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
 import { runAudit, type AuditOptions } from "./audit/index.js";
 import { loadConfigFile, resolveConfig, type ConfigOverrides } from "./config.js";
 import { exportQueues } from "./contact/export.js";
-import { runContacts, type ContactOptions } from "./contact/index.js";
+import { runContacts, type ContactOptions, type PaidPlan } from "./contact/index.js";
+import { formatReconcileReport, reconcileContacts } from "./contact/reconcile.js";
 import { LeadStore } from "./db.js";
 import { runDiscovery, SOURCES } from "./discovery/index.js";
 import { exportCsv } from "./export.js";
@@ -17,6 +19,7 @@ Commands:
   discover    Stage 1: query discovery sources and store leads (deduped)
   audit       Stage 2: audit leads that have a website (mobile, Playwright + Lighthouse)
   contacts    Stage 3: find and verify emails for high-scoring leads with their own site
+  reconcile   Re-score, drop stage-3 results that break the current rules, report, rewrite CSVs
   export      Write leads.csv, email_queue.csv and fallback_queue.csv
   run         discover + audit + contacts + export
   failures    Show recent per-lead failures
@@ -41,7 +44,8 @@ General:
   --screenshots <dir>         default: output/screenshots
 
 Audit:
-  --reaudit                   re-audit leads already audited (default: only new or failed)
+  --reaudit                   re-audit leads already audited (default: only new, failed, or unreachable once)
+  --upgrade                   also re-audit leads audited by an older version of the checks
   --limit <n>                 audit at most n leads
   --ids <1,2,3>               audit only these lead ids
   --no-lighthouse             skip Lighthouse (much faster)
@@ -54,9 +58,33 @@ Contacts (needs HUNTER_API_KEY and ZEROBOUNCE_API_KEY):
   --min-score <n>             only leads scoring at least n (default: contact_min_score, 60)
   --recontact                 redo leads already processed
   --max-verify <n>            most addresses verified per lead (default 3; each costs a credit)
+  --dry-run                   show how many paid calls would be made, then stop
+  --yes                       make the paid calls without asking
 
   --verbose                   debug logging
 `;
+
+/** Ask before spending API credits. --yes skips the question; no terminal means no. */
+async function confirmPaidCalls(plan: PaidPlan, yes: boolean): Promise<boolean> {
+    const total = plan.hunterCalls + plan.zeroBounceCalls;
+    const upTo = plan.zeroBounceUpTo ? ` (+ up to ${plan.zeroBounceUpTo} ZeroBounce for addresses Hunter returns)` : "";
+    const summary = `About to make ${total} paid call(s): ${plan.hunterCalls} Hunter, ${plan.zeroBounceCalls} ZeroBounce${upTo}, for ${plan.leads} lead(s).`;
+    if (yes) {
+        process.stderr.write(`${summary} Approved by --yes.\n`);
+        return true;
+    }
+    if (!process.stdin.isTTY) {
+        process.stderr.write(`${summary} Not approved: re-run with --yes to allow, or --dry-run to only preview.\n`);
+        return false;
+    }
+    const rl = createInterface({ input: process.stdin, output: process.stderr });
+    try {
+        const answer = await rl.question(`${summary} Continue? [y/N] `);
+        return /^y(es)?$/i.test(answer.trim());
+    } finally {
+        rl.close();
+    }
+}
 
 async function main() {
     const { values, positionals } = parseArgs({
@@ -89,6 +117,9 @@ async function main() {
             "min-score": { type: "string" },
             recontact: { type: "boolean", default: false },
             "max-verify": { type: "string", default: "3" },
+            upgrade: { type: "boolean", default: false },
+            "dry-run": { type: "boolean", default: false },
+            yes: { type: "boolean", default: false },
             verbose: { type: "boolean", default: false },
         },
     });
@@ -102,7 +133,7 @@ async function main() {
 
     const store = new LeadStore(resolve(values.db));
     try {
-        const needsConfig = ["discover", "audit", "contacts", "export", "run"].includes(command);
+        const needsConfig = ["discover", "audit", "contacts", "reconcile", "export", "run"].includes(command);
         const overrides: ConfigOverrides = {
             country: values.country,
             country_code: values["country-code"],
@@ -121,6 +152,7 @@ async function main() {
 
         const auditOpts: AuditOptions = {
             reaudit: values.reaudit,
+            upgrade: values.upgrade,
             limit: values.limit ? Number(values.limit) : undefined,
             ids: values.ids ? values.ids.split(",").map(Number).filter(Number.isInteger) : undefined,
             lighthouse: !values["no-lighthouse"],
@@ -139,6 +171,8 @@ async function main() {
             perHostDelayMs: auditOpts.perHostDelayMs,
             userAgentToken: auditOpts.userAgentToken,
             timeoutMs: Math.min(auditOpts.timeoutMs, 20_000),
+            dryRun: values["dry-run"],
+            confirm: (plan) => confirmPaidCalls(plan, values.yes),
         };
 
         const out = resolve(values.out);
@@ -183,8 +217,14 @@ async function main() {
             }
             case "contacts": {
                 const c = await runContacts(store, config!, contactOpts);
-                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped`);
+                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped, ${c.deferred} waiting for paid-call approval`);
                 writeCsv("contacts done");
+                break;
+            }
+            case "reconcile": {
+                const report = reconcileContacts(store);
+                process.stdout.write(`${formatReconcileReport(report)}\n`);
+                writeCsv("reconciled");
                 break;
             }
             case "export":
@@ -198,7 +238,7 @@ async function main() {
                 log.info(`audit: ${a.attempted} attempted ${JSON.stringify(a.byStatus)}`);
                 writeCsv("audit done");
                 const c = await runContacts(store, config!, contactOpts);
-                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped`);
+                log.info(`contacts: ${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.failed} failed, ${c.skipped} skipped, ${c.deferred} waiting for paid-call approval`);
                 writeCsv("finished");
                 break;
             }
