@@ -18,10 +18,13 @@ git clone https://github.com/IdowuJosiah/lead-scout.git
 cd lead-scout
 npm install
 npx playwright install chromium      # once, if Chromium isn't already installed
-export GOOGLE_PLACES_API_KEY=...      # Places API (New) must be enabled for the key
-export HUNTER_API_KEY=...             # stage 3 only
-export ZEROBOUNCE_API_KEY=...         # stage 3 only
+cp .env.example .env                  # then open .env and paste your keys
 ```
+
+`.env` holds `GOOGLE_PLACES_API_KEY` (Places API (New) must be enabled for
+it), plus `HUNTER_API_KEY` and `ZEROBOUNCE_API_KEY`, which only stage 3 needs.
+The file is in `.gitignore`, so it never reaches GitHub. Keys set with
+`export` in the terminal take priority over the file.
 
 Node 22.19+ is required (it uses the built-in `node:sqlite`, so there's no native addon to compile).
 

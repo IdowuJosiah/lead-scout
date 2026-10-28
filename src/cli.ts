@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
@@ -36,6 +37,9 @@ Region (override config/region.json):
   --payment-providers <a,b>   names or domains to detect
   --sources <a,b>             discovery sources (${Object.keys(SOURCES).join(", ")})
   --lat <n> --lng <n>         search centre (default: geocode the city)
+
+Keys: GOOGLE_PLACES_API_KEY, HUNTER_API_KEY, ZEROBOUNCE_API_KEY, from the shell or a .env
+file in this folder (copy .env.example to .env). Shell values win over the file.
 
 General:
   --config <path>             default: config/region.json
@@ -86,7 +90,22 @@ async function confirmPaidCalls(plan: PaidPlan, yes: boolean): Promise<boolean> 
     }
 }
 
+/**
+ * API keys from a local .env file, so they needn't be typed each session.
+ * Variables already set in the shell win over the file.
+ */
+function loadEnv() {
+    const path = resolve(".env");
+    if (!existsSync(path)) return;
+    try {
+        process.loadEnvFile(path);
+    } catch (err) {
+        log.warn(`could not read ${path}: ${errMessage(err)}`);
+    }
+}
+
 async function main() {
+    loadEnv();
     const { values, positionals } = parseArgs({
         allowPositionals: true,
         options: {
