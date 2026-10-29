@@ -1,0 +1,59 @@
+# Finds and audits leads, finds + verifies emails within the monthly API
+# budget, and drafts messages. Sends nothing: emails wait for your approval
+# in the dashboard.
+name: Weekly lead run
+
+on:
+  schedule:
+    - cron: "41 5 * * 1" # Mondays 05:41 UTC = 06:41 in Lagos
+  workflow_dispatch:
+    inputs:
+      discover:
+        description: "Search Google for new leads (uses Places API calls)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: lead-scout-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Load state
+        run: bash scripts/state.sh pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Run agent
+        run: npm run cli -- agent weekly --state state ${{ (github.event_name == 'workflow_dispatch' && !inputs.discover) && '--no-discover' || '' }}
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+          ZEROBOUNCE_API_KEY: ${{ secrets.ZEROBOUNCE_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+
+      - name: Save state
+        if: always()
+        run: bash scripts/state.sh push "weekly run ${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

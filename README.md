@@ -11,6 +11,29 @@ discover -> audit -> contacts -> export
               SQLite (data/leads.db)
 ```
 
+## Automatic agent
+
+To run everything on a schedule with no terminal, use GitHub Actions and the
+web dashboard; **[SETUP.md](SETUP.md)** walks through it step by step. In short:
+
+- **Weekly** (`.github/workflows/weekly.yml`): find, audit, find and verify emails within the monthly credit limits, then draft messages.
+- **Hourly on weekdays** (`.github/workflows/send.yml`): apply your dashboard clicks, read replies, and send approved emails inside the send window.
+- **Dashboard** (`dashboard/`, deployed on Vercel): approve or edit emails, one-tap WhatsApp, leads, replies.
+
+The same steps can be run by hand:
+
+```bash
+npm run cli -- draft                  # write drafts (email batch + WhatsApp/phone)
+npm run cli -- send                   # send approved emails now (needs SMTP_USER/SMTP_PASS)
+npm run cli -- inbox                  # read replies, stop requests, bounces
+npm run cli -- agent weekly --state state
+npm run cli -- agent tick --state state
+```
+
+Messages are built from `config/outreach.json`. Each sentence there is tied
+to a measured issue (slow load, no checkout, password page, no website…), and
+a sentence is only used when the value it mentions was actually measured.
+
 ## Setup
 
 ```bash

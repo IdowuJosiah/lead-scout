@@ -1,0 +1,380 @@
+:root {
+    --bg: #f6f6f4;
+    --surface: #ffffff;
+    --surface-2: #f0f0ec;
+    --text: #1b1b19;
+    --muted: #6a6a64;
+    --border: #e2e2dc;
+    --accent: #1f6f5c;
+    --accent-text: #ffffff;
+    --warn-bg: #fff4dc;
+    --warn-text: #7a5300;
+    --bad-bg: #fde8e6;
+    --bad-text: #9a2318;
+    --good-bg: #e3f4ec;
+    --good-text: #1d6446;
+    --radius: 10px;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #121312;
+        --surface: #1b1c1b;
+        --surface-2: #232523;
+        --text: #ececea;
+        --muted: #a0a29c;
+        --border: #2f312e;
+        --accent: #4fb596;
+        --accent-text: #0d1a15;
+        --warn-bg: #3a2e12;
+        --warn-text: #f3d18a;
+        --bad-bg: #3b1d1a;
+        --bad-text: #f3aaa0;
+        --good-bg: #16302a;
+        --good-text: #8fd9b9;
+        color-scheme: dark;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+a {
+    color: var(--accent);
+}
+
+.wrap {
+    max-width: 980px;
+    overflow-wrap: anywhere;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header.top {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+header.top .wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.brand {
+    font-weight: 700;
+    margin-right: auto;
+}
+
+nav.tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    width: 100%;
+    order: 3;
+}
+
+nav.tabs a {
+    padding: 6px 12px;
+    border-radius: 999px;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+nav.tabs a[aria-current="page"] {
+    background: var(--accent);
+    color: var(--accent-text);
+}
+
+nav.tabs .count {
+    margin-left: 6px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 8px 0 4px;
+}
+
+h2 {
+    font-size: 17px;
+    margin: 24px 0 8px;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.small {
+    font-size: 13px;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin: 10px 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.stat .value {
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat .label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.notice {
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin: 10px 0;
+    background: var(--surface-2);
+}
+
+.notice.warn {
+    background: var(--warn-bg);
+    color: var(--warn-text);
+}
+
+.notice.bad {
+    background: var(--bad-bg);
+    color: var(--bad-text);
+}
+
+.notice.good {
+    background: var(--good-bg);
+    color: var(--good-text);
+}
+
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--muted);
+    margin-right: 4px;
+    /* Long notes (e.g. risk flags) wrap instead of widening the page on phones. */
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+.badge.good {
+    background: var(--good-bg);
+    color: var(--good-text);
+}
+
+.badge.warn {
+    background: var(--warn-bg);
+    color: var(--warn-text);
+}
+
+.badge.bad {
+    background: var(--bad-bg);
+    color: var(--bad-text);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: var(--accent);
+    color: var(--accent-text);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.btn-quiet {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.btn-danger {
+    background: transparent;
+    color: var(--bad-text);
+    border-color: var(--border);
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.spread {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+textarea {
+    min-height: 260px;
+    resize: vertical;
+}
+
+label.check {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+}
+
+.field {
+    margin: 8px 0;
+}
+
+.field > span {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.message {
+    white-space: pre-wrap;
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 8px 0;
+}
+
+details > summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+th {
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+td.num {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.meter {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.meter > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+}
+
+.steps li {
+    margin: 2px 0;
+}
+
+.login {
+    max-width: 360px;
+    margin: 12vh auto;
+    padding: 16px;
+}
+
+@media (min-width: 720px) {
+    nav.tabs {
+        width: auto;
+        order: 0;
+    }
+}
+
+/* Keeps the main button reachable at the bottom of long forms. */
+.action-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 10px 0;
+}

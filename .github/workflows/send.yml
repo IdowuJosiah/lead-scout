@@ -1,0 +1,52 @@
+# Applies your dashboard clicks, reads replies, and sends approved emails
+# inside the send window. Runs hourly on weekdays, and right away when you
+# approve a batch in the dashboard.
+name: Send approved emails
+
+on:
+  schedule:
+    - cron: "7 8-15 * * 1-5" # hourly 09:07-16:07 in Lagos, Mon-Fri
+  workflow_dispatch:
+
+concurrency:
+  group: lead-scout-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
+      - name: Load state
+        run: bash scripts/state.sh pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Run agent
+        run: npm run cli -- agent tick --state state
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_FROM: ${{ vars.SMTP_FROM }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+
+      - name: Save state
+        if: always()
+        run: bash scripts/state.sh push "send run ${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
