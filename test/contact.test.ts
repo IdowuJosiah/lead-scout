@@ -282,7 +282,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         // Queues, ordered by score then review count.
         const q = { email: join(dir, "email_queue.csv"), fallback: join(dir, "fallback_queue.csv") };
         exportCsv(store, join(dir, "leads.csv"));
-        assert.deepEqual(exportQueues(store, config, q), { email: 4, fallback: 2 });
+        assert.deepEqual(exportQueues(store, config, q), { email: 4, fallback: 2, noWebsite: 0 });
         const emailCsv = readFileSync(q.email, "utf8").trim().split("\r\n");
         assert.equal(emailCsv[0], "name,email,email_type,verification_status,evidence,lead_score,country,risk_flag,email_source,website,timezone,send_window,legal_basis");
         assert.ok(emailCsv[1]!.startsWith("brandthree.ng,"), "300 reviews beats 12 at the same score");
@@ -291,7 +291,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
 
         // Turning email off for the region moves everyone to the fallback queue at export.
         const off = resolveConfig({ ...baseConfig, allowed_to_email: false });
-        assert.deepEqual(exportQueues(store, off, q), { email: 0, fallback: 6 });
+        assert.deepEqual(exportQueues(store, off, q), { email: 0, fallback: 6, noWebsite: 0 });
         assert.match(readFileSync(q.fallback, "utf8"), /email not permitted for region NG/);
         store.close();
     });
@@ -342,6 +342,32 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         store.close();
     });
 
+    it("adds no-website leads to the fallback queue with their WhatsApp/phone channel", async () => {
+        const store = new LeadStore(join(dir, "nosite.db"));
+        const config = resolveConfig({ ...baseConfig, allowed_to_email: true });
+        const add = (name: string, phone: string | null, extra: Record<string, unknown> = {}) =>
+            store.upsertLead({ name, category: "skincare", address: `${name} rd`, phone, website_url: null, website_domain: null, source: "google_places", source_ref: name, dedupe_key: dedupeKey(name, `${name} rd`, null), country: "NG", ...extra });
+        add("Mobile Few Reviews", "0803 123 4567", { user_ratings_total: 4 });
+        add("Mobile Many Reviews", "0805 555 1234", { user_ratings_total: 210 });
+        add("Landline Only", "+234 9 461 2345");
+        add("No Phone", null);
+        add("Closed", "0803 000 0000", { business_status: "CLOSED_PERMANENTLY" });
+        add("Elsewhere", "0803 111 1111", { country: "GH" });
+        exportCsv(store, join(dir, "nosite_leads.csv"));
+
+        const q = { email: join(dir, "nosite_email.csv"), fallback: join(dir, "nosite_fallback.csv") };
+        assert.deepEqual(exportQueues(store, config, q), { email: 0, fallback: 4, noWebsite: 4 }, "closed and other-region leads left out");
+        const lines = readFileSync(q.fallback, "utf8").trim().split("\r\n");
+        assert.equal(lines[0], "name,channel,contact,channel_note,phone,reason,lead_score,country,website,evidence,timezone,send_window,lead_type,category");
+        assert.ok(lines[1]!.startsWith("Mobile Many Reviews,whatsapp,https://wa.me/2348055551234,"), "same score: more reviews first");
+        assert.ok(lines[2]!.startsWith("Mobile Few Reviews,whatsapp,https://wa.me/2348031234567,"));
+        assert.match(lines.find((l) => l.startsWith("Landline Only"))!, /^Landline Only,phone,/);
+        assert.match(lines.find((l) => l.startsWith("No Phone"))!, /^No Phone,none,,no phone number listed,/);
+        assert.ok(lines.slice(1).every((l) => l.includes(",no_website,skincare")));
+        assert.ok(lines.slice(1).every((l) => l.includes("no website listed by google_places")));
+        store.close();
+    });
+
     it("reconcile invalidates results that break the current rules and reports why", async () => {
         const store = new LeadStore(join(dir, "r.db"));
         const ids = seed(store);
@@ -374,7 +400,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         assert.equal(reconcileContacts(store).domainMismatch.length, 0, "reconcile is idempotent");
 
         const q = { email: join(dir, "r_email.csv"), fallback: join(dir, "r_fallback.csv") };
-        assert.deepEqual(exportQueues(store, config, q), { email: 2, fallback: 0 });
+        assert.deepEqual(exportQueues(store, config, q), { email: 2, fallback: 0, noWebsite: 0 });
         store.close();
     });
 });

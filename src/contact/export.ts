@@ -1,12 +1,13 @@
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { RegionConfig } from "../config.js";
-import type { LeadStore } from "../db.js";
+import type { LeadRow, LeadStore } from "../db.js";
 import { csvCell } from "../export.js";
 import { log } from "../log.js";
 import { compareLeads } from "../scoring.js";
 import { parseWebsite } from "../url.js";
 import { isFreeProvider, isOwnDomain } from "./classify.js";
+import { fallbackChannel } from "./fallback.js";
 import { emailAllowed } from "./index.js";
 
 const EMAIL_COLUMNS = [
@@ -16,7 +17,7 @@ const EMAIL_COLUMNS = [
 
 const FALLBACK_COLUMNS = [
     "name", "channel", "contact", "channel_note", "phone", "reason", "lead_score", "country",
-    "website", "evidence", "timezone", "send_window",
+    "website", "evidence", "timezone", "send_window", "lead_type", "category",
 ] as const;
 
 function writeCsv(path: string, columns: readonly string[], rows: Record<string, unknown>[]) {
@@ -32,11 +33,15 @@ function writeCsv(path: string, columns: readonly string[], rows: Record<string,
  * The region rule is re-checked here, so turning allowed_to_email off takes
  * effect immediately: those leads move to the fallback queue. Leads from a
  * different region than the loaded config are left out (their rule is unknown).
+ *
+ * Leads with no website at all never go through stage 3 (there is no site to
+ * find an email on), so they are added to the fallback queue here, with their
+ * WhatsApp/phone channel. That needs no API call.
  */
 export function exportQueues(store: LeadStore, config: RegionConfig, paths: { email: string; fallback: string }) {
     const window = `${config.send_window.days} ${config.send_window.start}-${config.send_window.end} ${config.timezone}`;
     const emailRows: Record<string, unknown>[] = [];
-    const fallbackRows: Record<string, unknown>[] = [];
+    const fallback: { lead: LeadRow; row: Record<string, unknown> }[] = [];
     let otherRegion = 0;
     let notOwned = 0;
     let belowScore = 0;
@@ -83,21 +88,58 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
                 legal_basis: config.legal_basis,
             });
         } else {
-            fallbackRows.push({
-                ...common,
-                channel: result.channel,
-                contact: result.channel_value,
-                channel_note: result.channel_note,
-                phone: lead.phone,
-                reason: result.outcome === "email" ? `email not permitted for region ${country} (allowed_to_email is not true)` : result.reason,
-                evidence: `${result.contact_evidence ?? ""} | site: ${lead.evidence ?? ""}`,
+            fallback.push({
+                lead,
+                row: {
+                    ...common,
+                    lead_type: "no_usable_email",
+                    category: lead.category,
+                    channel: result.channel,
+                    contact: result.channel_value,
+                    channel_note: result.channel_note,
+                    phone: lead.phone,
+                    reason: result.outcome === "email" ? `email not permitted for region ${country} (allowed_to_email is not true)` : result.reason,
+                    evidence: `${result.contact_evidence ?? ""} | site: ${lead.evidence ?? ""}`,
+                },
             });
         }
     }
+
+    // No-website leads: contact by WhatsApp or phone. Unscored ones (e.g. permanently closed) are left out.
+    let noWebsite = 0;
+    for (const { lead } of store.allLeadsWithAudits()) {
+        if (lead.website_url || lead.lead_score == null) continue;
+        const country = lead.country ?? config.country_code;
+        if (country !== config.country_code) continue;
+        const ch = fallbackChannel(lead.phone, country, null);
+        noWebsite++;
+        fallback.push({
+            lead,
+            row: {
+                name: lead.name,
+                lead_score: lead.lead_score,
+                country,
+                website: null,
+                timezone: config.timezone,
+                send_window: window,
+                channel: ch.channel,
+                contact: ch.value,
+                channel_note: ch.note,
+                phone: lead.phone,
+                reason: `no website listed by ${lead.source}`,
+                evidence: lead.evidence,
+                lead_type: "no_website",
+                category: lead.category,
+            },
+        });
+    }
+    fallback.sort((a, b) => compareLeads(a.lead, b.lead));
+    const fallbackRows = fallback.map((f) => f.row);
+
     writeCsv(paths.email, EMAIL_COLUMNS, emailRows);
     writeCsv(paths.fallback, FALLBACK_COLUMNS, fallbackRows);
     if (otherRegion) log.warn(`queues: ${otherRegion} lead(s) from other regions left out; export with their region config`);
     if (notOwned) log.warn(`queues: ${notOwned} stage-3 result(s) left out: not an owned site or email at another domain. Run: npm run cli -- reconcile`);
     if (belowScore) log.info(`queues: ${belowScore} lead(s) now score below contact_min_score (${config.contact_min_score}) and were left out`);
-    return { email: emailRows.length, fallback: fallbackRows.length };
+    return { email: emailRows.length, fallback: fallbackRows.length, noWebsite };
 }

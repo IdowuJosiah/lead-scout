@@ -204,7 +204,14 @@ Invalidated leads are processed again by the next `contacts` run, using every ca
 
 `email_queue.csv` has these columns: name, email, email_type, verification_status, evidence, lead_score, country, then risk_flag, email_source, website, timezone, send_window, legal_basis.
 
-`fallback_queue.csv` has these columns: name, channel, contact, channel_note, phone, reason, lead_score, country, website, evidence, timezone, send_window.
+`fallback_queue.csv` has these columns: name, channel, contact, channel_note, phone, reason, lead_score, country, website, evidence, timezone, send_window, lead_type, category.
+
+It holds two kinds of lead, told apart by `lead_type`:
+
+- `no_usable_email`: stage 3 ran on the lead but found no usable email.
+- `no_website`: the lead lists no website at all, so stage 3 never runs. These are added from the database at every export, at no cost.
+
+Each row has its best channel: a `wa.me` link for mobile numbers, the phone number otherwise, or `none`. Permanently closed businesses are left out.
 
 Both are rebuilt from the database each time, and sorted by score, then by review count.
 

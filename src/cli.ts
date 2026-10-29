@@ -202,7 +202,7 @@ async function main() {
             try {
                 const n = exportCsv(store, out);
                 const q = config ? exportQueues(store, config, queues) : null;
-                log.info(`csv: wrote ${n} lead(s) to ${values.out}${q ? `, ${q.email} to email_queue.csv, ${q.fallback} to fallback_queue.csv` : ""} (${why})`);
+                log.info(`csv: wrote ${n} lead(s) to ${values.out}${q ? `, ${q.email} to email_queue.csv, ${q.fallback} to fallback_queue.csv (${q.noWebsite} with no website)` : ""} (${why})`);
             } catch (err) {
                 log.warn(`csv: could not write CSVs: ${errMessage(err)}`);
             }
