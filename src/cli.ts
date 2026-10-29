@@ -11,6 +11,12 @@ import { LeadStore } from "./db.js";
 import { runDiscovery, SOURCES } from "./discovery/index.js";
 import { exportCsv } from "./export.js";
 import { errMessage, log, setLogLevel } from "./log.js";
+import { runTick, runWeekly } from "./agent/index.js";
+import { buildSnapshot, writeSnapshot } from "./agent/snapshot.js";
+import { loadOutreachConfig } from "./outreach/config.js";
+import { runDraft } from "./outreach/draft.js";
+import { applyInbound, fetchInbox, imapSettingsFromEnv } from "./outreach/inbox.js";
+import { mailSettingsFromEnv, runSend, smtpTransport } from "./outreach/send.js";
 
 const HELP = `lead-scout - find brands that need an ecommerce site, and audit them
 
@@ -23,6 +29,12 @@ Commands:
   reconcile   Re-score, drop stage-3 results that break the current rules, report, rewrite CSVs
   export      Write leads.csv, email_queue.csv and fallback_queue.csv
   run         discover + audit + contacts + export
+  draft       Write email drafts (a batch for your approval) and WhatsApp/phone messages
+  send        Send approved emails now (inside the send window, within daily limits)
+  inbox       Read replies, "stop" requests and bounces from the mailbox
+  snapshot    Write dashboard.json
+  agent weekly   Unattended: actions, inbox, discover, audit, contacts (within budget), draft
+  agent tick     Unattended: actions, inbox, send approved emails
   failures    Show recent per-lead failures
   stats       Show row counts
 
@@ -64,6 +76,12 @@ Contacts (needs HUNTER_API_KEY and ZEROBOUNCE_API_KEY):
   --max-verify <n>            most addresses verified per lead (default 3; each costs a credit)
   --dry-run                   show how many paid calls would be made, then stop
   --yes                       make the paid calls without asking
+
+Agent / outreach:
+  --state <dir>               keep leads.db, dashboard.json, actions/ and output/ in this folder
+  --outreach <path>           default: config/outreach.json
+  --lighthouse                run Lighthouse in agent audits (off by default: slow)
+  --no-discover               agent weekly: skip discovery (no Google calls)
 
   --verbose                   debug logging
 `;
@@ -111,7 +129,11 @@ async function main() {
         options: {
             help: { type: "boolean", short: "h" },
             config: { type: "string", default: "config/region.json" },
-            db: { type: "string", default: "data/leads.db" },
+            db: { type: "string" },
+            state: { type: "string" },
+            outreach: { type: "string", default: "config/outreach.json" },
+            lighthouse: { type: "boolean", default: false },
+            "no-discover": { type: "boolean", default: false },
             out: { type: "string", default: "output/leads.csv" },
             screenshots: { type: "string", default: "output/screenshots" },
             country: { type: "string" },
@@ -150,9 +172,10 @@ async function main() {
     }
     if (values.verbose) setLogLevel("debug");
 
-    const store = new LeadStore(resolve(values.db));
+    const stateDir = values.state ? resolve(values.state) : null;
+    const store = new LeadStore(resolve(values.db ?? (stateDir ? join(stateDir, "leads.db") : "data/leads.db")));
     try {
-        const needsConfig = ["discover", "audit", "contacts", "reconcile", "export", "run"].includes(command);
+        const needsConfig = ["discover", "audit", "contacts", "reconcile", "export", "run", "draft", "send", "snapshot", "agent"].includes(command);
         const overrides: ConfigOverrides = {
             country: values.country,
             country_code: values["country-code"],
@@ -270,6 +293,49 @@ async function main() {
             case "stats":
                 process.stdout.write(`${JSON.stringify(store.counts(), null, 2)}\n`);
                 break;
+            case "draft": {
+                runDraft(store, config!, loadOutreachConfig(values.outreach));
+                writeCsv("drafted");
+                break;
+            }
+            case "send": {
+                const mail = mailSettingsFromEnv();
+                if (!mail) throw new Error("Set SMTP_USER and SMTP_PASS (in .env) to send email");
+                const transport = smtpTransport(mail);
+                try {
+                    await runSend(store, config!, loadOutreachConfig(values.outreach), { transport, from: mail.from });
+                } finally {
+                    transport.close();
+                }
+                break;
+            }
+            case "inbox": {
+                const imap = imapSettingsFromEnv();
+                if (!imap) throw new Error("Set SMTP_USER/SMTP_PASS (or IMAP_USER/IMAP_PASS) in .env to read the mailbox");
+                const c = applyInbound(store, await fetchInbox(store, imap));
+                log.info(`inbox: ${JSON.stringify(c)}`);
+                break;
+            }
+            case "snapshot": {
+                const path = join(stateDir ?? dirname(out), "dashboard.json");
+                writeSnapshot(path, buildSnapshot(store, config!, loadOutreachConfig(values.outreach)));
+                log.info(`snapshot: wrote ${path}`);
+                break;
+            }
+            case "agent": {
+                const which = positionals[1];
+                if (which !== "weekly" && which !== "tick") throw new Error('Use "agent weekly" or "agent tick"');
+                const agentOpts = {
+                    stateDir: stateDir ?? resolve("."),
+                    audit: { ...auditOpts, lighthouse: values.lighthouse, screenshotsDir: join(stateDir ?? ".", "output", "screenshots") },
+                    contacts: contactOpts,
+                    discover: !values["no-discover"],
+                };
+                const run = which === "weekly" ? runWeekly : runTick;
+                const steps = await run(store, config!, loadOutreachConfig(values.outreach), agentOpts);
+                if (steps.every((s) => !s.ok)) process.exitCode = 1;
+                break;
+            }
             default:
                 throw new Error(`Unknown command "${command}". Run with --help.`);
         }

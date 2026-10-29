@@ -42,6 +42,11 @@ export interface ContactOptions {
      * calls are not made: leads that need them are left for a later run.
      */
     confirm?: (plan: PaidPlan) => Promise<boolean>;
+    /**
+     * Paid calls still allowed this month. Leads whose calls don't fit wait for
+     * a later run (highest scores go first). Every call is counted either way.
+     */
+    budget?: { hunter: number; zerobounce: number };
 }
 
 export interface ContactSummary {
@@ -211,28 +216,38 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
     // ---- Plan paid calls ----
     const plan: PaidPlan = { leads: 0, hunterCalls: 0, hunterCached: 0, zeroBounceCalls: 0, zeroBounceCached: 0, zeroBounceUpTo: 0 };
     const needsPaid = new Set<Gathered>();
+    const overBudget = new Set<Gathered>();
     if (allowed) {
         for (const g of gathered) {
-            let paid = false;
             let cands = g.candidates;
+            let h = 0;
+            let zbUpTo = 0;
+            let hCached = 0;
             if (g.hunterDomain) {
                 if (g.hunterCached) {
-                    plan.hunterCached++;
-                    cands = g.hunterCached.map((h) => hunterCandidate(h, g.home.hostname));
+                    hCached = 1;
+                    cands = g.hunterCached.map((x) => hunterCandidate(x, g.home.hostname));
                 } else if (hunter) {
-                    plan.hunterCalls++;
-                    plan.zeroBounceUpTo += zerobounce ? opts.maxVerify : 0;
-                    paid = true;
+                    h = 1;
+                    zbUpTo = zerobounce ? opts.maxVerify : 0;
                 }
             }
             const verify = toVerify(cands);
-            const uncached = zerobounce ? uncachedVerifications(cands) : 0;
-            plan.zeroBounceCalls += uncached;
+            const zb = zerobounce ? uncachedVerifications(cands) : 0;
+            // Leads come in score order, so the best ones get the budget first.
+            if (opts.budget && (h || zb) && (plan.hunterCalls + h > opts.budget.hunter || plan.zeroBounceCalls + plan.zeroBounceUpTo + zb + zbUpTo > opts.budget.zerobounce)) {
+                overBudget.add(g);
+                continue;
+            }
+            plan.hunterCalls += h;
+            plan.hunterCached += hCached;
+            plan.zeroBounceUpTo += zbUpTo;
+            plan.zeroBounceCalls += zb;
             plan.zeroBounceCached += verify.length - verify.filter((c) => !store.getVerification(c.email)).length;
-            if (uncached) paid = true;
-            if (paid) needsPaid.add(g);
+            if (h || zb) needsPaid.add(g);
         }
         plan.leads = needsPaid.size;
+        if (overBudget.size) log.warn(`contacts: ${overBudget.size} lead(s) wait for next month's API credits (monthly budget reached)`);
     }
     summary.plan = plan;
     const totalPaid = plan.hunterCalls + plan.zeroBounceCalls;
@@ -263,6 +278,7 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
             let found = g.hunterCached;
             if (!found && hunter) {
                 try {
+                    store.outreach.recordUsage("hunter");
                     found = await hunter.domainSearch(g.hunterDomain);
                     store.saveHunterCache(g.hunterDomain, JSON.stringify(found));
                 } catch (err) {
@@ -306,6 +322,7 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
             }
             if (!zerobounce) continue;
             try {
+                store.outreach.recordUsage("zerobounce");
                 const v = await zerobounce.validate(c.email);
                 c.status = v.status;
                 c.subStatus = v.subStatus;
@@ -339,7 +356,7 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
     };
 
     for (const [i, g] of gathered.entries()) {
-        if (!paidApproved && needsPaid.has(g)) {
+        if (overBudget.has(g) || (!paidApproved && needsPaid.has(g))) {
             summary.deferred++;
             continue;
         }

@@ -318,6 +318,21 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         store.close();
     });
 
+    it("stays within the monthly API budget, best leads first, and counts every call", async () => {
+        process.env.HUNTER_API_KEY = "h";
+        process.env.ZEROBOUNCE_API_KEY = "z";
+        const store = new LeadStore(join(dir, "budget.db"));
+        seed(store);
+        const s = await runContacts(store, resolveConfig({ ...baseConfig, allowed_to_email: true }), { ...opts, maxVerify: 1, budget: { hunter: 1, zerobounce: 3 } });
+        assert.ok(s.plan!.hunterCalls <= 1);
+        assert.ok(s.plan!.zeroBounceCalls + s.plan!.zeroBounceUpTo <= 3, "upper bound stays inside the budget");
+        assert.ok(s.deferred > 0, "the rest wait for next month");
+        assert.ok(store.outreach.usage("hunter") <= 1);
+        assert.ok(store.outreach.usage("zerobounce") <= 3);
+        assert.equal(store.outreach.usage("hunter") + store.outreach.usage("zerobounce"), paid(), "every paid call is counted");
+        store.close();
+    });
+
     it("blocks email entirely when the region disallows it, without calling paid APIs", async () => {
         process.env.HUNTER_API_KEY = "h";
         process.env.ZEROBOUNCE_API_KEY = "z";

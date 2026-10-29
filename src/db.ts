@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
+import { OUTREACH_SCHEMA, OutreachStore } from "./outreach/store.js";
 
 /**
  * SQLite storage (node:sqlite, no native addon). Every write is an upsert keyed
@@ -275,13 +276,16 @@ export function isDeadError(error: string): boolean {
 
 export class LeadStore {
     readonly db: DatabaseSync;
+    readonly outreach: OutreachStore;
 
     constructor(path: string) {
         if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
         this.db = new DatabaseSync(path);
         this.db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
         this.db.exec(SCHEMA);
+        this.db.exec(OUTREACH_SCHEMA);
         this.migrate();
+        this.outreach = new OutreachStore(this.db);
     }
 
     /** Bring databases made by older versions up to the current schema. */

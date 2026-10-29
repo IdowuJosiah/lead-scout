@@ -1,7 +1,7 @@
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { RegionConfig } from "../config.js";
-import type { LeadRow, LeadStore } from "../db.js";
+import type { ContactResult, LeadRow, LeadStore } from "../db.js";
 import { csvCell } from "../export.js";
 import { log } from "../log.js";
 import { compareLeads } from "../scoring.js";
@@ -19,6 +19,23 @@ const FALLBACK_COLUMNS = [
     "name", "channel", "contact", "channel_note", "phone", "reason", "lead_score", "country",
     "website", "evidence", "timezone", "send_window", "lead_type", "category",
 ] as const;
+
+/**
+ * Why a stored stage-3 result may not be used right now, or null if it may.
+ * Shared by the queue export and the drafting step so they always agree.
+ */
+export function stage3Exclusion(lead: LeadRow, result: ContactResult, config: RegionConfig): "other_region" | "not_owned" | "below_score" | null {
+    const country = lead.country ?? config.country_code;
+    if (country !== config.country_code) return "other_region";
+    if (lead.website_class !== "owned_site") return "not_owned";
+    if ((lead.lead_score ?? -1) < config.contact_min_score) return "below_score";
+    if (result.outcome === "email" && result.email) {
+        const domain = result.email.split("@")[1]!;
+        const site = parseWebsite(lead.website_url);
+        if (!isFreeProvider(domain) && !(site && isOwnDomain(domain, site.hostname))) return "not_owned";
+    }
+    return null;
+}
 
 function writeCsv(path: string, columns: readonly string[], rows: Record<string, unknown>[]) {
     const lines = [columns.join(","), ...rows.map((r) => columns.map((c) => csvCell(r[c])).join(","))];
@@ -53,28 +70,13 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
 
     for (const { lead, result } of results) {
         const country = lead.country ?? config.country_code;
-        if (country !== config.country_code) {
-            otherRegion++;
-            continue;
-        }
         // Stage 3 only applies to owned sites at or above the threshold (reconcile cleans the DB;
         // this guards the CSVs in case it hasn't run since the rules or scores changed).
-        if (lead.website_class !== "owned_site") {
-            notOwned++;
-            continue;
-        }
-        if ((lead.lead_score ?? -1) < config.contact_min_score) {
-            belowScore++;
-            continue;
-        }
-        if (result.outcome === "email" && result.email) {
-            const domain = result.email.split("@")[1]!;
-            const site = parseWebsite(lead.website_url);
-            if (!isFreeProvider(domain) && !(site && isOwnDomain(domain, site.hostname))) {
-                notOwned++;
-                continue;
-            }
-        }
+        const excluded = stage3Exclusion(lead, result, config);
+        if (excluded === "other_region") otherRegion++;
+        if (excluded === "not_owned") notOwned++;
+        if (excluded === "below_score") belowScore++;
+        if (excluded) continue;
         const common = { name: lead.name, lead_score: lead.lead_score, country, website: lead.website_url, timezone: config.timezone, send_window: window };
         if (result.outcome === "email" && emailAllowed(config)) {
             emailRows.push({

@@ -1,0 +1,105 @@
+{
+  "sender": {
+    "name": "",
+    "business": "",
+    "role": "web developer",
+    "website": "",
+    "phone": ""
+  },
+
+  "limits": {
+    "batch_size": 25,
+    "daily_email_limit": 25,
+    "emails_per_run": 5,
+    "min_gap_seconds": 60,
+    "max_gap_seconds": 180,
+    "whatsapp_drafts_per_week": 40,
+    "hunter_calls_per_month": 50,
+    "zerobounce_calls_per_month": 100
+  },
+
+  "email": {
+    "subjects": {
+      "no_cart_or_checkout": ["Quick idea for {brand}'s website", "Selling online from {domain}"],
+      "password_protected": ["{brand}'s store is still locked", "About the password page on {domain}"],
+      "whatsapp_order_only": ["Taking {brand}'s orders online", "Quick idea for {brand}'s website"],
+      "dead_listing": ["{brand}'s website link isn't working", "About {domain}"],
+      "site_unreachable": ["{brand}'s website isn't loading", "About {domain}"],
+      "default": ["Quick note about {brand}'s website", "An idea for {brand}'s website"]
+    },
+    "greeting": ["Hi {brand} team,", "Hello {brand} team,"],
+    "intro": [
+      "I came across {brand} while searching Google for {category} in {city}, and had a look at your website on my phone.",
+      "I found {brand} on Google and checked how your website works on a phone, since that's where most of your customers will see it."
+    ],
+    "transition": ["A couple of things stood out:", "Two things I noticed:"],
+    "offer": [
+      "I'm {sender_name}, a {sender_role} in {city}. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.",
+      "I'm {sender_name}, a {sender_role}. I help brands like {brand} sell directly from their own website, with a proper cart and checkout that works well on phones."
+    ],
+    "cta": [
+      "Would you be open to a 15-minute call this week? I can show you what that could look like for {brand}.",
+      "If it's useful, I can put together a free mock-up of how {brand}'s store could look. Would that be helpful?"
+    ],
+    "signoff": ["Best,", "Thanks,"],
+    "opt_out": "If you'd rather not hear from me, just reply \"stop\" and I won't email you again."
+  },
+
+  "whatsapp": {
+    "greeting": ["Hello {brand} 👋", "Hi {brand} team 👋"],
+    "intro": ["My name is {sender_name}, I'm a {sender_role}{sender_business_suffix}."],
+    "offer": [
+      "I build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.",
+      "I help brands like yours sell online with their own website, where customers can order and pay directly."
+    ],
+    "cta": ["Would you be open to a quick chat about it?", "Can I send you a short example of what it could look like?"],
+    "opt_out": "(If you're not interested, just reply \"no\" and I won't message again.)"
+  },
+
+  "issues": {
+    "no_website": [
+      "I couldn't find a website for {brand} on your Google listing.",
+      "Your Google listing doesn't link to a website yet."
+    ],
+    "social_only": [
+      "Your Google listing links to your {host} page rather than a website of your own.",
+      "Right now your Google listing sends people to {host} instead of your own website."
+    ],
+    "link_in_bio_only": ["Your Google listing links to a {host} page rather than your own website."],
+    "messaging_only": ["Your Google listing links straight to a chat ({host}) rather than a website."],
+    "dead_listing": [
+      "The website on your Google listing, {domain}, doesn't open at the moment ({dead_reason}).",
+      "When I tried {domain} from your Google listing, it didn't load ({dead_reason})."
+    ],
+    "site_unreachable": ["{domain} didn't load on two separate checks."],
+    "password_protected": [
+      "Your store at {domain} is behind a password page, so customers can't browse or buy yet.",
+      "{domain} currently shows a password page, so visitors can't get into the store."
+    ],
+    "whatsapp_order_only": [
+      "On {domain}, orders go through WhatsApp; I couldn't find a cart or checkout.",
+      "{domain} sends customers to WhatsApp to order, with no cart or checkout on the site."
+    ],
+    "no_cart_or_checkout": [
+      "I couldn't find a cart or checkout on {domain} (I checked {pages_checked}), so customers can't buy directly.",
+      "There's no way to add items to a cart or pay on {domain} (I checked {pages_checked})."
+    ],
+    "hosted_storefront": [
+      "Your shop is on {host}, so it's on the platform's address rather than your own .com or .ng.",
+      "Your store lives on {host} rather than a domain of your own."
+    ],
+    "load_timed_out": ["On a phone, {domain} still hadn't finished loading when my test timed out."],
+    "very_slow_load": [
+      "{domain} took {load_seconds} seconds to load on a phone.",
+      "On a phone, {domain} took {load_seconds} seconds to fully load."
+    ],
+    "slow_load": ["{domain} took {load_seconds} seconds to load on a phone."],
+    "lighthouse_poor": ["Google's Lighthouse test gives {domain} a mobile performance score of {lighthouse}/100."],
+    "lighthouse_needs_work": ["Google's Lighthouse test gives {domain} a mobile performance score of {lighthouse}/100."],
+    "no_valid_ssl": [
+      "{domain} doesn't have a working secure (https) connection, so some browsers show a \"Not secure\" warning.",
+      "Browsers can mark {domain} as \"Not secure\" because it has no valid https certificate."
+    ],
+    "no_payment_provider_detected": ["I couldn't see an online payment option (like Paystack or Flutterwave) on {domain}."]
+  }
+}
