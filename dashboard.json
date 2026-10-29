@@ -1,0 +1,86 @@
+{
+ "version": 1,
+ "generated_at": "2026-10-29T15:10:54.109Z",
+ "region": {
+  "city": "Lagos",
+  "country": "Nigeria",
+  "country_code": "NG",
+  "timezone": "Africa/Lagos",
+  "send_window": {
+   "days": "Mon-Fri",
+   "start": "09:00",
+   "end": "17:00"
+  },
+  "allowed_to_email": true
+ },
+ "sender": {
+  "name": "",
+  "configured": false
+ },
+ "limits": {
+  "batch_size": 25,
+  "daily_email_limit": 25,
+  "emails_per_run": 5,
+  "min_gap_seconds": 60,
+  "max_gap_seconds": 180,
+  "whatsapp_drafts_per_week": 40,
+  "hunter_calls_per_month": 50,
+  "zerobounce_calls_per_month": 100
+ },
+ "stats": {
+  "leads": 0,
+  "noWebsite": 0,
+  "audited": 0,
+  "failedAudits": 0,
+  "failures": 0,
+  "emailQueue": 0,
+  "fallbackQueue": 0,
+  "emails_sent": 0,
+  "emails_waiting_approval": 0,
+  "emails_approved": 0,
+  "chats_to_send": 0,
+  "replies": 0,
+  "opt_outs": 0,
+  "bounces": 0
+ },
+ "usage": {
+  "month": "2026-10",
+  "hunter": {
+   "used": 0,
+   "limit": 50
+  },
+  "zerobounce": {
+   "used": 0,
+   "limit": 100
+  }
+ },
+ "runs": {
+  "weekly": null,
+  "tick": {
+   "started_at": "2026-10-29T15:10:54.107Z",
+   "finished_at": "2026-10-29T15:10:54.107Z",
+   "steps": [
+    {
+     "step": "actions",
+     "ok": true,
+     "detail": "0 applied, 0 rejected"
+    },
+    {
+     "step": "inbox",
+     "ok": true,
+     "detail": "skipped: no mailbox credentials"
+    },
+    {
+     "step": "send",
+     "ok": true,
+     "detail": "skipped: no SMTP credentials"
+    }
+   ]
+  }
+ },
+ "batches": [],
+ "chats": [],
+ "replies": [],
+ "leads": [],
+ "failures": []
+}

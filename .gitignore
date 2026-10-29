@@ -1,0 +1,4 @@
+output/screenshots/
+*.tmp
+*.db-wal
+*.db-shm
