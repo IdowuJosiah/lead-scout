@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-10-30T19:55:04.034Z",
+ "generated_at": "2026-11-02T13:50:10.725Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -32,7 +32,7 @@
   "noWebsite": 0,
   "audited": 0,
   "failedAudits": 0,
-  "failures": 0,
+  "failures": 7,
   "emailQueue": 0,
   "fallbackQueue": 0,
   "emails_sent": 0,
@@ -44,7 +44,7 @@
   "bounces": 0
  },
  "usage": {
-  "month": "2026-10",
+  "month": "2026-11",
   "hunter": {
    "used": 0,
    "limit": 50
@@ -55,7 +55,42 @@
   }
  },
  "runs": {
-  "weekly": null,
+  "weekly": {
+   "started_at": "2026-11-02T13:50:08.217Z",
+   "finished_at": "2026-11-02T13:50:10.723Z",
+   "steps": [
+    {
+     "step": "actions",
+     "ok": true,
+     "detail": "0 applied, 0 rejected"
+    },
+    {
+     "step": "inbox",
+     "ok": true,
+     "detail": "skipped: no mailbox credentials"
+    },
+    {
+     "step": "discover",
+     "ok": true,
+     "detail": "0 found, 0 new, 6 failure(s)"
+    },
+    {
+     "step": "audit",
+     "ok": true,
+     "detail": "0 audited {}"
+    },
+    {
+     "step": "contacts",
+     "ok": true,
+     "detail": "0 processed: 0 email, 0 fallback, 0 waiting for credits"
+    },
+    {
+     "step": "draft",
+     "ok": false,
+     "detail": "Set \"sender.name\" in config/outreach.json before drafting messages"
+    }
+   ]
+  },
   "tick": {
    "started_at": "2026-10-30T19:55:04.029Z",
    "finished_at": "2026-10-30T19:55:04.029Z",
@@ -82,5 +117,55 @@
  "chats": [],
  "replies": [],
  "leads": [],
- "failures": []
+ "failures": [
+  {
+   "occurred_at": "2026-11-02T13:50:10.722Z",
+   "stage": "agent:draft",
+   "lead_id": null,
+   "name": null,
+   "message": "Set \"sender.name\" in config/outreach.json before drafting messages"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:10.719Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"bags\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:10.219Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"hair extensions\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:09.719Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"perfume\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:09.219Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"jewelry\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:08.720Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"skincare\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  },
+  {
+   "occurred_at": "2026-11-02T13:50:08.219Z",
+   "stage": "discover",
+   "lead_id": null,
+   "name": null,
+   "message": "google_places \"fashion\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
+  }
+ ]
 }
