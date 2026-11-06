@@ -14,7 +14,7 @@ Setup takes about 30 minutes, and you only do it once.
 
 ## 1. Zoho Mail: the mailbox that sends
 
-1. Use a mailbox on **your own domain**, ideally a separate one just for outreach (e.g. `hello@yourstudio.ng`). Zoho's free plan supports custom domains.
+1. Use a mailbox on **your own domain**, ideally a separate one just for outreach (e.g. `hello@yourstudio.ng`). You need a paid plan such as **Mail Lite**: Zoho's free plan only works in the browser and phone app, with no IMAP or SMTP, so the agent couldn't send or read mail through it.
 2. While adding the domain, Zoho walks you through **SPF and DKIM** DNS records. Don't skip these: without them, your emails land in spam.
 3. Turn on IMAP so the agent can read replies: Zoho Mail → **Settings → Mail Accounts → IMAP Access → enable**.
 4. Create an **app password** for the agent: Zoho Accounts → **Security → App Passwords → Generate**. Use it instead of your normal password. It's required if you use two-factor login, and safer anyway.
@@ -103,7 +103,7 @@ The dashboard reads the agent's state and records your clicks through a limited 
 | Vercel | free (Hobby plan) |
 | Google Places | about 18 requests a week; inside Google's free usage |
 | Hunter / ZeroBounce | free plans; the agent never goes over the monthly limits in `config/outreach.json` |
-| Zoho Mail | free plan, or a paid plan for more mailboxes |
+| Zoho Mail | Mail Lite (about $1 per user per month; check Zoho's pricing page for your region), plus your domain |
 
 ## Good to know
 
