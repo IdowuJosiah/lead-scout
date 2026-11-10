@@ -34,6 +34,7 @@ export const LINK_IN_BIO_HOSTS = [
     "linkbio.co",
     "hoo.be",
     "komi.io",
+    "taplink.ws",
 ];
 
 export const WHATSAPP_HOSTS = ["wa.me", "api.whatsapp.com", "web.whatsapp.com", "chat.whatsapp.com", "wa.link", "whatsapp.com"];
@@ -52,7 +53,9 @@ export const HOSTED_STOREFRONT_HOSTS = [
     "selar.com",
     "paystack.shop",
     "paystack.com",
+    "flutterwave.com",
     "flutterwave.store",
+    "shoplink.to",
     "catlog.shop",
     "mainstack.me",
     "mainstack.com",
@@ -79,10 +82,22 @@ export const HOSTED_STOREFRONT_HOSTS = [
     "sites.google.com",
     "squarespace.com",
     "gumroad.com",
+    // free hosting / site-builder subdomains
+    "lovable.app",
+    "vercel.app",
+    "netlify.app",
+    "github.io",
+    "web.app",
+    "firebaseapp.com",
+    "webflow.io",
+    "framer.website",
+    "framer.ai",
+    "glitch.me",
+    "pages.dev",
 ];
 
 /** Hosts shared by many unrelated businesses: dedupe on host + first path segment. */
-const SHARED_HOSTS = [...SOCIAL_HOSTS, ...LINK_IN_BIO_HOSTS, ...MESSAGING_HOSTS, "sites.google.com", "business.site", "paystack.com", "selar.co", "jiji.ng", "jumia.com.ng", "konga.com", "etsy.com"];
+const SHARED_HOSTS = [...SOCIAL_HOSTS, ...LINK_IN_BIO_HOSTS, ...MESSAGING_HOSTS, "sites.google.com", "business.site", "paystack.com", "flutterwave.com", "selar.co", "jiji.ng", "jumia.com.ng", "konga.com", "etsy.com"];
 
 /** What the listed website URL is, from the URL alone (dead_listing needs an audit). */
 export type UrlKind = "owned_site" | "social" | "messaging" | "link_in_bio" | "hosted_storefront";

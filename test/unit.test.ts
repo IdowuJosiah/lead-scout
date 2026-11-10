@@ -9,6 +9,7 @@ import { csvCell } from "../src/export.js";
 import { boundingBox, haversineKm } from "../src/discovery/googlePlaces.js";
 import { compareLeads, scoreLead, priorityOf, WEIGHTS } from "../src/scoring.js";
 import { classifyUrl, dedupeKey, parseWebsite } from "../src/url.js";
+import { normalizeExtract } from "../src/audit/page.js";
 
 const snap = (o: Partial<PageSnapshot>): PageSnapshot => ({
     finalUrl: "https://shop.example/",
@@ -74,6 +75,11 @@ describe("url", () => {
         assert.equal(classifyUrl(new URL("https://brand.bumpa.shop")).kind, "hosted_storefront");
         assert.equal(classifyUrl(new URL("https://jiji.ng/shop/brand")).kind, "hosted_storefront");
         assert.equal(classifyUrl(new URL("https://brand.com")).kind, "owned_site");
+        // seen in a real run: platform pages listed as the brand's website
+        assert.equal(classifyUrl(new URL("https://flutterwave.com/store/thefamouslifestyle")).kind, "hosted_storefront");
+        assert.equal(classifyUrl(new URL("http://hairlegantdeluxe.shoplink.to/")).kind, "hosted_storefront");
+        assert.equal(classifyUrl(new URL("https://brand.lovable.app/")).kind, "hosted_storefront");
+        assert.equal(classifyUrl(new URL("https://honeysourcebrand.taplink.ws/")).kind, "link_in_bio");
     });
 
     it("dedupes by domain, but not across shared hosts", () => {
@@ -84,6 +90,17 @@ describe("url", () => {
             dedupeKey("B", null, new URL("https://api.whatsapp.com/send?phone=222")),
         );
         assert.equal(dedupeKey("Ade's Wigs", "12 Allen Ave, Ikeja", null), dedupeKey("ADE'S  WIGS", "12 Allen Ave., Ikeja", null));
+    });
+});
+
+describe("page extraction", () => {
+    it("tolerates whatever a page returns", () => {
+        assert.deepEqual(normalizeExtract(null), { links: [], buttons: [], formActions: [], generator: null, text: "" });
+        const n = normalizeExtract({ links: [{ href: { baseVal: "x" }, text: 3 }, { href: "https://a.ng/", text: "Shop" }], buttons: [5, "Add to cart"], formActions: [{}], text: undefined });
+        assert.deepEqual(n.links, [{ href: "https://a.ng/", text: "Shop" }]);
+        assert.deepEqual(n.buttons, ["Add to cart"]);
+        assert.deepEqual(n.formActions, []);
+        assert.equal(n.text, "");
     });
 });
 

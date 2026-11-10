@@ -1,4 +1,5 @@
 import { hostMatches, WHATSAPP_HOSTS } from "../url.js";
+import { isFreeProvider, isRoleAddress } from "./classify.js";
 
 /**
  * Pull email addresses out of fetched HTML. Only addresses that are actually
@@ -41,6 +42,8 @@ export function normaliseEmail(raw: string): string | null {
     if (JUNK_LOCAL.test(local.replace(/\+.*$/, ""))) return null;
     if (hostMatches(domain, JUNK_DOMAINS)) return null;
     if (/^[0-9a-f]{24,}$/.test(local)) return null; // tracking ids
+    // info@gmail.com, sales@yahoo.com: placeholders, not anyone's real mailbox
+    if (isFreeProvider(domain) && isRoleAddress(local) && /^[a-z]+$/.test(local)) return null;
     return email;
 }
 

@@ -192,8 +192,12 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
             });
         }
 
-        const host = parseWebsite(lead.website_url)?.hostname.replace(/^www\./, "") ?? null;
-        const hunterDomain = !candidates.length && allowed && host && !isIP(host) && host.includes(".") ? host : null;
+        const listed = parseWebsite(lead.website_url);
+        const host = listed?.hostname.replace(/^www\./, "") ?? null;
+        // A listed URL with a path (e.g. /store/brand) is usually a page on a shared platform:
+        // a domain search there would return the platform's staff, not the brand.
+        const rootListing = !!listed && (listed.pathname === "/" || listed.pathname === "");
+        const hunterDomain = !candidates.length && allowed && rootListing && host && !isIP(host) && host.includes(".") ? host : null;
         const cached = hunterDomain ? store.getHunterCache(hunterDomain) : null;
         return { lead, home, pageNotes, siteWhatsapp, candidates, ignored, hunterDomain, hunterCached: cached ? (JSON.parse(cached.emails) as HunterEmail[]) : null };
     };

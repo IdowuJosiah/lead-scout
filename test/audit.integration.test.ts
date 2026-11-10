@@ -63,6 +63,16 @@ const SITES: Record<string, Route> = {
             : p.startsWith("/shop")
               ? { body: '<html><body><h1>Shop</h1><button class="add">Add to cart</button><script src="https://js.paystack.co/v1/inline.js"></script></body></html>' }
               : { body: '<html><body><h1>Deep Brand</h1><a href="/shop/">Shop now</a></body></html>' },
+    // Features that crashed the page reader on real sites
+    odd: (p) =>
+        p === "/robots.txt"
+            ? { status: 404, body: "" }
+            : {
+                  body: `<html><body><ul><li role="button" value="3"></li></ul>
+                    <svg><a href="/svg-link"><text>x</text></a></svg>
+                    <form action="/search"><input name="action" value="go"></form>
+                    <button>Add to cart</button></body></html>`,
+              },
     parked: (p) => (p === "/robots.txt" ? { status: 404, body: "" } : { body: "<html><body><h1>brand.ng</h1><p>This domain is for sale! Buy this domain today.</p></body></html>" }),
 };
 
@@ -114,6 +124,7 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
             locked: add("Locked", urls.locked!),
             deep: add("Deep", urls.deep!),
             parked: add("Parked", urls.parked!),
+            odd: add("Odd", urls.odd!),
             insta: add("Insta", "https://instagram.com/somebrand"),
             none: add("NoSite", null),
         };
@@ -136,7 +147,7 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
             userAgentToken: "LeadScoutTest",
         };
         const summary = await runAudit(store, config, opts);
-        assert.equal(summary.attempted, 9, "no-website lead is not audited");
+        assert.equal(summary.attempted, 10, "no-website lead is not audited");
 
         const byId = new Map(store.allLeadsWithAudits().map((r) => [r.lead.id, r]));
         const a = (k: keyof typeof ids) => byId.get(ids[k])!.audit!;
@@ -167,6 +178,8 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
         assert.equal(a("deep").has_cart, 1, "cart found on /shop/, not the homepage");
         assert.match(a("deep").cart_signal!, /on \/shop\//);
         assert.deepEqual(JSON.parse(a("deep").commerce_pages!), ["/shop/"]);
+        assert.equal(a("odd").status, "ok", a("odd").error ?? "");
+        assert.equal(a("odd").has_cart, 1);
         assert.equal(a("parked").status, "dead");
         assert.match(a("parked").error!, /parked domain/);
 
@@ -176,12 +189,12 @@ describe("audit (end to end)", { timeout: 300_000 }, () => {
         assert.equal((await runAudit(store, config, opts)).attempted, 0);
         // --reaudit replaces rows rather than adding.
         await runAudit(store, config, { ...opts, reaudit: true, ids: [ids.store] });
-        assert.equal(store.allLeadsWithAudits().filter((r) => r.audit).length, 9);
+        assert.equal(store.allLeadsWithAudits().filter((r) => r.audit).length, 10);
 
         const out = join(dir, "leads.csv");
-        assert.equal(exportCsv(store, out), 10);
+        assert.equal(exportCsv(store, out), 11);
         const lines = readFileSync(out, "utf8").trim().split("\r\n");
-        assert.equal(lines.length, 11);
+        assert.equal(lines.length, 12);
         assert.match(lines[1]!, /^100,high,NoSite,/);
         const scores = lines.slice(1).map((l) => (l.startsWith(",") ? -1 : Number(l.split(",")[0])));
         assert.deepEqual(scores, [...scores].sort((x, y) => y - x), "sorted by lead_score desc");

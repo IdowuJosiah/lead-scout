@@ -14,21 +14,41 @@ const LOAD_TIME_SCRIPT = `(() => {
     return nav && nav.loadEventEnd > 0 ? Math.round(nav.loadEventEnd) : null;
 })()`;
 
+// Written defensively: sites can override built-ins or give elements odd
+// properties (an <li role=button> has a numeric .value; an SVG <a> has an
+// object .href), so every value is forced to a plain string.
 const EXTRACT_SCRIPT = `(() => {
-    const text = (el) => (el && (el.innerText || el.textContent)) || "";
-    const links = [...document.querySelectorAll("a[href]")].slice(0, 2000).map((a) => ({
-        href: a.href || a.getAttribute("href") || "",
-        text: (text(a) || a.getAttribute("aria-label") || "").trim().slice(0, 200),
+    const str = (v) => (typeof v === "string" ? v : "");
+    const text = (el) => { try { return str(el && (el.innerText || el.textContent)); } catch (e) { return ""; } };
+    const all = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel));
+    const attr = (el, n) => str(el.getAttribute && el.getAttribute(n));
+    const links = all("a[href]").slice(0, 2000).map((a) => ({
+        href: str(a.href) || attr(a, "href"),
+        text: (text(a) || attr(a, "aria-label")).trim().slice(0, 200),
     }));
-    const buttons = [...document.querySelectorAll("button, input[type=submit], input[type=button], [role=button]")]
+    const buttons = all("button, input[type=submit], input[type=button], [role=button]")
         .slice(0, 1000)
-        .map((b) => (text(b) || b.value || b.getAttribute("aria-label") || "").trim().slice(0, 200))
+        .map((b) => (text(b) || str(b.value) || attr(b, "aria-label")).trim().slice(0, 200))
         .filter(Boolean);
-    const formActions = [...document.querySelectorAll("form[action]")].map((f) => f.action);
-    const alts = [...document.querySelectorAll("img[alt]")].map((i) => i.getAttribute("alt") || "").join(" ");
-    const generator = document.querySelector('meta[name="generator" i]')?.getAttribute("content") ?? null;
-    return { links, buttons, formActions, generator, text: (text(document.body) + " " + alts).slice(0, 300000) };
+    const formActions = all("form[action]").map((f) => str(f.action) || attr(f, "action")).filter(Boolean);
+    const alts = all("img[alt]").map((i) => attr(i, "alt")).join(" ");
+    const gen = document.querySelector('meta[name="generator" i]');
+    return { links, buttons, formActions, generator: gen ? attr(gen, "content") || null : null, text: (text(document.body) + " " + alts).slice(0, 300000) };
 })()`;
+
+/** Whatever the page returned, give the detectors well-typed values. */
+export function normalizeExtract(raw: unknown): Omit<PageSnapshot, "finalUrl" | "html" | "headers" | "requestUrls"> {
+    const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+    const s = (v: unknown) => (typeof v === "string" ? v : "");
+    const arr = (v: unknown) => (Array.isArray(v) ? v : []);
+    return {
+        links: arr(r.links).map((l) => ({ href: s((l as { href?: unknown })?.href), text: s((l as { text?: unknown })?.text) })).filter((l) => l.href),
+        buttons: arr(r.buttons).map(s).filter(Boolean),
+        formActions: arr(r.formActions).map(s).filter(Boolean),
+        generator: s(r.generator) || null,
+        text: s(r.text),
+    };
+}
 
 export type PageLoad =
     | {
@@ -90,7 +110,7 @@ export async function loadPage(browser: Browser, url: string, opts: LoadOptions)
         // Give client-rendered stores a moment to draw cart buttons.
         await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {});
 
-        const extracted = (await page.evaluate(EXTRACT_SCRIPT)) as Omit<PageSnapshot, "finalUrl" | "html" | "headers" | "requestUrls">;
+        const extracted = normalizeExtract(await page.evaluate(EXTRACT_SCRIPT).catch(() => null));
         const html = (await page.content()).slice(0, 3_000_000);
         const headers = response ? await response.allHeaders().catch(() => ({})) : {};
 

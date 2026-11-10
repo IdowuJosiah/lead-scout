@@ -47,6 +47,11 @@ describe("extract", () => {
         );
     });
 
+    it("drops placeholder free-mailbox addresses but keeps real ones", () => {
+        const found = extractEmails("<p>info@gmail.com sales@yahoo.com bhillscosmetics@gmail.com hello@brand.ng</p>", "https://brand.ng/");
+        assert.deepEqual(found.map((f) => f.email), ["bhillscosmetics@gmail.com", "hello@brand.ng"]);
+    });
+
     it("finds WhatsApp links", () => {
         assert.deepEqual(extractWhatsappLinks('<a href="https://wa.me/2348031234567">Chat</a><a href="/shop">x</a>', "https://brand.ng/"), ["https://wa.me/2348031234567"]);
     });

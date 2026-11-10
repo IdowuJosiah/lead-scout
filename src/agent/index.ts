@@ -3,6 +3,7 @@ import { runAudit, type AuditOptions } from "../audit/index.js";
 import type { RegionConfig } from "../config.js";
 import { exportQueues } from "../contact/export.js";
 import { runContacts, type ContactOptions } from "../contact/index.js";
+import { reconcileContacts } from "../contact/reconcile.js";
 import type { LeadStore } from "../db.js";
 import { runDiscovery } from "../discovery/index.js";
 import { exportCsv } from "../export.js";
@@ -86,6 +87,11 @@ export async function runWeekly(store: LeadStore, region: RegionConfig, cfg: Out
     await step(results, store, "audit", async () => {
         const a = await runAudit(store, region, { ...opts.audit, upgrade: true });
         return `${a.attempted} audited ${JSON.stringify(a.byStatus)}`;
+    });
+    await step(results, store, "reconcile", () => {
+        const r = reconcileContacts(store);
+        const removed = Object.values(r.notOwnedSite).reduce((s, x) => s + x.results, 0) + r.domainMismatch.length;
+        return `${removed} stage-3 result(s) invalidated, ${r.freeProviderFlagged.length} flagged`;
     });
     await step(results, store, "contacts", async () => {
         const o = store.outreach;
