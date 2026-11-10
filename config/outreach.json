@@ -1,15 +1,15 @@
 {
   "sender": {
-    "name": "",
+    "name": "Josiah Idowu",
     "business": "",
     "role": "web developer",
-    "website": "",
+    "website": "https://jazzthedev.online",
     "phone": ""
   },
 
   "limits": {
     "batch_size": 25,
-    "daily_email_limit": 25,
+    "daily_email_limit": 10,
     "emails_per_run": 5,
     "min_gap_seconds": 60,
     "max_gap_seconds": 180,
