@@ -109,8 +109,12 @@ export default async function Overview({ searchParams }: { searchParams: Promise
 
             <h2>API credits</h2>
             <div className="grid">
-                <Meter label="Hunter" used={snap.usage.hunter.used} limit={snap.usage.hunter.limit} />
-                <Meter label="ZeroBounce" used={snap.usage.zerobounce.used} limit={snap.usage.zerobounce.limit} />
+                <Meter
+                    label={snap.usage.verifier === "zerobounce" ? "Hunter searches" : "Hunter (searches + verifications)"}
+                    used={snap.usage.hunter.used}
+                    limit={snap.usage.hunter.limit}
+                />
+                {snap.usage.verifier === "zerobounce" ? <Meter label="ZeroBounce" used={snap.usage.zerobounce.used} limit={snap.usage.zerobounce.limit} /> : null}
             </div>
 
             <h2>Agent runs</h2>

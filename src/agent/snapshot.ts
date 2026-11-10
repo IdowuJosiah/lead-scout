@@ -5,6 +5,7 @@ import type { LeadStore } from "../db.js";
 import type { OutreachConfig } from "../outreach/config.js";
 import { monthKey } from "../outreach/store.js";
 import { compareLeads, priorityOf } from "../scoring.js";
+import { verifierName } from "../contact/apis.js";
 
 /**
  * dashboard.json: everything the dashboard shows, written after every run.
@@ -108,6 +109,7 @@ export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: Outre
         },
         usage: {
             month: monthKey(),
+            verifier: verifierName(),
             hunter: { used: o.usage("hunter"), limit: cfg.limits.hunter_calls_per_month },
             zerobounce: { used: o.usage("zerobounce"), limit: cfg.limits.zerobounce_calls_per_month },
         },

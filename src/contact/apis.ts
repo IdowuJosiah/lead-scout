@@ -56,6 +56,36 @@ export class HunterClient {
             }))
             .filter((e) => e.sourceCount > 0);
     }
+
+    /**
+     * Hunter email verifier: https://hunter.io/api-documentation/v2#email-verifier
+     * Statuses: valid, invalid, accept_all, webmail, disposable, unknown.
+     * accept_all is reported as "catch-all" so the queue rules treat both providers alike.
+     */
+    async verify(email: string): Promise<Verification> {
+        const url = `https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${encodeURIComponent(this.apiKey)}`;
+        // A slow check answers 202 with no result yet; asking again returns it (counted once).
+        for (let attempt = 0; attempt < 4; attempt++) {
+            const body = (await getJson(url, this.limiter, "Hunter verifier")) as { data?: { status?: string; score?: number } };
+            const status = body.data?.status?.toLowerCase();
+            if (status) {
+                return { status: status === "accept_all" ? "catch-all" : status, subStatus: body.data?.score != null ? `score ${body.data.score}` : null };
+            }
+            await sleep(5000);
+        }
+        throw new Error("Hunter verifier: no result after 4 tries");
+    }
+}
+
+/** Anything that can check an address; the result is cached per email. */
+export interface Verifier {
+    name: "hunter" | "zerobounce";
+    validate(email: string): Promise<Verification>;
+}
+
+/** Which verifier to use: EMAIL_VERIFIER=zerobounce opts back in to ZeroBounce; Hunter otherwise. */
+export function verifierName(env = process.env): "hunter" | "zerobounce" {
+    return env.EMAIL_VERIFIER?.trim().toLowerCase() === "zerobounce" ? "zerobounce" : "hunter";
 }
 
 // ---- ZeroBounce ------------------------------------------------------------

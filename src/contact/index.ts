@@ -8,7 +8,7 @@ import { errMessage, log } from "../log.js";
 import { RateLimiter } from "../rateLimit.js";
 import { parseWebsite } from "../url.js";
 import { websiteClass } from "../websiteClass.js";
-import { ApiConfigError, HunterClient, queueDecision, ZeroBounceClient, type HunterEmail } from "./apis.js";
+import { ApiConfigError, HunterClient, queueDecision, verifierName, ZeroBounceClient, type HunterEmail, type Verifier } from "./apis.js";
 import { classifyEmail, isOwnDomain, rankEmails } from "./classify.js";
 import { extractEmails, extractWhatsappLinks } from "./extract.js";
 import { fallbackChannel } from "./fallback.js";
@@ -19,10 +19,13 @@ export interface PaidPlan {
     leads: number;
     hunterCalls: number;
     hunterCached: number;
-    zeroBounceCalls: number;
-    zeroBounceCached: number;
-    /** Extra ZeroBounce calls possible for addresses Hunter may return. */
-    zeroBounceUpTo: number;
+    /** Email verification calls (Hunter's verifier, or ZeroBounce if chosen). */
+    verifyCalls: number;
+    verifyCached: number;
+    /** Extra verification calls possible for addresses a Hunter search may return. */
+    verifyUpTo: number;
+    /** Which service verifies. */
+    verifier: "hunter" | "zerobounce";
 }
 
 export interface ContactOptions {
@@ -30,7 +33,7 @@ export interface ContactOptions {
     recontact: boolean;
     limit?: number;
     ids?: number[];
-    /** Most addresses verified per lead (each costs a ZeroBounce credit). */
+    /** Most addresses verified per lead (each costs a verification credit). */
     maxVerify: number;
     perHostDelayMs: number;
     userAgentToken: string;
@@ -46,7 +49,7 @@ export interface ContactOptions {
      * Paid calls still allowed this month. Leads whose calls don't fit wait for
      * a later run (highest scores go first). Every call is counted either way.
      */
-    budget?: { hunter: number; zerobounce: number };
+    budget?: { hunter: number; verify: number };
 }
 
 export interface ContactSummary {
@@ -129,9 +132,17 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
         );
     }
     let hunter = allowed && process.env.HUNTER_API_KEY ? new HunterClient(process.env.HUNTER_API_KEY) : null;
-    let zerobounce = allowed && process.env.ZEROBOUNCE_API_KEY ? new ZeroBounceClient(process.env.ZEROBOUNCE_API_KEY) : null;
+    const vName = verifierName();
+    let zerobounce: Verifier | null = null;
+    if (allowed && vName === "zerobounce" && process.env.ZEROBOUNCE_API_KEY) {
+        const zb = new ZeroBounceClient(process.env.ZEROBOUNCE_API_KEY);
+        zerobounce = { name: "zerobounce", validate: (e) => zb.validate(e) };
+    } else if (allowed && vName === "hunter" && hunter) {
+        const h = hunter;
+        zerobounce = { name: "hunter", validate: (e) => h.verify(e) };
+    }
     if (allowed && !hunter) log.warn("contacts: HUNTER_API_KEY not set; Hunter lookups skipped (cached results still used)");
-    if (allowed && !zerobounce) log.warn("contacts: ZEROBOUNCE_API_KEY not set; uncached emails can't be verified, so they won't be queued");
+    if (allowed && !zerobounce) log.warn(`contacts: no ${vName === "zerobounce" ? "ZEROBOUNCE_API_KEY" : "HUNTER_API_KEY"}; uncached emails can't be verified, so they won't be queued`);
 
     const limiter = new RateLimiter(opts.perHostDelayMs);
     const robots = new RobotsChecker(opts.userAgentToken, limiter);
@@ -218,7 +229,7 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
     }
 
     // ---- Plan paid calls ----
-    const plan: PaidPlan = { leads: 0, hunterCalls: 0, hunterCached: 0, zeroBounceCalls: 0, zeroBounceCached: 0, zeroBounceUpTo: 0 };
+    const plan: PaidPlan = { leads: 0, hunterCalls: 0, hunterCached: 0, verifyCalls: 0, verifyCached: 0, verifyUpTo: 0, verifier: vName };
     const needsPaid = new Set<Gathered>();
     const overBudget = new Set<Gathered>();
     if (allowed) {
@@ -239,25 +250,33 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
             const verify = toVerify(cands);
             const zb = zerobounce ? uncachedVerifications(cands) : 0;
             // Leads come in score order, so the best ones get the budget first.
-            if (opts.budget && (h || zb) && (plan.hunterCalls + h > opts.budget.hunter || plan.zeroBounceCalls + plan.zeroBounceUpTo + zb + zbUpTo > opts.budget.zerobounce)) {
+            // With Hunter verifying, searches and verifications draw on the same monthly credits.
+            const verifyNeed = plan.verifyCalls + plan.verifyUpTo + zb + zbUpTo;
+            const overBudgetNow =
+                !!opts.budget &&
+                (h > 0 || zb > 0) &&
+                (vName === "hunter"
+                    ? plan.hunterCalls + h + verifyNeed > opts.budget.hunter
+                    : plan.hunterCalls + h > opts.budget.hunter || verifyNeed > opts.budget.verify);
+            if (overBudgetNow) {
                 overBudget.add(g);
                 continue;
             }
             plan.hunterCalls += h;
             plan.hunterCached += hCached;
-            plan.zeroBounceUpTo += zbUpTo;
-            plan.zeroBounceCalls += zb;
-            plan.zeroBounceCached += verify.length - verify.filter((c) => !store.getVerification(c.email)).length;
+            plan.verifyUpTo += zbUpTo;
+            plan.verifyCalls += zb;
+            plan.verifyCached += verify.length - verify.filter((c) => !store.getVerification(c.email)).length;
             if (h || zb) needsPaid.add(g);
         }
         plan.leads = needsPaid.size;
         if (overBudget.size) log.warn(`contacts: ${overBudget.size} lead(s) wait for next month's API credits (monthly budget reached)`);
     }
     summary.plan = plan;
-    const totalPaid = plan.hunterCalls + plan.zeroBounceCalls;
+    const totalPaid = plan.hunterCalls + plan.verifyCalls;
     log.info(
-        `contacts: paid calls needed: Hunter ${plan.hunterCalls} (cached ${plan.hunterCached}), ZeroBounce ${plan.zeroBounceCalls}` +
-            `${plan.zeroBounceUpTo ? ` + up to ${plan.zeroBounceUpTo} for addresses Hunter returns` : ""} (cached ${plan.zeroBounceCached}), across ${plan.leads} lead(s)`,
+        `contacts: paid calls needed: Hunter search ${plan.hunterCalls} (cached ${plan.hunterCached}), verification (${vName}) ${plan.verifyCalls}` +
+            `${plan.verifyUpTo ? ` + up to ${plan.verifyUpTo} for addresses Hunter returns` : ""} (cached ${plan.verifyCached}), across ${plan.leads} lead(s)`,
     );
     if (opts.dryRun) {
         log.info("contacts: dry run; nothing saved and no paid calls made");
@@ -326,14 +345,14 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
             }
             if (!zerobounce) continue;
             try {
-                store.outreach.recordUsage("zerobounce");
+                store.outreach.recordUsage(zerobounce.name);
                 const v = await zerobounce.validate(c.email);
                 c.status = v.status;
                 c.subStatus = v.subStatus;
-                store.saveVerification({ email: c.email, status: v.status, sub_status: v.subStatus, provider: "zerobounce", verified_at: new Date().toISOString() });
+                store.saveVerification({ email: c.email, status: v.status, sub_status: v.subStatus, provider: zerobounce.name, verified_at: new Date().toISOString() });
             } catch (err) {
                 if (err instanceof ApiConfigError) {
-                    log.error(`contacts: ${err.message}; disabling ZeroBounce for this run`);
+                    log.error(`contacts: ${err.message}; disabling email verification for this run`);
                     zerobounce = null;
                 }
                 c.subStatus = errMessage(err);
@@ -351,10 +370,10 @@ export async function runContacts(store: LeadStore, config: RegionConfig, opts: 
                 email_source: best.email_source,
                 verification_status: best.status,
                 risk_flag: flags.length ? flags.join("; ") : null,
-                contact_evidence: `${best.email} found via ${best.detail}; ZeroBounce: ${best.status}${best.subStatus ? ` (${best.subStatus})` : ""}${ignoredNote}`,
+                contact_evidence: `${best.email} found via ${best.detail}; verified (${vName}): ${best.status}${best.subStatus ? ` (${best.subStatus})` : ""}${ignoredNote}`,
             };
         }
-        const outcomes = verify.map((c) => `${c.email}: ${c.status ?? `not verified (${c.subStatus ?? (zerobounce ? "error" : "no ZeroBounce key or not approved")})`}`);
+        const outcomes = verify.map((c) => `${c.email}: ${c.status ?? `not verified (${c.subStatus ?? (zerobounce ? "error" : "no verifier available or not approved")})`}`);
         const unchecked = candidates.length - verify.length;
         return fallback(`${candidates.length} email(s) found, none usable (${outcomes.join("; ")}${unchecked ? `; ${unchecked} more not checked` : ""})`);
     };

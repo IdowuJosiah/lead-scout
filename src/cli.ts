@@ -50,7 +50,7 @@ Region (override config/region.json):
   --sources <a,b>             discovery sources (${Object.keys(SOURCES).join(", ")})
   --lat <n> --lng <n>         search centre (default: geocode the city)
 
-Keys: GOOGLE_PLACES_API_KEY, HUNTER_API_KEY, ZEROBOUNCE_API_KEY, from the shell or a .env
+Keys: GOOGLE_PLACES_API_KEY, HUNTER_API_KEY (and ZEROBOUNCE_API_KEY if EMAIL_VERIFIER=zerobounce), from the shell or a .env
 file in this folder (copy .env.example to .env). Shell values win over the file.
 
 General:
@@ -70,7 +70,7 @@ Audit:
   --user-agent <token>        robots.txt product token (default LeadScout)
   --csv-every <n>             rewrite the CSV every n audited sites (default 5, 0 = only at the end)
 
-Contacts (needs HUNTER_API_KEY and ZEROBOUNCE_API_KEY):
+Contacts (needs HUNTER_API_KEY; Hunter also verifies emails unless EMAIL_VERIFIER=zerobounce):
   --min-score <n>             only leads scoring at least n (default: contact_min_score, 60)
   --recontact                 redo leads already processed
   --max-verify <n>            most addresses verified per lead (default 3; each costs a credit)
@@ -88,9 +88,9 @@ Agent / outreach:
 
 /** Ask before spending API credits. --yes skips the question; no terminal means no. */
 async function confirmPaidCalls(plan: PaidPlan, yes: boolean): Promise<boolean> {
-    const total = plan.hunterCalls + plan.zeroBounceCalls;
-    const upTo = plan.zeroBounceUpTo ? ` (+ up to ${plan.zeroBounceUpTo} ZeroBounce for addresses Hunter returns)` : "";
-    const summary = `About to make ${total} paid call(s): ${plan.hunterCalls} Hunter, ${plan.zeroBounceCalls} ZeroBounce${upTo}, for ${plan.leads} lead(s).`;
+    const total = plan.hunterCalls + plan.verifyCalls;
+    const upTo = plan.verifyUpTo ? ` (+ up to ${plan.verifyUpTo} more verifications for addresses Hunter finds)` : "";
+    const summary = `About to make ${total} paid call(s): ${plan.hunterCalls} Hunter search, ${plan.verifyCalls} ${plan.verifier} verification${upTo}, for ${plan.leads} lead(s).`;
     if (yes) {
         process.stderr.write(`${summary} Approved by --yes.\n`);
         return true;

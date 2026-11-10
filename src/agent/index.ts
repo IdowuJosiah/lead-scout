@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { runAudit, type AuditOptions } from "../audit/index.js";
 import type { RegionConfig } from "../config.js";
 import { exportQueues } from "../contact/export.js";
+import { verifierName } from "../contact/apis.js";
 import { runContacts, type ContactOptions } from "../contact/index.js";
 import { reconcileContacts } from "../contact/reconcile.js";
 import type { LeadStore } from "../db.js";
@@ -91,13 +92,16 @@ export async function runWeekly(store: LeadStore, region: RegionConfig, cfg: Out
     await step(results, store, "reconcile", () => {
         const r = reconcileContacts(store);
         const removed = Object.values(r.notOwnedSite).reduce((s, x) => s + x.results, 0) + r.domainMismatch.length;
-        return `${removed} stage-3 result(s) invalidated, ${r.freeProviderFlagged.length} flagged`;
+        return `${removed} stage-3 result(s) invalidated, ${r.unverifiedRetried} unverified retried, ${r.freeProviderFlagged.length} flagged`;
     });
     await step(results, store, "contacts", async () => {
         const o = store.outreach;
         const budget = {
             hunter: Math.max(0, cfg.limits.hunter_calls_per_month - o.usage("hunter")),
-            zerobounce: Math.max(0, cfg.limits.zerobounce_calls_per_month - o.usage("zerobounce")),
+            // Hunter verifications share the Hunter pool (handled in runContacts).
+            verify: verifierName() === "hunter"
+                ? Math.max(0, cfg.limits.hunter_calls_per_month - o.usage("hunter"))
+                : Math.max(0, cfg.limits.zerobounce_calls_per_month - o.usage("zerobounce")),
         };
         // Unattended: the monthly budget is the approval.
         const c = await runContacts(store, region, { ...opts.contacts, budget, confirm: async () => true });

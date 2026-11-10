@@ -153,6 +153,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
     const sites: Record<string, string> = {};
 
     before(async () => {
+        process.env.EMAIL_VERIFIER = "zerobounce"; // this suite covers the ZeroBounce path; Hunter's has its own test
         dir = mkdtempSync(join(tmpdir(), "lead-scout-contacts-"));
         const defs: Record<string, Pages> = {
             "brandone.ng": {
@@ -181,6 +182,11 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         globalThis.fetch = (async (input: string | URL) => {
             const url = new URL(String(input));
             calls.push(url.hostname);
+            if (url.hostname === "api.hunter.io" && url.pathname.endsWith("/email-verifier")) {
+                const email = url.searchParams.get("email")!;
+                const st = zb[email] ?? "unknown";
+                return Response.json({ data: { status: st === "catch-all" ? "accept_all" : st, score: 90 } });
+            }
             if (url.hostname === "api.hunter.io") return Response.json({ data: { emails: hunterByDomain[url.searchParams.get("domain")!] ?? [] } });
             if (url.hostname === "api.zerobounce.net") {
                 const email = url.searchParams.get("email")!;
@@ -201,6 +207,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         rmSync(dir, { recursive: true, force: true });
         delete process.env.HUNTER_API_KEY;
         delete process.env.ZEROBOUNCE_API_KEY;
+        delete process.env.EMAIL_VERIFIER;
     });
 
     const baseConfig = {
@@ -247,7 +254,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         const s = await runContacts(store, config, opts);
         assert.equal(s.skipped, 1, "the hosted storefront is skipped");
         assert.deepEqual([s.processed, s.email, s.fallback, s.failed], [6, 4, 2, 0], "the 'low' lead is under the threshold");
-        assert.deepEqual(s.plan, { leads: 6, hunterCalls: 2, hunterCached: 0, zeroBounceCalls: 4, zeroBounceCached: 0, zeroBounceUpTo: 6 });
+        assert.deepEqual(s.plan, { leads: 6, hunterCalls: 2, hunterCached: 0, verifyCalls: 4, verifyCached: 0, verifyUpTo: 6, verifier: "zerobounce" });
 
         const one = resultOf(store, ids["brandone.ng"]!)!;
         assert.deepEqual([one.email, one.email_type, one.email_source], ["info@brandone.ng", "role", "mailto"]);
@@ -281,7 +288,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         const again = await runContacts(store, config, { ...opts, recontact: true, confirm: async () => (asked = true) });
         assert.equal(paid(), 0);
         assert.equal(asked, false);
-        assert.deepEqual(again.plan, { leads: 0, hunterCalls: 0, hunterCached: 2, zeroBounceCalls: 0, zeroBounceCached: 5, zeroBounceUpTo: 0 });
+        assert.deepEqual(again.plan, { leads: 0, hunterCalls: 0, hunterCached: 2, verifyCalls: 0, verifyCached: 5, verifyUpTo: 0, verifier: "zerobounce" });
         assert.equal(store.contactResults().length, 6, "no duplicate rows");
 
         // Queues, ordered by score then review count.
@@ -301,6 +308,40 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         store.close();
     });
 
+    it("verifies with Hunter by default, sharing the Hunter budget", async () => {
+        process.env.HUNTER_API_KEY = "h";
+        delete process.env.ZEROBOUNCE_API_KEY;
+        delete process.env.EMAIL_VERIFIER;
+        try {
+            const config = resolveConfig({ ...baseConfig, allowed_to_email: true });
+            const store = new LeadStore(join(dir, "hunterverify.db"));
+            const ids = seed(store);
+            const s = await runContacts(store, config, opts);
+            assert.equal(s.plan!.verifier, "hunter");
+            assert.equal(calls.filter((h) => h === "api.zerobounce.net").length, 0, "ZeroBounce is not used");
+            const three = resultOf(store, ids["brandthree.ng"]!)!;
+            assert.deepEqual([three.email, three.verification_status], ["sales@brandthree.ng", "catch-all"], "accept_all maps to catch-all");
+            assert.match(three.risk_flag!, /catch-all/);
+            assert.equal(resultOf(store, ids["brandone.ng"]!)!.email, "info@brandone.ng");
+            assert.equal(resultOf(store, ids["brandtwo.ng"]!)!.outcome, "fallback", "invalid still discarded");
+            assert.equal(store.outreach.usage("zerobounce"), 0);
+            assert.equal(store.outreach.usage("hunter"), calls.filter((h) => h === "api.hunter.io").length, "searches + verifications counted as Hunter");
+            store.close();
+
+            // A tight shared budget defers leads instead of overspending.
+            calls = [];
+            const store2 = new LeadStore(join(dir, "hunterverify2.db"));
+            seed(store2);
+            const t = await runContacts(store2, config, { ...opts, maxVerify: 1, budget: { hunter: 3, verify: 3 } });
+            assert.ok(t.plan!.hunterCalls + t.plan!.verifyCalls + t.plan!.verifyUpTo <= 3, "one shared pool");
+            assert.ok(calls.length <= 3);
+            assert.ok(t.deferred > 0);
+            store2.close();
+        } finally {
+            process.env.EMAIL_VERIFIER = "zerobounce";
+        }
+    });
+
     it("asks before paid calls; declining or a dry run spends nothing", async () => {
         process.env.HUNTER_API_KEY = "h";
         process.env.ZEROBOUNCE_API_KEY = "z";
@@ -309,7 +350,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         seed(store);
 
         const dry = await runContacts(store, config, { ...opts, dryRun: true });
-        assert.equal(dry.plan!.hunterCalls + dry.plan!.zeroBounceCalls, 6);
+        assert.equal(dry.plan!.hunterCalls + dry.plan!.verifyCalls, 6);
         assert.equal(store.contactResults().length, 0, "dry run saves nothing");
 
         const declined = await runContacts(store, config, { ...opts, confirm: async () => false });
@@ -328,9 +369,9 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         process.env.ZEROBOUNCE_API_KEY = "z";
         const store = new LeadStore(join(dir, "budget.db"));
         seed(store);
-        const s = await runContacts(store, resolveConfig({ ...baseConfig, allowed_to_email: true }), { ...opts, maxVerify: 1, budget: { hunter: 1, zerobounce: 3 } });
+        const s = await runContacts(store, resolveConfig({ ...baseConfig, allowed_to_email: true }), { ...opts, maxVerify: 1, budget: { hunter: 1, verify: 3 } });
         assert.ok(s.plan!.hunterCalls <= 1);
-        assert.ok(s.plan!.zeroBounceCalls + s.plan!.zeroBounceUpTo <= 3, "upper bound stays inside the budget");
+        assert.ok(s.plan!.verifyCalls + s.plan!.verifyUpTo <= 3, "upper bound stays inside the budget");
         assert.ok(s.deferred > 0, "the rest wait for next month");
         assert.ok(store.outreach.usage("hunter") <= 1);
         assert.ok(store.outreach.usage("zerobounce") <= 3);

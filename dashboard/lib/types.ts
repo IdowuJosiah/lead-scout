@@ -91,7 +91,7 @@ export interface Snapshot {
     sender: { name: string; configured: boolean };
     limits: Record<string, number>;
     stats: Record<string, number>;
-    usage: { month: string; hunter: { used: number; limit: number }; zerobounce: { used: number; limit: number } };
+    usage: { month: string; verifier?: "hunter" | "zerobounce"; hunter: { used: number; limit: number }; zerobounce: { used: number; limit: number } };
     runs: { weekly: RunInfo | null; tick: RunInfo | null };
     batches: Batch[];
     chats: OutreachItem[];

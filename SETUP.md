@@ -28,7 +28,7 @@ On GitHub, open your `lead-scout` repo → `config/outreach.json` → the pencil
 
 - `sender.name`: your name. **This is required**: nothing is drafted until it's set.
 - `sender.business`, `sender.website`, `sender.phone`: optional; they're added to the signature.
-- `limits`: daily email limit, batch size, and your monthly Hunter/ZeroBounce credits.
+- `limits`: daily email limit, batch size, and your monthly Hunter credits (Hunter both finds and verifies emails, so `hunter_calls_per_month` covers both).
 - `email` / `whatsapp` / `issues`: every phrase the agent uses. Edit freely. `{brand}`, `{domain}` and the other placeholders are filled only with facts the audit measured. If you mistype one, the run stops and tells you.
 
 Click **Commit changes**. Also check `config/region.json`, especially `allowed_to_email` and `legal_basis`.
@@ -43,7 +43,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 |---|---|
 | `GOOGLE_PLACES_API_KEY` | your Google key |
 | `HUNTER_API_KEY` | your Hunter key |
-| `ZEROBOUNCE_API_KEY` | your ZeroBounce key |
+| `ZEROBOUNCE_API_KEY` | optional. ZeroBounce's firewall blocks GitHub's servers, so Hunter verifies instead |
 | `SMTP_USER` | your Zoho address, e.g. `hello@yourstudio.ng` |
 | `SMTP_PASS` | the Zoho **app password** from step 1 |
 
@@ -102,7 +102,7 @@ The dashboard reads the agent's state and records your clicks through a limited 
 | GitHub Actions | free (this uses roughly a third of the free monthly minutes) |
 | Vercel | free (Hobby plan) |
 | Google Places | about 18 requests a week; inside Google's free usage |
-| Hunter / ZeroBounce | free plans; the agent never goes over the monthly limits in `config/outreach.json` |
+| Hunter | free plan (50 credits a month for searches and verifications); the agent never goes over the limit in `config/outreach.json` |
 | Zoho Mail | Mail Lite (about $1 per user per month; check Zoho's pricing page for your region), plus your domain |
 
 ## Good to know

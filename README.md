@@ -45,7 +45,10 @@ cp .env.example .env                  # then open .env and paste your keys
 ```
 
 `.env` holds `GOOGLE_PLACES_API_KEY` (Places API (New) must be enabled for
-it), plus `HUNTER_API_KEY` and `ZEROBOUNCE_API_KEY`, which only stage 3 needs.
+it), plus `HUNTER_API_KEY`, which only stage 3 needs. Hunter both finds and
+verifies emails. ZeroBounce is optional: set `EMAIL_VERIFIER=zerobounce` and
+`ZEROBOUNCE_API_KEY` to use it instead. Its firewall blocks GitHub Actions
+servers, so it only works from your own machine.
 The file is in `.gitignore`, so it never reaches GitHub. Keys set with
 `export` in the terminal take priority over the file.
 
@@ -194,18 +197,20 @@ contacted this way. For each lead:
 2. **Domain rule.** Only addresses at the lead's own domain, or at a free mailbox provider (gmail, yahoo, …), are kept. Free-mailbox addresses are flagged. Anything at another business's domain is dropped and noted in the evidence, e.g. the web designer's `dev@agency.io` in the footer.
 3. **Hunter.** If the site published no usable address, it runs a [Hunter](https://hunter.io) domain search, keeping only addresses Hunter actually saw on the web at that domain. It never guesses an address from a pattern.
 4. **Classification.** Each address is classed `personal`, `role` (info@, hello@, sales@…) or `free_provider`. The preference order is personal > role > free_provider.
-5. **ZeroBounce** verifies the best few (`--max-verify`, default 3). Only `valid` addresses, or `catch-all` ones with a risk flag, are queued. Invalid, unknown, spamtrap and do-not-mail addresses never are.
+5. **Verification:** Hunter's email verifier checks the best few (`--max-verify`, default 3). Its `accept_all` result counts as catch-all. To use ZeroBounce instead, set `EMAIL_VERIFIER=zerobounce`. Only `valid` addresses, or `catch-all` ones with a risk flag, are queued. Invalid, unknown, spamtrap and do-not-mail addresses never are.
 6. **Fallback.** A lead with no usable email goes to `fallback_queue.csv` with its best other channel, in this order: a WhatsApp link the site publishes; a `wa.me` link built from a listed *mobile* number (whether that number uses WhatsApp isn't checked); otherwise the phone number.
 
 If `allowed_to_email` is not `true`, no paid lookups run and every lead goes to the fallback queue.
 
 **Paid calls are cached and confirmed.** Hunter results are cached per domain
-and ZeroBounce results per address in SQLite, so nothing is paid for twice.
+and verification results per address in SQLite, so nothing is paid for twice.
+With Hunter verifying, searches and verifications share the monthly
+`hunter_calls_per_month` budget.
 Before any paid call, the run does all the free work first, then prints
-exactly how many Hunter and ZeroBounce calls it needs, and asks:
+exactly how many Hunter searches and verifications it needs, and asks:
 
 ```
-About to make 7 paid call(s): 2 Hunter, 5 ZeroBounce (+ up to 6 ZeroBounce for addresses Hunter returns), for 6 lead(s). Continue? [y/N]
+About to make 7 paid call(s): 2 Hunter search, 5 hunter verification (+ up to 6 more verifications for addresses Hunter finds), for 6 lead(s). Continue? [y/N]
 ```
 
 Answer `n` and nothing is spent: those leads stay pending for a later run.

@@ -14,6 +14,8 @@ export interface ReconcileReport {
     otherDomainContactsDeleted: number;
     /** Queued free-provider emails that kept their place but gained a risk flag. */
     freeProviderFlagged: { leadId: number; name: string; email: string }[];
+    /** Fallback results where emails were found but never verified (no verifier at the time); retried next run. */
+    unverifiedRetried: number;
     /** Audits made before the current checks; refresh with `audit --upgrade`. */
     outdatedAudits: number;
 }
@@ -25,7 +27,7 @@ export interface ReconcileReport {
  */
 export function reconcileContacts(store: LeadStore): ReconcileReport {
     rescoreAll(store);
-    const report: ReconcileReport = { notOwnedSite: {}, domainMismatch: [], otherDomainContactsDeleted: 0, freeProviderFlagged: [], outdatedAudits: 0 };
+    const report: ReconcileReport = { notOwnedSite: {}, domainMismatch: [], otherDomainContactsDeleted: 0, freeProviderFlagged: [], unverifiedRetried: 0, outdatedAudits: 0 };
     const db = store.db;
     const deleteResult = db.prepare("DELETE FROM contact_results WHERE lead_id = ?");
     const deleteContacts = db.prepare("DELETE FROM contacts WHERE lead_id = ?");
@@ -44,6 +46,13 @@ export function reconcileContacts(store: LeadStore): ReconcileReport {
                 if (result.outcome === "email") r.emails++;
                 deleteResult.run(lead.id);
                 deleteContacts.run(lead.id);
+                continue;
+            }
+
+            // Emails were found but no verifier could check them: decide again once one can.
+            if (result.outcome === "fallback" && /not verified \((no verifier|no ZeroBounce key)|ZeroBounce HTTP 403|disabling/.test(result.reason ?? "")) {
+                deleteResult.run(lead.id);
+                report.unverifiedRetried++;
                 continue;
             }
 
@@ -100,6 +109,7 @@ export function formatReconcileReport(r: ReconcileReport): string {
     if (!total) lines.push("  (none)");
     if (r.otherDomainContactsDeleted) lines.push(`Other-domain addresses removed from stored contacts (were not queued): ${r.otherDomainContactsDeleted}`);
     lines.push(`Free-provider emails kept but flagged: ${r.freeProviderFlagged.length}`);
+    if (r.unverifiedRetried) lines.push(`Leads whose emails were never verified, queued for another try: ${r.unverifiedRetried}`);
     for (const f of r.freeProviderFlagged) lines.push(`      #${f.leadId} ${f.name}: ${f.email}`);
     if (r.outdatedAudits) {
         lines.push(
