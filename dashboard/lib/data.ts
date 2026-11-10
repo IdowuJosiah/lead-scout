@@ -11,9 +11,29 @@ import type { DashboardAction, DistributiveOmit, Snapshot } from "./types";
  */
 
 const localDir = () => process.env.LOCAL_STATE_DIR || null;
+/** "owner/repo" from whatever was pasted: full URL, quotes, spaces, ".git", trailing slash. */
+export function parseRepo(raw: string | undefined): string | null {
+    if (!raw) return null;
+    const cleaned = raw
+        .trim()
+        .replace(/^["']|["']$/g, "")
+        .trim()
+        .replace(/^(https?:\/\/)?(www\.)?github\.com\//i, "")
+        .replace(/\s*\/\s*/g, "/")
+        .replace(/\.git$/i, "")
+        .replace(/\/+$/, "");
+    const m = /^([\w.-]+)\/([\w.-]+)$/.exec(cleaned);
+    return m ? `${m[1]}/${m[2]}` : null;
+}
+
 const repo = () => {
-    const r = process.env.GITHUB_REPO;
-    if (!r || !/^[\w.-]+\/[\w.-]+$/.test(r)) throw new Error("GITHUB_REPO must be set, e.g. IdowuJosiah/lead-scout");
+    const raw = process.env.GITHUB_REPO;
+    const r = parseRepo(raw);
+    if (!r) {
+        throw new Error(
+            raw ? `GITHUB_REPO isn't in the form owner/repo (it has ${raw.length} characters). Set it to: IdowuJosiah/lead-scout` : "GITHUB_REPO must be set, e.g. IdowuJosiah/lead-scout",
+        );
+    }
     return r;
 };
 const stateBranch = () => process.env.STATE_BRANCH || "agent-data";
