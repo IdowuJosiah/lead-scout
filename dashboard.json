@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-10T21:23:02.034Z",
+ "generated_at": "2026-11-10T23:41:13.815Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -30,13 +30,13 @@
  "stats": {
   "leads": 328,
   "noWebsite": 141,
-  "audited": 183,
-  "failedAudits": 4,
-  "failures": 36,
-  "emailQueue": 0,
-  "fallbackQueue": 28,
+  "audited": 187,
+  "failedAudits": 0,
+  "failures": 37,
+  "emailQueue": 11,
+  "fallbackQueue": 13,
   "emails_sent": 0,
-  "emails_waiting_approval": 0,
+  "emails_waiting_approval": 11,
   "emails_approved": 0,
   "chats_to_send": 40,
   "replies": 0,
@@ -45,8 +45,9 @@
  },
  "usage": {
   "month": "2026-11",
+  "verifier": "hunter",
   "hunter": {
-   "used": 16,
+   "used": 32,
    "limit": 50
   },
   "zerobounce": {
@@ -56,8 +57,8 @@
  },
  "runs": {
   "weekly": {
-   "started_at": "2026-11-10T20:50:42.550Z",
-   "finished_at": "2026-11-10T21:23:01.999Z",
+   "started_at": "2026-11-10T23:35:43.870Z",
+   "finished_at": "2026-11-10T23:41:13.769Z",
    "steps": [
     {
      "step": "actions",
@@ -70,24 +71,24 @@
      "detail": "0 repl(ies), 0 opt-out(s), 0 bounce(s), 0 auto-repl(ies)"
     },
     {
-     "step": "discover",
-     "ok": true,
-     "detail": "347 found, 328 new, 0 failure(s)"
-    },
-    {
      "step": "audit",
      "ok": true,
-     "detail": "187 audited {\"ok\":114,\"social_profile\":28,\"dead\":14,\"messaging_link\":14,\"unreachable\":4,\"blocked\":2,\"failed\":4,\"robots_disallowed\":7}"
+     "detail": "8 audited {\"unreachable\":1,\"ok\":7}"
+    },
+    {
+     "step": "reconcile",
+     "ok": true,
+     "detail": "4 stage-3 result(s) invalidated, 12 unverified retried, 0 flagged"
     },
     {
      "step": "contacts",
      "ok": true,
-     "detail": "28 processed: 0 email, 28 fallback, 0 waiting for credits"
+     "detail": "12 processed: 11 email, 1 fallback, 0 waiting for credits"
     },
     {
      "step": "draft",
      "ok": true,
-     "detail": "0 email(s), 40 WhatsApp, 0 phone"
+     "detail": "11 email(s) in batch #1, 0 WhatsApp, 0 phone"
     }
    ]
   },
@@ -113,7 +114,303 @@
    ]
   }
  },
- "batches": [],
+ "batches": [
+  {
+   "id": 1,
+   "created_at": "2026-11-10T23:41:13.760Z",
+   "status": "awaiting_approval",
+   "approved_at": null,
+   "items": [
+    {
+     "id": 41,
+     "lead_id": 84,
+     "channel": "email",
+     "name": "Blackhills Cosmetics",
+     "category": "skincare",
+     "score": 99,
+     "reviews": 52,
+     "website": "https://blackhills-cosmetics.com/",
+     "website_class": "owned_site",
+     "phone": "+234 912 221 1494",
+     "recipient": "bhillscosmetics@gmail.com",
+     "subject": "Taking Blackhills Cosmetics's orders online",
+     "body": "Hi Blackhills Cosmetics team,\n\nI came across Blackhills Cosmetics while searching Google for skincare in Lagos, and had a look at your website on my phone.\n\nA couple of things stood out:\n\n- On blackhills-cosmetics.com, orders go through WhatsApp; I couldn't find a cart or checkout.\n- On a phone, blackhills-cosmetics.com still hadn't finished loading when my test timed out.\n\nI'm Josiah Idowu, a web developer. I help brands like Blackhills Cosmetics sell directly from their own website, with a proper cart and checkout that works well on phones.\n\nWould you be open to a 15-minute call this week? I can show you what that could look like for Blackhills Cosmetics.\n\nThanks,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "whatsapp_order_only",
+      "load_timed_out"
+     ],
+     "evidence": "https://blackhills-cosmetics.com/ -> https://www.blackhills-cosmetics.com/ did not finish loading within the timeout on Pixel 7 viewport; platform custom (no known platform signature matched); no cart or checkout found on homepage or 3 shop page(s) (/categories/facial-cleansers, /categories/toners-essences, /categories/serums-treatments); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/categories/facial-cleansers, /categories/toners-essences, /categories/serums-treatments); valid HTTPS; Google: 5 stars from 52 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.761Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": "free mailbox (gmail.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 42,
+     "lead_id": 2,
+     "channel": "email",
+     "name": "Ahdookeh Fashion",
+     "category": "fashion",
+     "score": 90,
+     "reviews": 43,
+     "website": "http://ahdookehfashion.com/",
+     "website_class": "owned_site",
+     "phone": "+234 818 896 5783",
+     "recipient": "ahdookehtailors@gmail.com",
+     "subject": "Taking Ahdookeh Fashion's orders online",
+     "body": "Hello Ahdookeh Fashion team,\n\nI found Ahdookeh Fashion on Google and checked how your website works on a phone, since that's where most of your customers will see it.\n\nOn ahdookehfashion.com, orders go through WhatsApp; I couldn't find a cart or checkout.\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nWould you be open to a 15-minute call this week? I can show you what that could look like for Ahdookeh Fashion.\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "whatsapp_order_only"
+     ],
+     "evidence": "http://ahdookehfashion.com/ -> https://ahdookehfashion.com/ loaded in 2.6s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/shop/, /product-category/dresses/, /product-category/two-piece-and-kimonos/); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/shop/, /product-category/dresses/, /product-category/two-piece-and-kimonos/); valid HTTPS; Google: 4.8 stars from 43 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.762Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": "free mailbox (gmail.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 43,
+     "lead_id": 173,
+     "channel": "email",
+     "name": "MBuchy Perfumes",
+     "category": "perfume",
+     "score": 90,
+     "reviews": 43,
+     "website": "https://www.mbuchyperfumes.com/",
+     "website_class": "owned_site",
+     "phone": "+234 803 532 3111",
+     "recipient": "admin@mbuchyperfumes.com",
+     "subject": "Quick idea for MBuchy Perfumes's website",
+     "body": "Hello MBuchy Perfumes team,\n\nI came across MBuchy Perfumes while searching Google for perfume in Lagos, and had a look at your website on my phone.\n\nOn mbuchyperfumes.com, orders go through WhatsApp; I couldn't find a cart or checkout.\n\nI'm Josiah Idowu, a web developer. I help brands like MBuchy Perfumes sell directly from their own website, with a proper cart and checkout that works well on phones.\n\nWould you be open to a 15-minute call this week? I can show you what that could look like for MBuchy Perfumes.\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "whatsapp_order_only"
+     ],
+     "evidence": "https://www.mbuchyperfumes.com/ -> https://mbuchyperfumes.com/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 6.9.11\"); no cart or checkout found on homepage; 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 43 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.762Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": null,
+     "replied": false
+    },
+    {
+     "id": 44,
+     "lead_id": 92,
+     "channel": "email",
+     "name": "Micky Skincare",
+     "category": "skincare",
+     "score": 90,
+     "reviews": 16,
+     "website": "http://www.mickyskincare.ng/",
+     "website_class": "owned_site",
+     "phone": "+234 818 541 7558",
+     "recipient": "sales@mickyskincare.ng",
+     "subject": "Quick idea for Micky Skincare's website",
+     "body": "Hi Micky Skincare team,\n\nI found Micky Skincare on Google and checked how your website works on a phone, since that's where most of your customers will see it.\n\nmickyskincare.ng sends customers to WhatsApp to order, with no cart or checkout on the site.\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nIf it's useful, I can put together a free mock-up of how Micky Skincare's store could look. Would that be helpful?\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "whatsapp_order_only"
+     ],
+     "evidence": "http://www.mickyskincare.ng/ -> https://mickyskincare.ng/ loaded in 4.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wc_add_to_cart_params\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/product-category/sets/, /product-category/anti-aging/, /product-category/skin-concern/); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/product-category/sets/, /product-category/anti-aging/, /product-category/skin-concern/); valid HTTPS; Google: 5 stars from 16 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.763Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": null,
+     "replied": false
+    },
+    {
+     "id": 45,
+     "lead_id": 104,
+     "channel": "email",
+     "name": "Neneeys Optimal Skin Care",
+     "category": "skincare",
+     "score": 90,
+     "reviews": 12,
+     "website": "http://spa.neneeysbeauty.com/",
+     "website_class": "owned_site",
+     "phone": "+234 802 660 7323",
+     "recipient": "services@neneeysbeauty.com",
+     "subject": "Taking Neneeys Optimal Skin Care's orders online",
+     "body": "Hello Neneeys Optimal Skin Care team,\n\nI came across Neneeys Optimal Skin Care while searching Google for skincare in Lagos, and had a look at your website on my phone.\n\nspa.neneeysbeauty.com sends customers to WhatsApp to order, with no cart or checkout on the site.\n\nI'm Josiah Idowu, a web developer. I help brands like Neneeys Optimal Skin Care sell directly from their own website, with a proper cart and checkout that works well on phones.\n\nIf it's useful, I can put together a free mock-up of how Neneeys Optimal Skin Care's store could look. Would that be helpful?\n\nThanks,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "whatsapp_order_only"
+     ],
+     "evidence": "http://spa.neneeysbeauty.com/ -> https://spa.neneeysbeauty.com/ loaded in 4.3s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 7.1.4\"); no cart or checkout found on homepage or 1 shop page(s) (/product-category/services/); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/product-category/services/); valid HTTPS; Google: 4.6 stars from 12 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.764Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": null,
+     "replied": false
+    },
+    {
+     "id": 46,
+     "lead_id": 1,
+     "channel": "email",
+     "name": "MELODIA - Fashion Design | Clothing | Ladies Wears",
+     "category": "fashion",
+     "score": 65,
+     "reviews": 69,
+     "website": "https://melodia.ng/",
+     "website_class": "owned_site",
+     "phone": "+234 703 647 5659",
+     "recipient": "admin@melodia.ng",
+     "subject": "Quick idea for MELODIA - Fashion Design | Clothing | Ladies Wears's website",
+     "body": "Hello MELODIA - Fashion Design | Clothing | Ladies Wears team,\n\nI found MELODIA - Fashion Design | Clothing | Ladies Wears on Google and checked how your website works on a phone, since that's where most of your customers will see it.\n\nThere's no way to add items to a cart or pay on melodia.ng (I checked the homepage).\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nIf it's useful, I can put together a free mock-up of how MELODIA - Fashion Design | Clothing | Ladies Wears's store could look. Would that be helpful?\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "https://melodia.ng/ loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform WordPress (\"/wp-content/\" in page source); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 69 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.764Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": null,
+     "replied": false
+    },
+    {
+     "id": 47,
+     "lead_id": 114,
+     "channel": "email",
+     "name": "Sharpstone Jewelry Store -Wedding and Engagement Rings",
+     "category": "jewelry",
+     "score": 65,
+     "reviews": 29,
+     "website": "http://www.sharpstonejewelry.com/",
+     "website_class": "owned_site",
+     "phone": "+234 909 002 1656",
+     "recipient": "sharpstonejewelry@gmail.com",
+     "subject": "Quick idea for Sharpstone Jewelry Store -Wedding and Engagement Rings's website",
+     "body": "Hi Sharpstone Jewelry Store -Wedding and Engagement Rings team,\n\nI came across Sharpstone Jewelry Store -Wedding and Engagement Rings while searching Google for jewelry in Lagos, and had a look at your website on my phone.\n\nThere's no way to add items to a cart or pay on sharpstonejewelry.com (I checked the homepage and /shop/, /collections/rings/, /collections/rings/engagement-rings/).\n\nI'm Josiah Idowu, a web developer. I help brands like Sharpstone Jewelry Store -Wedding and Engagement Rings sell directly from their own website, with a proper cart and checkout that works well on phones.\n\nIf it's useful, I can put together a free mock-up of how Sharpstone Jewelry Store -Wedding and Engagement Rings's store could look. Would that be helpful?\n\nThanks,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "http://www.sharpstonejewelry.com/ -> https://sharpstonejewelry.com/ loaded in 4.0s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/shop/, /collections/rings/, /collections/rings/engagement-rings/); no configured payment provider found on homepage or 3 shop page(s) (/shop/, /collections/rings/, /collections/rings/engagement-rings/); valid HTTPS; Google: 4.9 stars from 29 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.765Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": "free mailbox (gmail.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 48,
+     "lead_id": 198,
+     "channel": "email",
+     "name": "The Perfume Stores",
+     "category": "perfume",
+     "score": 65,
+     "reviews": 20,
+     "website": "https://www.theperfumestores.net/",
+     "website_class": "owned_site",
+     "phone": "+234 901 111 0000",
+     "recipient": "msteeservice@yahoo.com",
+     "subject": "Quick idea for The Perfume Stores's website",
+     "body": "Hello The Perfume Stores team,\n\nI found The Perfume Stores on Google and checked how your website works on a phone, since that's where most of your customers will see it.\n\nI couldn't find a cart or checkout on theperfumestores.net (I checked the homepage and /shop), so customers can't buy directly.\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nIf it's useful, I can put together a free mock-up of how The Perfume Stores's store could look. Would that be helpful?\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "https://www.theperfumestores.net/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Wix (x-wix-request-id response header); no cart or checkout found on homepage or 1 shop page(s) (/shop); no configured payment provider found on homepage or 1 shop page(s) (/shop); valid HTTPS; Google: 5 stars from 20 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.765Z",
+     "sent_at": null,
+     "verification_status": "catch-all",
+     "risk_flag": "catch-all domain: the server accepts any address, so this mailbox could not be confirmed; free mailbox (yahoo.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 49,
+     "lead_id": 254,
+     "channel": "email",
+     "name": "Makis Hair Empire",
+     "category": "hair extensions",
+     "score": 65,
+     "reviews": 14,
+     "website": "https://makishairempire.bizzsite.xyz/",
+     "website_class": "owned_site",
+     "phone": "+234 813 747 0804",
+     "recipient": "amakaimmaculata96@gmail.com",
+     "subject": "Quick idea for Makis Hair Empire's website",
+     "body": "Hi Makis Hair Empire team,\n\nI came across Makis Hair Empire while searching Google for hair extensions in Lagos, and had a look at your website on my phone.\n\nThere's no way to add items to a cart or pay on makishairempire.bizzsite.xyz (I checked the homepage).\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nWould you be open to a 15-minute call this week? I can show you what that could look like for Makis Hair Empire.\n\nThanks,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "https://makishairempire.bizzsite.xyz/ loaded in 3.9s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 7.0.8\"); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 14 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.766Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": "free mailbox (gmail.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 50,
+     "lead_id": 297,
+     "channel": "email",
+     "name": "Mybags.ng & accessories",
+     "category": "bags",
+     "score": 65,
+     "reviews": 5,
+     "website": "http://www.mybagsng.com/",
+     "website_class": "owned_site",
+     "phone": "+234 907 072 3808",
+     "recipient": "mybagsng1@gmail.com",
+     "subject": "Selling online from mybagsng.com",
+     "body": "Hi Mybags.ng & accessories team,\n\nI came across Mybags.ng & accessories while searching Google for bags in Lagos, and had a look at your website on my phone.\n\nThere's no way to add items to a cart or pay on mybagsng.com (I checked the homepage).\n\nI'm Josiah Idowu, a web developer in Lagos. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.\n\nIf it's useful, I can put together a free mock-up of how Mybags.ng & accessories's store could look. Would that be helpful?\n\nThanks,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "http://www.mybagsng.com/ -> https://www.mybagsng.com/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.4 stars from 5 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.767Z",
+     "sent_at": null,
+     "verification_status": "valid",
+     "risk_flag": "free mailbox (gmail.com), not at the site's own domain",
+     "replied": false
+    },
+    {
+     "id": 51,
+     "lead_id": 105,
+     "channel": "email",
+     "name": "Angels Touch Skincare",
+     "category": "skincare",
+     "score": 65,
+     "reviews": 3,
+     "website": "http://angelstouchorganics.com/",
+     "website_class": "owned_site",
+     "phone": "+234 818 450 1115",
+     "recipient": "nutrition.specialist@yahoo.com",
+     "subject": "Selling online from angelstouchorganics.com",
+     "body": "Hello Angels Touch Skincare team,\n\nI came across Angels Touch Skincare while searching Google for skincare in Lagos, and had a look at your website on my phone.\n\nThere's no way to add items to a cart or pay on angelstouchorganics.com (I checked the homepage).\n\nI'm Josiah Idowu, a web developer. I help brands like Angels Touch Skincare sell directly from their own website, with a proper cart and checkout that works well on phones.\n\nIf it's useful, I can put together a free mock-up of how Angels Touch Skincare's store could look. Would that be helpful?\n\nBest,\nJosiah Idowu\nhttps://jazzthedev.online\n\nIf you'd rather not hear from me, just reply \"stop\" and I won't email you again.",
+     "issues": [
+      "no_cart_or_checkout"
+     ],
+     "evidence": "http://angelstouchorganics.com/ -> https://www.angelstouchorganics.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 3 reviews",
+     "status": "draft",
+     "error": null,
+     "created_at": "2026-11-10T23:41:13.767Z",
+     "sent_at": null,
+     "verification_status": "catch-all",
+     "risk_flag": "catch-all domain: the server accepts any address, so this mailbox could not be confirmed; free mailbox (yahoo.com), not at the site's own domain",
+     "replied": false
+    }
+   ]
+  }
+ ],
  "chats": [
   {
    "id": 1,
@@ -3540,7 +3837,13 @@
    "rating": 5,
    "reviews": 52,
    "evidence": "https://blackhills-cosmetics.com/ -> https://www.blackhills-cosmetics.com/ did not finish loading within the timeout on Pixel 7 viewport; platform custom (no known platform signature matched); no cart or checkout found on homepage or 3 shop page(s) (/categories/facial-cleansers, /categories/toners-essences, /categories/serums-treatments); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/categories/facial-cleansers, /categories/toners-essences, /categories/serums-treatments); valid HTTPS; Google: 5 stars from 52 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -3630,6 +3933,21 @@
    "rating": 4.9,
    "reviews": 50,
    "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 4.9 stars from 50 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 311,
+   "name": "Honeysource Bags And Craft",
+   "category": "bags",
+   "score": 95,
+   "priority": "high",
+   "website": "https://honeysourcebrand.taplink.ws/",
+   "website_class": "link_in_bio",
+   "phone": "+234 805 935 9333",
+   "rating": 4.9,
+   "reviews": 44,
+   "evidence": "https://honeysourcebrand.taplink.ws/ loaded on Pixel 7 viewport; HTTP 200; page is a link-in-bio/social page (taplink.ws); platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 44 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4230,7 +4548,13 @@
    "rating": 4.8,
    "reviews": 43,
    "evidence": "http://ahdookehfashion.com/ -> https://ahdookehfashion.com/ loaded in 2.6s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/shop/, /product-category/dresses/, /product-category/two-piece-and-kimonos/); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/shop/, /product-category/dresses/, /product-category/two-piece-and-kimonos/); valid HTTPS; Google: 4.8 stars from 43 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4245,7 +4569,13 @@
    "rating": 4.8,
    "reviews": 43,
    "evidence": "https://www.mbuchyperfumes.com/ -> https://mbuchyperfumes.com/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 6.9.11\"); no cart or checkout found on homepage; 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 43 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4345,11 +4675,11 @@
    "score": 90,
    "priority": "high",
    "website": "https://hotsplashstore.lovable.app/",
-   "website_class": "owned_site",
+   "website_class": "hosted_storefront",
    "phone": "+234 817 118 4696",
    "rating": 4.9,
    "reviews": 28,
-   "evidence": "https://hotsplashstore.lovable.app/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/shop); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/shop); valid HTTPS; Google: 4.9 stars from 28 reviews",
+   "evidence": "https://hotsplashstore.lovable.app/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (lovable.app), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/shop); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/shop); valid HTTPS; Google: 4.9 stars from 28 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4380,7 +4710,13 @@
    "rating": 5,
    "reviews": 16,
    "evidence": "http://www.mickyskincare.ng/ -> https://mickyskincare.ng/ loaded in 4.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wc_add_to_cart_params\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/product-category/sets/, /product-category/anti-aging/, /product-category/skin-concern/); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 3 shop page(s) (/product-category/sets/, /product-category/anti-aging/, /product-category/skin-concern/); valid HTTPS; Google: 5 stars from 16 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4390,11 +4726,11 @@
    "score": 90,
    "priority": "high",
    "website": "https://chicagofashionworld.vercel.app/about",
-   "website_class": "owned_site",
+   "website_class": "hosted_storefront",
    "phone": "+234 815 462 2420",
    "rating": 5,
    "reviews": 14,
-   "evidence": "https://chicagofashionworld.vercel.app/about loaded in 1.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/collections); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/collections); valid HTTPS; Google: 5 stars from 14 reviews",
+   "evidence": "https://chicagofashionworld.vercel.app/about loaded in 1.1s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (vercel.app), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/collections); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/collections); valid HTTPS; Google: 5 stars from 14 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4425,7 +4761,13 @@
    "rating": 4.6,
    "reviews": 12,
    "evidence": "http://spa.neneeysbeauty.com/ -> https://spa.neneeysbeauty.com/ loaded in 4.3s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 7.1.4\"); no cart or checkout found on homepage or 1 shop page(s) (/product-category/services/); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/product-category/services/); valid HTTPS; Google: 4.6 stars from 12 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4555,11 +4897,11 @@
    "score": 90,
    "priority": "high",
    "website": "https://gideonshairextensions.webflow.io/",
-   "website_class": "owned_site",
+   "website_class": "hosted_storefront",
    "phone": "+234 811 950 6092",
    "rating": 5,
    "reviews": 1,
-   "evidence": "https://gideonshairextensions.webflow.io/ loaded in 875ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 1 reviews",
+   "evidence": "https://gideonshairextensions.webflow.io/ loaded in 875ms on Pixel 7 viewport; HTTP 200; hosted on a platform domain (webflow.io), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage; 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 1 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4575,6 +4917,21 @@
    "rating": null,
    "reviews": null,
    "evidence": "Listed website is a chat link (wa.me); not loaded",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 66,
+   "name": "Original Cosmetics Nigeria",
+   "category": "skincare",
+   "score": 85,
+   "priority": "high",
+   "website": "http://originalcosmetics.com.ng/?utm_source=google&utm_medium=gmb&utm_campaign=gmb_main_website_link",
+   "website_class": "owned_site",
+   "phone": "+234 909 609 0764",
+   "rating": 4.6,
+   "reviews": 519,
+   "evidence": "Site could not be loaded on 2 audit run(s): robots.txt request failed: getaddrinfo EAI_AGAIN originalcosmetics.com.ng; Google: 4.6 stars from 519 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4605,7 +4962,13 @@
    "rating": 4.8,
    "reviews": 69,
    "evidence": "https://melodia.ng/ loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform WordPress (\"/wp-content/\" in page source); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 69 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4650,7 +5013,13 @@
    "rating": 4.9,
    "reviews": 29,
    "evidence": "http://www.sharpstonejewelry.com/ -> https://sharpstonejewelry.com/ loaded in 4.0s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage or 3 shop page(s) (/shop/, /collections/rings/, /collections/rings/engagement-rings/); no configured payment provider found on homepage or 3 shop page(s) (/shop/, /collections/rings/, /collections/rings/engagement-rings/); valid HTTPS; Google: 4.9 stars from 29 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4695,7 +5064,13 @@
    "rating": 5,
    "reviews": 20,
    "evidence": "https://www.theperfumestores.net/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Wix (x-wix-request-id response header); no cart or checkout found on homepage or 1 shop page(s) (/shop); no configured payment provider found on homepage or 1 shop page(s) (/shop); valid HTTPS; Google: 5 stars from 20 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4735,11 +5110,11 @@
    "score": 65,
    "priority": "high",
    "website": "https://flutterwave.com/store/thefamouslifestyle",
-   "website_class": "owned_site",
+   "website_class": "hosted_storefront",
    "phone": "+234 818 469 0812",
    "rating": 4.6,
    "reviews": 14,
-   "evidence": "https://flutterwave.com/store/thefamouslifestyle loaded in 2.9s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 2 shop page(s) (/store/thefamouslifestyle, /store/thefamouslifestyle); payment providers: Flutterwave (request to flutterwave.com); valid HTTPS; Google: 4.6 stars from 14 reviews",
+   "evidence": "https://flutterwave.com/store/thefamouslifestyle loaded in 2.9s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (flutterwave.com), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 2 shop page(s) (/store/thefamouslifestyle, /store/thefamouslifestyle); payment providers: Flutterwave (request to flutterwave.com); valid HTTPS; Google: 4.6 stars from 14 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4755,7 +5130,13 @@
    "rating": 4.9,
    "reviews": 14,
    "evidence": "https://makishairempire.bizzsite.xyz/ loaded in 3.9s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 7.0.8\"); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 14 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4845,7 +5226,13 @@
    "rating": 3.4,
    "reviews": 5,
    "evidence": "http://www.mybagsng.com/ -> https://www.mybagsng.com/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.4 stars from 5 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4890,7 +5277,13 @@
    "rating": 4.3,
    "reviews": 3,
    "evidence": "http://angelstouchorganics.com/ -> https://www.angelstouchorganics.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 3 reviews",
-   "outreach": [],
+   "outreach": [
+    {
+     "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4954,6 +5347,21 @@
    "replied": false
   },
   {
+   "id": 44,
+   "name": "CIDCLOTHINGSTORE/Fashion store in Lagos",
+   "category": "fashion",
+   "score": 50,
+   "priority": "medium",
+   "website": "http://rashviveagency.lovable.app/",
+   "website_class": "hosted_storefront",
+   "phone": "+234 703 849 7272",
+   "rating": 4.8,
+   "reviews": 10,
+   "evidence": "http://rashviveagency.lovable.app/ -> https://rashviveagency.lovable.app/ loaded in 829ms on Pixel 7 viewport; HTTP 200; hosted on a platform domain (lovable.app), not the brand's own; platform custom (no known platform signature matched); cart/checkout found (link \"Fashion UrbanThread Luxury Fashion Stor\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 10 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 103,
    "name": "MySecrets of Skin",
    "category": "skincare",
@@ -4995,6 +5403,21 @@
    "rating": 4.7,
    "reviews": 3,
    "evidence": "https://www.sewamebeaute.com/ -> https://sewamebeaute.com/ did not finish loading within the timeout on Pixel 7 viewport; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"Checkout\", link \"Add to cart\"); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 3 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 221,
+   "name": "Glach Hairs | Luxury Human Hair | Quality Human Hair | Bone Straight | Human Hair Extensions | Hair Revamping | Wig Revamp",
+   "category": "hair extensions",
+   "score": 35,
+   "priority": "medium",
+   "website": "https://glachhairs.com.ng/",
+   "website_class": "owned_site",
+   "phone": "+234 913 816 2007",
+   "rating": 4.9,
+   "reviews": 44,
+   "evidence": "https://glachhairs.com.ng/ loaded in 15.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 44 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5509,6 +5932,21 @@
    "replied": false
   },
   {
+   "id": 83,
+   "name": "Rtees Natural Cosmetics Skincare And Spa Shitta Surulere Lagos Nigeria",
+   "category": "skincare",
+   "score": 10,
+   "priority": "low",
+   "website": "https://rteesorganics.com/",
+   "website_class": "owned_site",
+   "phone": "+234 812 200 6000",
+   "rating": 4.9,
+   "reviews": 36,
+   "evidence": "https://rteesorganics.com/ loaded in 3.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 36 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 21,
    "name": "Funmyclothing",
    "category": "fashion",
@@ -5824,21 +6262,6 @@
    "replied": false
   },
   {
-   "id": 44,
-   "name": "CIDCLOTHINGSTORE/Fashion store in Lagos",
-   "category": "fashion",
-   "score": 10,
-   "priority": "low",
-   "website": "http://rashviveagency.lovable.app/",
-   "website_class": "owned_site",
-   "phone": "+234 703 849 7272",
-   "rating": 4.8,
-   "reviews": 10,
-   "evidence": "http://rashviveagency.lovable.app/ -> https://rashviveagency.lovable.app/ loaded in 829ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (link \"Fashion UrbanThread Luxury Fashion Stor\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 10 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
    "id": 183,
    "name": "D'Scentsation",
    "category": "perfume",
@@ -5884,6 +6307,21 @@
    "replied": false
   },
   {
+   "id": 142,
+   "name": "Eno Basse Diamonds. Lagos, Nigeria",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "http://enobasse.com/",
+   "website_class": "owned_site",
+   "phone": "+234 916 488 6579",
+   "rating": 5,
+   "reviews": 9,
+   "evidence": "http://enobasse.com/ -> https://enobasse.com/ loaded in 1.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (cart link /cart); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 9 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 327,
    "name": "Chuga Bags",
    "category": "bags",
@@ -5899,6 +6337,21 @@
    "replied": false
   },
   {
+   "id": 181,
+   "name": "Issohgidi Perfumery – Surulere",
+   "category": "perfume",
+   "score": 10,
+   "priority": "low",
+   "website": "https://issohgidiperfumery.com/",
+   "website_class": "owned_site",
+   "phone": "+234 817 892 5593",
+   "rating": 4.9,
+   "reviews": 8,
+   "evidence": "https://issohgidiperfumery.com/ loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 8 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 138,
    "name": "Ovasparkles Jewels",
    "category": "jewelry",
@@ -5910,6 +6363,21 @@
    "rating": 4.9,
    "reviews": 8,
    "evidence": "https://ovasparklesbeads.com.ng/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to Cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 8 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 100,
+   "name": "Allure Essence by Ag ( Skincare Store)",
+   "category": "skincare",
+   "score": 10,
+   "priority": "low",
+   "website": "https://allureessencebyag.com/",
+   "website_class": "owned_site",
+   "phone": "+234 815 055 9201",
+   "rating": 5,
+   "reviews": 6,
+   "evidence": "https://allureessencebyag.com/ loaded in 106ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"ADD TO CART\"); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 6 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6064,6 +6532,21 @@
    "replied": false
   },
   {
+   "id": 121,
+   "name": "JOKEGOLDJEWELRY",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.jokegoldjewelry.com/",
+   "website_class": "owned_site",
+   "phone": "+234 703 361 1390",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "http://www.jokegoldjewelry.com/ -> https://jokegoldjewelry.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 1 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 166,
    "name": "Sparkle Pulse -Jewelry/Accessories Stores in Ikeja,Lagos|Earrings|Necklace|Bracelet etc",
    "category": "jewelry",
@@ -6109,21 +6592,6 @@
    "replied": false
   },
   {
-   "id": 66,
-   "name": "Original Cosmetics Nigeria",
-   "category": "skincare",
-   "score": null,
-   "priority": "",
-   "website": "http://originalcosmetics.com.ng/?utm_source=google&utm_medium=gmb&utm_campaign=gmb_main_website_link",
-   "website_class": "owned_site",
-   "phone": "+234 909 609 0764",
-   "rating": 4.6,
-   "reviews": 519,
-   "evidence": "Site could not be loaded on 1 audit run(s) (retried next run before scoring): robots.txt request failed: getaddrinfo EAI_AGAIN originalcosmetics.com.ng; Google: 4.6 stars from 519 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
    "id": 276,
    "name": "Fran’s Hair",
    "category": "hair extensions",
@@ -6150,36 +6618,6 @@
    "rating": 5,
    "reviews": 47,
    "evidence": "Not loaded: robots.txt HTTP 500 (treated as disallow); Google: 5 stars from 47 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 221,
-   "name": "Glach Hairs | Luxury Human Hair | Quality Human Hair | Bone Straight | Human Hair Extensions | Hair Revamping | Wig Revamp",
-   "category": "hair extensions",
-   "score": null,
-   "priority": "",
-   "website": "https://glachhairs.com.ng/",
-   "website_class": "owned_site",
-   "phone": "+234 913 816 2007",
-   "rating": 4.9,
-   "reviews": 44,
-   "evidence": "Site could not be loaded on 1 audit run(s) (retried next run before scoring): robots.txt request failed over HTTPS (timeout after 10000ms (ETIMEDOUT)) and HTTP (timeout after 10000ms (ETIMEDOUT)); Google: 4.9 stars from 44 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 311,
-   "name": "Honeysource Bags And Craft",
-   "category": "bags",
-   "score": null,
-   "priority": "",
-   "website": "https://honeysourcebrand.taplink.ws/",
-   "website_class": "owned_site",
-   "phone": "+234 805 935 9333",
-   "rating": 4.9,
-   "reviews": 44,
-   "evidence": "Audit error (nothing measured): Cannot read properties of undefined (reading 'slice'); Google: 4.9 stars from 44 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6214,21 +6652,6 @@
    "replied": false
   },
   {
-   "id": 83,
-   "name": "Rtees Natural Cosmetics Skincare And Spa Shitta Surulere Lagos Nigeria",
-   "category": "skincare",
-   "score": null,
-   "priority": "",
-   "website": "https://rteesorganics.com/",
-   "website_class": "owned_site",
-   "phone": "+234 812 200 6000",
-   "rating": 4.9,
-   "reviews": 36,
-   "evidence": "Audit error (nothing measured): page.evaluate: TypeError: (text(...) || b.value || b.getAttribute(...) || \"\").trim is not a function     at eval (eval at evaluate (:311:30), <anonymous>:9:80)     at Array.map (<anonymous>)     at eval (eval at evaluate (:311:30), <anonymous>:9:10)     at eval (eval at evaluate (:311:30), <anonymous>:15:3)     at eval (<anonymous>)     at UtilityScript.evaluate (<anonymous>:311:30)     at UtilityScript.<anonymous> (<anonymous>:1:44); Google: 4.9 stars from 36 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
    "id": 69,
    "name": "Mos Beauty Hub (Mo Organics Skincare)",
    "category": "skincare",
@@ -6257,69 +6680,16 @@
    "evidence": "Not loaded: robots.txt HTTP 200, disallows /; Google: 4.1 stars from 21 reviews",
    "outreach": [],
    "replied": false
-  },
-  {
-   "id": 142,
-   "name": "Eno Basse Diamonds. Lagos, Nigeria",
-   "category": "jewelry",
-   "score": null,
-   "priority": "",
-   "website": "http://enobasse.com/",
-   "website_class": "owned_site",
-   "phone": "+234 916 488 6579",
-   "rating": 5,
-   "reviews": 9,
-   "evidence": "Site could not be loaded on 1 audit run(s) (retried next run before scoring): robots.txt request failed: timeout after 10000ms (ETIMEDOUT); Google: 5 stars from 9 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 181,
-   "name": "Issohgidi Perfumery – Surulere",
-   "category": "perfume",
-   "score": null,
-   "priority": "",
-   "website": "https://issohgidiperfumery.com/",
-   "website_class": "owned_site",
-   "phone": "+234 817 892 5593",
-   "rating": 4.9,
-   "reviews": 8,
-   "evidence": "Audit error (nothing measured): page.evaluate: TypeError: (text(...) || b.value || b.getAttribute(...) || \"\").trim is not a function     at eval (eval at evaluate (:311:30), <anonymous>:9:80)     at Array.map (<anonymous>)     at eval (eval at evaluate (:311:30), <anonymous>:9:10)     at eval (eval at evaluate (:311:30), <anonymous>:15:3)     at eval (<anonymous>)     at UtilityScript.evaluate (<anonymous>:311:30)     at UtilityScript.<anonymous> (<anonymous>:1:44); Google: 4.9 stars from 8 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 100,
-   "name": "Allure Essence by Ag ( Skincare Store)",
-   "category": "skincare",
-   "score": null,
-   "priority": "",
-   "website": "https://allureessencebyag.com/",
-   "website_class": "owned_site",
-   "phone": "+234 815 055 9201",
-   "rating": 5,
-   "reviews": 6,
-   "evidence": "Site could not be loaded on 1 audit run(s) (retried next run before scoring): robots.txt request failed over HTTPS (timeout after 10000ms (ETIMEDOUT)) and HTTP (timeout after 10000ms (ETIMEDOUT)); Google: 5 stars from 6 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 121,
-   "name": "JOKEGOLDJEWELRY",
-   "category": "jewelry",
-   "score": null,
-   "priority": "",
-   "website": "http://www.jokegoldjewelry.com/",
-   "website_class": "owned_site",
-   "phone": "+234 703 361 1390",
-   "rating": 5,
-   "reviews": 1,
-   "evidence": "Audit error (nothing measured): page.evaluate: TypeError: (text(...) || b.value || b.getAttribute(...) || \"\").trim is not a function     at eval (eval at evaluate (:311:30), <anonymous>:9:80)     at Array.map (<anonymous>)     at eval (eval at evaluate (:311:30), <anonymous>:9:10)     at eval (eval at evaluate (:311:30), <anonymous>:15:3)     at eval (<anonymous>)     at UtilityScript.evaluate (<anonymous>:311:30)     at UtilityScript.<anonymous> (<anonymous>:1:44); Google: 5 stars from 1 reviews",
-   "outreach": [],
-   "replied": false
   }
  ],
  "failures": [
+  {
+   "occurred_at": "2026-11-10T23:35:48.291Z",
+   "stage": "audit",
+   "lead_id": 66,
+   "name": "Original Cosmetics Nigeria",
+   "message": "unreachable: robots.txt request failed: getaddrinfo EAI_AGAIN originalcosmetics.com.ng"
+  },
   {
    "occurred_at": "2026-11-10T21:14:27.802Z",
    "stage": "audit",
@@ -6487,13 +6857,6 @@
    "lead_id": null,
    "name": null,
    "message": "google_places \"bags\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
-  },
-  {
-   "occurred_at": "2026-11-09T14:18:02.678Z",
-   "stage": "discover",
-   "lead_id": null,
-   "name": null,
-   "message": "google_places \"hair extensions\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
   }
  ]
 }
