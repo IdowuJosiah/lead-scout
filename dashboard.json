@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-10T23:41:13.815Z",
+ "generated_at": "2026-11-11T16:04:28.069Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -93,8 +93,8 @@
    ]
   },
   "tick": {
-   "started_at": "2026-11-10T16:22:41.548Z",
-   "finished_at": "2026-11-10T16:22:41.549Z",
+   "started_at": "2026-11-11T16:04:27.013Z",
+   "finished_at": "2026-11-11T16:04:28.027Z",
    "steps": [
     {
      "step": "actions",
@@ -104,12 +104,12 @@
     {
      "step": "inbox",
      "ok": true,
-     "detail": "skipped: no mailbox credentials"
+     "detail": "0 repl(ies), 0 opt-out(s), 0 bounce(s), 0 auto-repl(ies)"
     },
     {
      "step": "send",
      "ok": true,
-     "detail": "skipped: no SMTP credentials"
+     "detail": "0 sent, 0 failed, 0 skipped (nothing approved to send)"
     }
    ]
   }
