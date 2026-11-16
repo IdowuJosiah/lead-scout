@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-13T16:09:34.442Z",
+ "generated_at": "2026-11-16T14:02:48.623Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -28,17 +28,17 @@
   "zerobounce_calls_per_month": 100
  },
  "stats": {
-  "leads": 328,
-  "noWebsite": 141,
-  "audited": 187,
+  "leads": 384,
+  "noWebsite": 166,
+  "audited": 218,
   "failedAudits": 0,
-  "failures": 37,
+  "failures": 42,
   "emailQueue": 11,
-  "fallbackQueue": 13,
+  "fallbackQueue": 14,
   "emails_sent": 0,
   "emails_waiting_approval": 11,
   "emails_approved": 0,
-  "chats_to_send": 40,
+  "chats_to_send": 37,
   "replies": 0,
   "opt_outs": 0,
   "bounces": 0
@@ -57,13 +57,13 @@
  },
  "runs": {
   "weekly": {
-   "started_at": "2026-11-10T23:35:43.870Z",
-   "finished_at": "2026-11-10T23:41:13.769Z",
+   "started_at": "2026-11-16T13:58:30.044Z",
+   "finished_at": "2026-11-16T14:02:48.594Z",
    "steps": [
     {
      "step": "actions",
      "ok": true,
-     "detail": "0 applied, 0 rejected"
+     "detail": "3 applied, 0 rejected"
     },
     {
      "step": "inbox",
@@ -71,24 +71,29 @@
      "detail": "0 repl(ies), 0 opt-out(s), 0 bounce(s), 0 auto-repl(ies)"
     },
     {
+     "step": "discover",
+     "ok": true,
+     "detail": "346 found, 56 new, 0 failure(s)"
+    },
+    {
      "step": "audit",
      "ok": true,
-     "detail": "8 audited {\"unreachable\":1,\"ok\":7}"
+     "detail": "31 audited {\"social_profile\":3,\"ok\":20,\"dead\":5,\"blocked\":3}"
     },
     {
      "step": "reconcile",
      "ok": true,
-     "detail": "4 stage-3 result(s) invalidated, 12 unverified retried, 0 flagged"
+     "detail": "0 stage-3 result(s) invalidated, 0 unverified retried, 0 flagged"
     },
     {
      "step": "contacts",
      "ok": true,
-     "detail": "12 processed: 11 email, 1 fallback, 0 waiting for credits"
+     "detail": "1 processed: 0 email, 1 fallback, 0 waiting for credits"
     },
     {
      "step": "draft",
      "ok": true,
-     "detail": "11 email(s) in batch #1, 0 WhatsApp, 0 phone"
+     "detail": "0 email(s) in batch #1, 0 WhatsApp, 0 phone"
     }
    ]
   },
@@ -430,10 +435,10 @@
     "no_website"
    ],
    "evidence": "No website listed by google_places; Google: 4.7 stars from 348 reviews",
-   "status": "draft",
+   "status": "sent",
    "error": null,
    "created_at": "2026-11-10T21:23:01.982Z",
-   "sent_at": null,
+   "sent_at": "2026-11-16T09:50:58.993Z",
    "verification_status": null,
    "risk_flag": null,
    "replied": false
@@ -456,10 +461,10 @@
     "no_website"
    ],
    "evidence": "No website listed by google_places; Google: 5 stars from 243 reviews",
-   "status": "draft",
+   "status": "sent",
    "error": null,
    "created_at": "2026-11-10T21:23:01.983Z",
-   "sent_at": null,
+   "sent_at": "2026-11-16T09:51:33.404Z",
    "verification_status": null,
    "risk_flag": null,
    "replied": false
@@ -482,10 +487,10 @@
     "no_website"
    ],
    "evidence": "No website listed by google_places; Google: 4.1 stars from 69 reviews",
-   "status": "draft",
+   "status": "sent",
    "error": null,
    "created_at": "2026-11-10T21:23:01.983Z",
-   "sent_at": null,
+   "sent_at": "2026-11-16T09:52:12.655Z",
    "verification_status": null,
    "risk_flag": null,
    "replied": false
@@ -595,6 +600,32 @@
    "replied": false
   },
   {
+   "id": 12,
+   "lead_id": 147,
+   "channel": "whatsapp",
+   "name": "AMINU GOLD 001",
+   "category": "jewelry",
+   "score": 100,
+   "reviews": 32,
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 723 8821",
+   "recipient": "https://wa.me/2349077238821",
+   "subject": null,
+   "body": "Hi AMINU GOLD 001 team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 32 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-10T21:23:01.987Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
    "id": 8,
    "lead_id": 224,
    "channel": "whatsapp",
@@ -690,32 +721,6 @@
     "no_website"
    ],
    "evidence": "No website listed by google_places; Google: 4.9 stars from 31 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.987Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false
-  },
-  {
-   "id": 12,
-   "lead_id": 147,
-   "channel": "whatsapp",
-   "name": "AMINU GOLD 001",
-   "category": "jewelry",
-   "score": 100,
-   "reviews": 30,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 907 723 8821",
-   "recipient": "https://wa.me/2349077238821",
-   "subject": null,
-   "body": "Hi AMINU GOLD 001 team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 30 reviews",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-10T21:23:01.987Z",
@@ -1470,8 +1475,8 @@
    "outreach": [
     {
      "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
+     "status": "sent",
+     "sent_at": "2026-11-16T09:50:58.993Z"
     }
    ],
    "replied": false
@@ -1491,8 +1496,8 @@
    "outreach": [
     {
      "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
+     "status": "sent",
+     "sent_at": "2026-11-16T09:51:33.404Z"
     }
    ],
    "replied": false
@@ -1512,10 +1517,25 @@
    "outreach": [
     {
      "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
+     "status": "sent",
+     "sent_at": "2026-11-16T09:52:12.655Z"
     }
    ],
+   "replied": false
+  },
+  {
+   "id": 354,
+   "name": "C-sunny jewelry store",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 803 815 4054",
+   "rating": 4.2,
+   "reviews": 65,
+   "evidence": "No website listed by google_places; Google: 4.2 stars from 65 reviews",
+   "outreach": [],
    "replied": false
   },
   {
@@ -1540,6 +1560,51 @@
    "replied": false
   },
   {
+   "id": 364,
+   "name": "The Fragrance Boutique",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 905 229 7774",
+   "rating": 4.9,
+   "reviews": 62,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 62 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 371,
+   "name": "5th Perfume Store",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 810 507 1353",
+   "rating": 4.8,
+   "reviews": 61,
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 61 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 353,
+   "name": "Tejiri Jewelry Company",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 807 251 4728",
+   "rating": 5,
+   "reviews": 60,
+   "evidence": "No website listed by google_places; Google: 5 stars from 60 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 245,
    "name": "JOPA HAIR VENTURES.",
    "category": "hair extensions",
@@ -1558,6 +1623,21 @@
      "sent_at": null
     }
    ],
+   "replied": false
+  },
+  {
+   "id": 362,
+   "name": "Gold store Lagos",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 812 104 7834",
+   "rating": 4.7,
+   "reviews": 43,
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 43 reviews",
+   "outreach": [],
    "replied": false
   },
   {
@@ -1593,6 +1673,27 @@
    "rating": 4.8,
    "reviews": 35,
    "evidence": "No website listed by google_places; Google: 4.8 stars from 35 reviews",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
+   "id": 147,
+   "name": "AMINU GOLD 001",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 723 8821",
+   "rating": 4.9,
+   "reviews": 32,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 32 reviews",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -1677,27 +1778,6 @@
    "rating": 4.9,
    "reviews": 31,
    "evidence": "No website listed by google_places; Google: 4.9 stars from 31 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
-   "replied": false
-  },
-  {
-   "id": 147,
-   "name": "AMINU GOLD 001",
-   "category": "jewelry",
-   "score": 100,
-   "priority": "high",
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 907 723 8821",
-   "rating": 4.9,
-   "reviews": 30,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 30 reviews",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -1912,6 +1992,21 @@
    "replied": false
   },
   {
+   "id": 361,
+   "name": "Talhat Jewellery Gold Buying, Selling & Watches",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 708 855 5868",
+   "rating": 4.7,
+   "reviews": 21,
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 21 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 216,
    "name": "Victorious scent",
    "category": "perfume",
@@ -1972,6 +2067,21 @@
      "sent_at": null
     }
    ],
+   "replied": false
+  },
+  {
+   "id": 368,
+   "name": "Nur by Ibtisaam Secret Hub | Exclusive Customized Perfume Oil Vendor in Lagos",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 701 130 8489",
+   "rating": 4.9,
+   "reviews": 19,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 19 reviews",
+   "outreach": [],
    "replied": false
   },
   {
@@ -2059,6 +2169,21 @@
    "replied": false
   },
   {
+   "id": 367,
+   "name": "Absolute fragrance",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 810 159 2510",
+   "rating": 5,
+   "reviews": 17,
+   "evidence": "No website listed by google_places; Google: 5 stars from 17 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 124,
    "name": "ILHAMSTORES | JEWELRIES | WRISTWATCHES| RINGS | T-SHIRTS IN LAGOS NIGERIA",
    "category": "jewelry",
@@ -2119,6 +2244,36 @@
      "sent_at": null
     }
    ],
+   "replied": false
+  },
+  {
+   "id": 372,
+   "name": "SCENTSBYTIANA UNBOXED PERFUMES IN LAGOS",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 812 410 1867",
+   "rating": 4.9,
+   "reviews": 16,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 16 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 359,
+   "name": "Aralogee Jewelry brand",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 906 594 6998",
+   "rating": 5,
+   "reviews": 14,
+   "evidence": "No website listed by google_places; Google: 5 stars from 14 reviews",
+   "outreach": [],
    "replied": false
   },
   {
@@ -2206,6 +2361,21 @@
    "replied": false
   },
   {
+   "id": 370,
+   "name": "Jessy Luxe For Less Perfume",
+   "category": "perfume",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 807 083 8324",
+   "rating": 4.9,
+   "reviews": 12,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 133,
    "name": "Jewels by Madeh",
    "category": "jewelry",
@@ -2224,6 +2394,21 @@
      "sent_at": null
     }
    ],
+   "replied": false
+  },
+  {
+   "id": 337,
+   "name": "MO Idowu Fashion House Yaba Lagos",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 905 470 6487",
+   "rating": 4.3,
+   "reviews": 12,
+   "evidence": "No website listed by google_places; Google: 4.3 stars from 12 reviews",
+   "outreach": [],
    "replied": false
   },
   {
@@ -2337,6 +2522,21 @@
    "rating": 4.5,
    "reviews": 11,
    "evidence": "No website listed by google_places; Google: 4.5 stars from 11 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 374,
+   "name": "Hair Empire",
+   "category": "hair extensions",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+1 437-255-9886",
+   "rating": 5,
+   "reviews": 11,
+   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
    "outreach": [],
    "replied": false
   },
@@ -2536,6 +2736,21 @@
    "replied": false
   },
   {
+   "id": 375,
+   "name": "LAFACEBEAUTYHAIR",
+   "category": "hair extensions",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 919 0753",
+   "rating": 4.9,
+   "reviews": 8,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 97,
    "name": "LamySkincare (Theglowshop)",
    "category": "skincare",
@@ -2596,17 +2811,17 @@
    "replied": false
   },
   {
-   "id": 25,
-   "name": "Tush clothing & styling",
-   "category": "fashion",
+   "id": 342,
+   "name": "Semsey Skin Experience Centre",
+   "category": "skincare",
    "score": 100,
    "priority": "high",
    "website": null,
    "website_class": "none",
-   "phone": "+234 805 383 2519",
-   "rating": 4.5,
+   "phone": "+234 809 064 5722",
+   "rating": 4.9,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews",
    "outreach": [],
    "replied": false
   },
@@ -2671,6 +2886,21 @@
    "replied": false
   },
   {
+   "id": 347,
+   "name": "LA PINKY SKINCARE AND SPA",
+   "category": "skincare",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 803 873 2257",
+   "rating": 4.9,
+   "reviews": 7,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 190,
    "name": "Mizzeo Perfumery - Perfumes, Perfume oils, Diffusers, scented candles and body spray.",
    "category": "perfume",
@@ -2697,6 +2927,21 @@
    "rating": 4.9,
    "reviews": 7,
    "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 25,
+   "name": "Tush clothing & styling",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 805 383 2519",
+   "rating": 4.4,
+   "reviews": 7,
+   "evidence": "No website listed by google_places; Google: 4.4 stars from 7 reviews",
    "outreach": [],
    "replied": false
   },
@@ -2832,6 +3077,21 @@
    "rating": 5,
    "reviews": 6,
    "evidence": "No website listed by google_places; Google: 5 stars from 6 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 384,
+   "name": "Bags & More",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 818 019 8029",
+   "rating": 5,
+   "reviews": 5,
+   "evidence": "No website listed by google_places; Google: 5 stars from 5 reviews",
    "outreach": [],
    "replied": false
   },
@@ -3016,6 +3276,21 @@
    "replied": false
   },
   {
+   "id": 381,
+   "name": "Wholesale Bags And Shoes In Gbagada Lagos",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 813 111 9994",
+   "rating": 5,
+   "reviews": 4,
+   "evidence": "No website listed by google_places; Google: 5 stars from 4 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 283,
    "name": "Bags wholesaler bags in Lagos ladies bags supplier",
    "category": "bags",
@@ -3117,6 +3392,21 @@
    "rating": 3.7,
    "reviews": 3,
    "evidence": "No website listed by google_places; Google: 3.7 stars from 3 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 338,
+   "name": "RIGHT TOUCH CLOTHING | BEST FASHION DESIGN SCHOOL IN OJODU, BERGER LAGOS",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 816 439 6911",
+   "rating": 4.3,
+   "reviews": 3,
+   "evidence": "No website listed by google_places; Google: 4.3 stars from 3 reviews",
    "outreach": [],
    "replied": false
   },
@@ -3226,6 +3516,21 @@
    "replied": false
   },
   {
+   "id": 382,
+   "name": "Gracitybagsdeals Wholesale/Retail Shop in Lagos",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 708 154 7829",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 120,
    "name": "Jojo's Empire, Lagos (Fashion accessories and jewellery)",
    "category": "jewelry",
@@ -3301,6 +3606,21 @@
    "replied": false
   },
   {
+   "id": 339,
+   "name": "Sarah Lani fashion designer in Lagos",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 808 742 8104",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 212,
    "name": "Scent Secrets Perfumes in Lagos scent_secret1",
    "category": "perfume",
@@ -3342,6 +3662,21 @@
    "rating": 5,
    "reviews": 2,
    "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 360,
+   "name": "The Jewellery Place Broad Str Can",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 802 333 2533",
+   "rating": 4,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 4 stars from 2 reviews",
    "outreach": [],
    "replied": false
   },
@@ -3511,6 +3846,21 @@
    "replied": false
   },
   {
+   "id": 349,
+   "name": "Laglow_skincare best organic skincare in Lagos, idimu",
+   "category": "skincare",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 909 726 2822",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "No website listed by google_places; Google: 5 stars from 1 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 56,
    "name": "Lagos Fashion International (LFI)",
    "category": "fashion",
@@ -3646,6 +3996,21 @@
    "replied": false
   },
   {
+   "id": 350,
+   "name": "Wholesale Organics Naija (skincare products)",
+   "category": "skincare",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 802 874 8070",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "No website listed by google_places; Google: 5 stars from 1 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 145,
    "name": "ZOYAS JEWELS",
    "category": "jewelry",
@@ -3714,6 +4079,21 @@
    "website": null,
    "website_class": "none",
    "phone": "+234 708 846 6190",
+   "rating": null,
+   "reviews": null,
+   "evidence": "No website listed by google_places",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 380,
+   "name": "Luxury Bags By Nimi",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 098 0185",
    "rating": null,
    "reviews": null,
    "evidence": "No website listed by google_places",
@@ -3819,9 +4199,9 @@
    "website": "http://www.debrasgrace.com/",
    "website_class": "owned_site",
    "phone": "+234 813 821 5497",
-   "rating": 4.3,
-   "reviews": 755,
-   "evidence": "http://www.debrasgrace.com/ -> https://debrasgrace.com/ loaded in 11.5s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 6.8.12\"); no cart or checkout found on homepage; 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 755 reviews",
+   "rating": 4.5,
+   "reviews": 191,
+   "evidence": "http://www.debrasgrace.com/ -> https://debrasgrace.com/ loaded in 11.5s on Pixel 7 viewport; HTTP 200; platform WordPress (generator meta \"WordPress 6.8.12\"); no cart or checkout found on homepage; 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.5 stars from 191 reviews",
    "outreach": [],
    "replied": false
   },
@@ -3856,8 +4236,8 @@
    "website_class": "link_in_bio",
    "phone": "+234 803 416 3289",
    "rating": 4.5,
-   "reviews": 108,
-   "evidence": "Listed website is a link-in-bio page (linktr.ee); Not loaded: robots.txt HTTP 200, disallows /Fragrance_goldenroseperfume_; Google: 4.5 stars from 108 reviews",
+   "reviews": 109,
+   "evidence": "Listed website is a link-in-bio page (linktr.ee); Not loaded: robots.txt HTTP 200, disallows /Fragrance_goldenroseperfume_; Google: 4.5 stars from 109 reviews",
    "outreach": [],
    "replied": false
   },
@@ -3873,6 +4253,36 @@
    "rating": 4.7,
    "reviews": 84,
    "evidence": "Listed website is a social profile (tiktok.com); not loaded; Google: 4.7 stars from 84 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 331,
+   "name": "OLUWAFEMI WOMAN CLOTHING",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "http://www.oluwafemiwomanclothing.com/",
+   "website_class": "dead_listing",
+   "phone": "+234 803 075 2081",
+   "rating": 4.9,
+   "reviews": 69,
+   "evidence": "Listed website does not exist: robots.txt request failed: getaddrinfo ENOTFOUND www.oluwafemiwomanclothing.com; Google: 4.9 stars from 69 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 332,
+   "name": "Osc college of fashion",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://www.osccollegeoffashion.com/",
+   "website_class": "dead_listing",
+   "phone": "+234 803 302 9096",
+   "rating": 4.7,
+   "reviews": 69,
+   "evidence": "Listed website does not exist: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND www.osccollegeoffashion.com) and HTTP (getaddrinfo ENOTFOUND www.osccollegeoffashion.com); Google: 4.7 stars from 69 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4027,6 +4437,21 @@
    "replied": false
   },
   {
+   "id": 336,
+   "name": "All Things Chic | Best Online Fashion & Clothing Store for Women | Clothes | Bags | Hair | Shoes | in Lagos, Nigeria.",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://allthingschic.com.ng/",
+   "website_class": "dead_listing",
+   "phone": "+234 810 159 7259",
+   "rating": 5,
+   "reviews": 18,
+   "evidence": "Listed website does not exist: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND allthingschic.com.ng) and HTTP (getaddrinfo ENOTFOUND allthingschic.com.ng); Google: 5 stars from 18 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 250,
    "name": "Hairlegant Deluxe",
    "category": "hair extensions",
@@ -4053,6 +4478,21 @@
    "rating": 4.7,
    "reviews": 18,
    "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 4.7 stars from 18 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 334,
+   "name": "Kitan Fashion House",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://kitantailoring.com/",
+   "website_class": "dead_listing",
+   "phone": "+234 803 727 8108",
+   "rating": 4.6,
+   "reviews": 18,
+   "evidence": "Listed website does not exist: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND kitantailoring.com) and HTTP (getaddrinfo ENOTFOUND kitantailoring.com); Google: 4.6 stars from 18 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4147,6 +4587,21 @@
    "replied": false
   },
   {
+   "id": 333,
+   "name": "NanaClothing",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://www.instagram.com/nanaclothing/",
+   "website_class": "social",
+   "phone": "+234 816 607 7518",
+   "rating": 4.5,
+   "reviews": 10,
+   "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 4.5 stars from 10 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 288,
    "name": "Thoche Enterprises/ BAG MAKER IN OGUDU / HANDMADE ANKARA BAGS AND ACCESSORIES",
    "category": "bags",
@@ -4218,6 +4673,21 @@
    "rating": 5,
    "reviews": 7,
    "evidence": "Listed website does not exist: robots.txt request failed: getaddrinfo ENOTFOUND www.kostumbyteeta.com.ng; Google: 5 stars from 7 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 341,
+   "name": "Pees Organic Skincare/ Natural Skincare Product Vendor in Lagos, Nigeria",
+   "category": "skincare",
+   "score": 95,
+   "priority": "high",
+   "website": "https://www.peesorganicskincare.com/",
+   "website_class": "dead_listing",
+   "phone": "+234 703 640 1322",
+   "rating": 4.9,
+   "reviews": 7,
+   "evidence": "Listed website does not exist: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND www.peesorganicskincare.com) and HTTP (getaddrinfo ENOTFOUND www.peesorganicskincare.com); Google: 4.9 stars from 7 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4323,6 +4793,36 @@
    "rating": 4.8,
    "reviews": 4,
    "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 4.8 stars from 4 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 345,
+   "name": "LuiElle Skincare: Natural And Organic Skincare In Lagos.",
+   "category": "skincare",
+   "score": 95,
+   "priority": "high",
+   "website": "https://beacons.ai/luielle.skincareandspainlagos",
+   "website_class": "link_in_bio",
+   "phone": "+234 706 220 0338",
+   "rating": 4.5,
+   "reviews": 4,
+   "evidence": "Not inspected: HTTP 403 returned to the audit browser (likely bot protection); Google: 4.5 stars from 4 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 329,
+   "name": "Fashion designer in Lagos / Ready-to-wear",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://instagram.com/kymahclothings?igshid=ZDdkNTZiNTM=",
+   "website_class": "social",
+   "phone": "+234 816 733 3198",
+   "rating": 5,
+   "reviews": 3,
+   "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 5 stars from 3 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4462,6 +4962,21 @@
    "replied": false
   },
   {
+   "id": 376,
+   "name": "Strands by Abeni",
+   "category": "hair extensions",
+   "score": 95,
+   "priority": "high",
+   "website": "http://www.instagram.com/strands_by_abeni",
+   "website_class": "social",
+   "phone": "+234 816 720 0001",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "Listed website is a social profile (instagram.com); not loaded; Google: 5 stars from 1 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 200,
    "name": "The perfume girl in Lagos island",
    "category": "perfume",
@@ -4537,6 +5052,21 @@
    "replied": false
   },
   {
+   "id": 358,
+   "name": "Hamza Soja Luxury Jewelries",
+   "category": "jewelry",
+   "score": 90,
+   "priority": "high",
+   "website": "https://hamzasoja.netlify.app/",
+   "website_class": "hosted_storefront",
+   "phone": "+234 911 008 3283",
+   "rating": 5,
+   "reviews": 73,
+   "evidence": "https://hamzasoja.netlify.app/ loaded in 834ms on Pixel 7 viewport; HTTP 200; hosted on a platform domain (netlify.app), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage; 5 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 73 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 2,
    "name": "Ahdookeh Fashion",
    "category": "fashion",
@@ -4576,21 +5106,6 @@
      "sent_at": null
     }
    ],
-   "replied": false
-  },
-  {
-   "id": 48,
-   "name": "Horlat Fashion Hub | Fashion Designer In Mushin Lagos",
-   "category": "fashion",
-   "score": 90,
-   "priority": "high",
-   "website": "https://wa.me/+2349052835113",
-   "website_class": "messaging",
-   "phone": "+234 905 283 5113",
-   "rating": 4.9,
-   "reviews": 42,
-   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 4.9 stars from 42 reviews",
-   "outreach": [],
    "replied": false
   },
   {
@@ -4639,6 +5154,21 @@
    "replied": false
   },
   {
+   "id": 48,
+   "name": "Horlat Fashion Hub | Fashion Designer In Mushin Lagos",
+   "category": "fashion",
+   "score": 90,
+   "priority": "high",
+   "website": "https://wa.me/+2349052835113",
+   "website_class": "messaging",
+   "phone": "+234 905 283 5113",
+   "rating": 4.9,
+   "reviews": 30,
+   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 4.9 stars from 30 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 119,
    "name": "Betty Jewellery(BJL)",
    "category": "jewelry",
@@ -4680,6 +5210,21 @@
    "rating": 4.9,
    "reviews": 28,
    "evidence": "https://hotsplashstore.lovable.app/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (lovable.app), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/shop); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 1 shop page(s) (/shop); valid HTTPS; Google: 4.9 stars from 28 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 373,
+   "name": "BMEHAIRS",
+   "category": "hair extensions",
+   "score": 90,
+   "priority": "high",
+   "website": "https://biggsmultiventureenterprise.systeme.io/693e8c3a",
+   "website_class": "owned_site",
+   "phone": "+234 810 111 8657",
+   "rating": 4.8,
+   "reviews": 26,
+   "evidence": "https://biggsmultiventureenterprise.systeme.io/693e8c3a loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; 8 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 26 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4831,21 +5376,6 @@
    "replied": false
   },
   {
-   "id": 76,
-   "name": "Elight Glow Skincare Lagos",
-   "category": "skincare, jewelry, perfume, bags",
-   "score": 90,
-   "priority": "high",
-   "website": "https://wa.me/message/UZBEBQGMLBXHD1",
-   "website_class": "messaging",
-   "phone": "+234 802 436 9335",
-   "rating": 5,
-   "reviews": 4,
-   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 5 stars from 4 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
    "id": 280,
    "name": "Bags, Handbags and shoulderbags in Lagos from Deebeebags",
    "category": "bags",
@@ -4887,6 +5417,21 @@
    "rating": 5,
    "reviews": 2,
    "evidence": "Listed website is a chat link (chat.whatsapp.com); not loaded; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 76,
+   "name": "Elight Glow Skincare Lagos",
+   "category": "skincare, jewelry, perfume, bags, hair extensions",
+   "score": 90,
+   "priority": "high",
+   "website": "https://wa.me/message/UZBEBQGMLBXHD1",
+   "website_class": "messaging",
+   "phone": "+234 802 436 9335",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 5 stars from 1 reviews",
    "outreach": [],
    "replied": false
   },
@@ -4983,6 +5528,21 @@
    "rating": 5,
    "reviews": 62,
    "evidence": "http://www.bibakulture.com/ -> https://bibakulture.com/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 62 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 28,
+   "name": "Famous LifestyleWear",
+   "category": "fashion, bags",
+   "score": 65,
+   "priority": "high",
+   "website": "https://flutterwave.com/store/thefamouslifestyle",
+   "website_class": "hosted_storefront",
+   "phone": "+234 818 469 0812",
+   "rating": 5,
+   "reviews": 39,
+   "evidence": "https://flutterwave.com/store/thefamouslifestyle loaded in 2.9s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (flutterwave.com), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 2 shop page(s) (/store/thefamouslifestyle, /store/thefamouslifestyle); payment providers: Flutterwave (request to flutterwave.com); valid HTTPS; Google: 5 stars from 39 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5104,17 +5664,17 @@
    "replied": false
   },
   {
-   "id": 28,
-   "name": "Famous LifestyleWear",
-   "category": "fashion, bags",
+   "id": 379,
+   "name": "BREEZY: ANKARA BAGS & SOUVENIR IN LAGOS",
+   "category": "bags",
    "score": 65,
    "priority": "high",
-   "website": "https://flutterwave.com/store/thefamouslifestyle",
+   "website": "https://flutterwave.com/store/shopbreezy",
    "website_class": "hosted_storefront",
    "phone": "+234 818 469 0812",
    "rating": 4.6,
    "reviews": 14,
-   "evidence": "https://flutterwave.com/store/thefamouslifestyle loaded in 2.9s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (flutterwave.com), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage or 2 shop page(s) (/store/thefamouslifestyle, /store/thefamouslifestyle); payment providers: Flutterwave (request to flutterwave.com); valid HTTPS; Google: 4.6 stars from 14 reviews",
+   "evidence": "https://flutterwave.com/store/shopbreezy loaded in 3.1s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (flutterwave.com), not the brand's own; platform custom (no known platform signature matched); no cart or checkout found on homepage; payment providers: Flutterwave (request to flutterwave.com); valid HTTPS; Google: 4.6 stars from 14 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5211,6 +5771,21 @@
    "rating": 4.7,
    "reviews": 9,
    "evidence": "https://bigghair.ng/ loaded in 881ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 9 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 340,
+   "name": "Tricia Beauty Empire|Natural Skincare in Lagos",
+   "category": "skincare",
+   "score": 65,
+   "priority": "high",
+   "website": "https://triciabeautyempire.bumpa.shop/",
+   "website_class": "hosted_storefront",
+   "phone": "+234 811 450 0935",
+   "rating": 5,
+   "reviews": 9,
+   "evidence": "https://triciabeautyempire.bumpa.shop/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (bumpa.shop), not the brand's own; platform Bumpa (hosted on bumpa.shop); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 9 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5431,8 +6006,8 @@
    "website_class": "owned_site",
    "phone": "+234 702 524 1605",
    "rating": 5,
-   "reviews": 22,
-   "evidence": "https://teetrendshair.com/ loaded in 11.7s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 22 reviews",
+   "reviews": 23,
+   "evidence": "https://teetrendshair.com/ loaded in 11.7s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 23 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5461,8 +6036,23 @@
    "website_class": "owned_site",
    "phone": "+234 802 052 8391",
    "rating": 4.6,
-   "reviews": 1117,
-   "evidence": "https://vspbotanics.com/ loaded in 5.9s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 1117 reviews",
+   "reviews": 1118,
+   "evidence": "https://vspbotanics.com/ loaded in 5.9s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 1118 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 366,
+   "name": "Fperfumes and fragrance",
+   "category": "perfume",
+   "score": 25,
+   "priority": "medium",
+   "website": "http://www.fperfumesandfragrance.com/",
+   "website_class": "owned_site",
+   "phone": "+234 810 612 2714",
+   "rating": 4.7,
+   "reviews": 72,
+   "evidence": "http://www.fperfumesandfragrance.com/ -> https://fperfumesandfragrance.com/ loaded in 5.6s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/, checkout link /checkout/); 41 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 72 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5497,6 +6087,21 @@
    "replied": false
   },
   {
+   "id": 363,
+   "name": "Velvet Sparkles",
+   "category": "jewelry",
+   "score": 25,
+   "priority": "medium",
+   "website": "http://www.velvetsparkles.com/",
+   "website_class": "owned_site",
+   "phone": "+234 906 488 5505",
+   "rating": 4.6,
+   "reviews": 34,
+   "evidence": "http://www.velvetsparkles.com/ -> https://velvetsparkles.com/ loaded in 8.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 34 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 172,
    "name": "Lattafa Perfume Nigeria",
    "category": "perfume",
@@ -5527,6 +6132,21 @@
    "replied": false
   },
   {
+   "id": 356,
+   "name": "Deinte Fine Jewelry",
+   "category": "jewelry",
+   "score": 25,
+   "priority": "medium",
+   "website": "http://www.deinte.com/",
+   "website_class": "owned_site",
+   "phone": "+234 818 573 8826",
+   "rating": 3.9,
+   "reviews": 8,
+   "evidence": "http://www.deinte.com/ loaded in 6.8s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"ADD TO BAG\" on /category/engagement/); no configured payment provider found on homepage or 1 shop page(s) (/category/engagement/); valid HTTPS; Google: 3.9 stars from 8 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 71,
    "name": "Mama Tega Cosmetics And Spa",
    "category": "skincare",
@@ -5551,8 +6171,8 @@
    "website_class": "owned_site",
    "phone": "+234 201 414 3072",
    "rating": 4.1,
-   "reviews": 449,
-   "evidence": "https://www.buybetter.ng/ -> https://buybetter.ng/ loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wc_add_to_cart_params\" in page source); cart/checkout found (link \"Add to Cart\"); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.1 stars from 449 reviews",
+   "reviews": 450,
+   "evidence": "https://www.buybetter.ng/ -> https://buybetter.ng/ loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wc_add_to_cart_params\" in page source); cart/checkout found (link \"Add to Cart\"); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.1 stars from 450 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5568,21 +6188,6 @@
    "rating": 4.7,
    "reviews": 404,
    "evidence": "https://www.eternalgems.com.ng/ -> https://eternalgems.com.ng/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 404 reviews",
-   "outreach": [],
-   "replied": false
-  },
-  {
-   "id": 149,
-   "name": "Azarai Ikeja - Wedding and Engagement rings in Ikeja Lagos",
-   "category": "jewelry",
-   "score": 10,
-   "priority": "low",
-   "website": "http://www.azarai.com/",
-   "website_class": "owned_site",
-   "phone": "+234 818 761 7955",
-   "rating": 4.5,
-   "reviews": 376,
-   "evidence": "http://www.azarai.com/ -> https://www.azarai.com/ loaded in 2.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.5 stars from 376 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5613,6 +6218,21 @@
    "rating": 4.3,
    "reviews": 287,
    "evidence": "http://www.bagswarehouse.ng/ -> https://www.bagswarehouse.ng/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (cart link /cart); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 287 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 335,
+   "name": "Aefashion Empire",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.aefashionempire.com/",
+   "website_class": "owned_site",
+   "phone": "+234 915 050 5003",
+   "rating": 3.7,
+   "reviews": 275,
+   "evidence": "http://www.aefashionempire.com/ -> https://www.aefashionempire.com/ loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to Cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 3.7 stars from 275 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5656,8 +6276,23 @@
    "website_class": "owned_site",
    "phone": "+234 808 581 2453",
    "rating": 4.6,
-   "reviews": 220,
-   "evidence": "http://www.beautybydaz.com/ -> https://beautybydaz.com/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"ADD TO BAG\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 220 reviews",
+   "reviews": 221,
+   "evidence": "http://www.beautybydaz.com/ -> https://beautybydaz.com/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"ADD TO BAG\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 221 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 355,
+   "name": "Saint Tracy",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.sainttracy.com/",
+   "website_class": "owned_site",
+   "phone": "+234 809 613 4950",
+   "rating": 4.6,
+   "reviews": 184,
+   "evidence": "https://www.sainttracy.com/ -> https://sainttracy.com/ loaded in 2.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, checkout link /checkout); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 184 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5673,6 +6308,21 @@
    "rating": 4.8,
    "reviews": 174,
    "evidence": "https://dexstitches.com/ loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (link \"PROCEED TO CHECKOUT\"); 3 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 174 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 357,
+   "name": "PANDORA IKEJA",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.pandorashop.ng/",
+   "website_class": "owned_site",
+   "phone": "+234 813 977 2630",
+   "rating": 4.9,
+   "reviews": 172,
+   "evidence": "https://www.pandorashop.ng/ loaded in 1.5s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (form action https://www.pandorashop.ng/cart/add); 6 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 172 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5701,8 +6351,8 @@
    "website_class": "owned_site",
    "phone": "+234 812 468 2733",
    "rating": 3.9,
-   "reviews": 143,
-   "evidence": "http://www.nectarbeautyhub.com/ -> https://nectarbeautyhub.com/ loaded in 4.7s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.9 stars from 143 reviews",
+   "reviews": 144,
+   "evidence": "http://www.nectarbeautyhub.com/ -> https://nectarbeautyhub.com/ loaded in 4.7s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.9 stars from 144 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5797,6 +6447,36 @@
    "replied": false
   },
   {
+   "id": 149,
+   "name": "Azarai Ikeja - Wedding and Engagement rings in Ikeja Lagos",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.azarai.com/",
+   "website_class": "owned_site",
+   "phone": "+234 818 761 7955",
+   "rating": 4.6,
+   "reviews": 84,
+   "evidence": "http://www.azarai.com/ -> https://www.azarai.com/ loaded in 2.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.6 stars from 84 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 365,
+   "name": "De Fragrance Vault",
+   "category": "perfume",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.defragrancevault.com/",
+   "website_class": "owned_site",
+   "phone": "+234 916 685 4000",
+   "rating": 5,
+   "reviews": 83,
+   "evidence": "https://www.defragrancevault.com/ -> https://defragrancevault.com/ loaded in 2.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"ADD TO CART\" on /products/marc-jacobs-decadence-eau-de-parfum-100ml/5093963); no configured payment provider found on homepage or 1 shop page(s) (/products/marc-jacobs-decadence-eau-de-parfum-100ml/5093963); valid HTTPS; Google: 5 stars from 83 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 31,
    "name": "Design for love (DFL) Ikoyi store",
    "category": "fashion",
@@ -5806,8 +6486,8 @@
    "website_class": "owned_site",
    "phone": "+234 809 334 4922",
    "rating": 4.8,
-   "reviews": 90,
-   "evidence": "http://www.buydfl.com/ -> https://www.buydfl.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 90 reviews",
+   "reviews": 82,
+   "evidence": "http://www.buydfl.com/ -> https://www.buydfl.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 82 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5836,8 +6516,8 @@
    "website_class": "owned_site",
    "phone": "+234 816 624 2541",
    "rating": 4,
-   "reviews": 69,
-   "evidence": "http://www.allure.com.ng/ -> https://allure.com.ng/ loaded in 4.1s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"Add to cart\"); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4 stars from 69 reviews",
+   "reviews": 67,
+   "evidence": "http://www.allure.com.ng/ -> https://allure.com.ng/ loaded in 4.1s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"Add to cart\"); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4 stars from 67 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5883,6 +6563,21 @@
    "rating": 4.4,
    "reviews": 53,
    "evidence": "https://www.bozjewelry.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.4 stars from 53 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 383,
+   "name": "Shop Rhai",
+   "category": "bags",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.shoprhai.com.ng/",
+   "website_class": "owned_site",
+   "phone": "+234 813 091 6638",
+   "rating": 5,
+   "reviews": 49,
+   "evidence": "https://www.shoprhai.com.ng/ -> https://shoprhai.com.ng/ loaded in 2.3s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 49 reviews",
    "outreach": [],
    "replied": false
   },
@@ -5943,6 +6638,21 @@
    "rating": 4.9,
    "reviews": 36,
    "evidence": "https://rteesorganics.com/ loaded in 3.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 36 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 330,
+   "name": "Vedil Clothing",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.vedilclothing.com/",
+   "website_class": "owned_site",
+   "phone": "+234 813 868 3171",
+   "rating": 4.9,
+   "reviews": 35,
+   "evidence": "http://www.vedilclothing.com/ -> https://www.vedilclothing.com/ loaded in 579ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"ADD TO BAG\" on /shop/ready-to-wear); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage or 2 shop page(s) (/shop/africa-my-heritage, /shop/ready-to-wear); valid HTTPS; Google: 4.9 stars from 35 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6018,6 +6728,21 @@
    "rating": 4.7,
    "reviews": 26,
    "evidence": "https://www.scentbyoreo.com.ng/ -> https://scentbyoreo.com.ng/ loaded in 1.9s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to Cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 26 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 377,
+   "name": "Glam Affairs Lagos",
+   "category": "hair extensions",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.glamaffairslagos.com/",
+   "website_class": "owned_site",
+   "phone": "+234 810 804 2841",
+   "rating": 4.8,
+   "reviews": 24,
+   "evidence": "http://www.glamaffairslagos.com/ -> https://glamaffairslagos.com/ loaded in 2.1s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (form action https://glamaffairslagos.com/cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 24 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6142,6 +6867,21 @@
    "replied": false
   },
   {
+   "id": 369,
+   "name": "Olfactory Adventure | Niche Perfume Store in Lagos",
+   "category": "perfume",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.olfactoryadventure.com/",
+   "website_class": "owned_site",
+   "phone": "+234 906 159 2457",
+   "rating": 4.9,
+   "reviews": 18,
+   "evidence": "http://www.olfactoryadventure.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to cart\"); 1 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 18 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 4,
    "name": "Tailored by Adunni Ltd. | Women's RTW Clothing Brand In Ikeja Lagos",
    "category": "fashion",
@@ -6181,8 +6921,8 @@
    "website_class": "owned_site",
    "phone": "+234 704 022 4091",
    "rating": 4.9,
-   "reviews": 14,
-   "evidence": "https://beautybyjoya.com/ loaded in 4.1s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 14 reviews",
+   "reviews": 15,
+   "evidence": "https://beautybyjoya.com/ loaded in 4.1s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 15 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6292,6 +7032,21 @@
    "replied": false
   },
   {
+   "id": 344,
+   "name": "Success beauty skincare cosmetics",
+   "category": "skincare",
+   "score": 10,
+   "priority": "low",
+   "website": "https://successbeautyskincare.com/",
+   "website_class": "owned_site",
+   "phone": "+234 704 798 3486",
+   "rating": 5,
+   "reviews": 10,
+   "evidence": "https://successbeautyskincare.com/ loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (link \"ADD TO CART\"); 2 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 10 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 125,
    "name": "ElsaLagos - Jewelry and Engagement Ring Store",
    "category": "jewelry",
@@ -6363,6 +7118,21 @@
    "rating": 4.9,
    "reviews": 8,
    "evidence": "https://ovasparklesbeads.com.ng/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to Cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 8 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 343,
+   "name": "Slique Beauty Limited",
+   "category": "skincare",
+   "score": 10,
+   "priority": "low",
+   "website": "https://sliquebeautylimited.com/",
+   "website_class": "owned_site",
+   "phone": "+234 803 229 4600",
+   "rating": 4.9,
+   "reviews": 7,
+   "evidence": "https://sliquebeautylimited.com/ loaded in 3.5s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/, checkout link /checkout/); 4 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 7 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6562,6 +7332,21 @@
    "replied": false
   },
   {
+   "id": 348,
+   "name": "ZINNY LUXURIOUS SKINCARE",
+   "category": "skincare",
+   "score": 10,
+   "priority": "low",
+   "website": "https://zinnyluxuriousskincare.com/",
+   "website_class": "owned_site",
+   "phone": "+234 703 920 2924",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "https://zinnyluxuriousskincare.com/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (button \"Add to Cart\"); no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 1 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 118,
    "name": "Jewellery Boss - Wedding Rings in Lagos",
    "category": "jewelry",
@@ -6577,6 +7362,36 @@
    "replied": false
   },
   {
+   "id": 352,
+   "name": "June Jewels",
+   "category": "jewelry",
+   "score": 10,
+   "priority": "low",
+   "website": "https://junejewelries.com/",
+   "website_class": "owned_site",
+   "phone": "+234 810 861 5172",
+   "rating": null,
+   "reviews": null,
+   "evidence": "https://junejewelries.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); no configured payment provider found on homepage; valid HTTPS",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 346,
+   "name": "Zaron Cosmetics Lagos | Makeup & Skin Care Store",
+   "category": "skincare",
+   "score": 5,
+   "priority": "low",
+   "website": "https://www.zaroncosmetics.com/",
+   "website_class": "owned_site",
+   "phone": "+234 907 355 8933",
+   "rating": 4.4,
+   "reviews": 125,
+   "evidence": "https://www.zaroncosmetics.com/ loaded in 564ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (link \"ADD TO BAG MAKE UP, LIPS, LIP GLOSSES PE\"); 2 WhatsApp link(s) on homepage; payment providers: Stripe (request to js.stripe.com); valid HTTPS; Google: 4.4 stars from 125 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 259,
    "name": "Slayon Extensions",
    "category": "hair extensions",
@@ -6588,6 +7403,21 @@
    "rating": 4.5,
    "reviews": 16,
    "evidence": "http://slayonextensions.com/ -> https://slayonextensions.com/ loaded in 2.3s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); 2 WhatsApp link(s) on homepage; payment providers: Flutterwave (flutterwave.com referenced in page source); valid HTTPS; Google: 4.5 stars from 16 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 351,
+   "name": "SDB Spa & Skincare 24Hours Service, lekki phase 1, lagos Nigeria",
+   "category": "skincare",
+   "score": null,
+   "priority": "",
+   "website": "https://www.sdb.com.ng/",
+   "website_class": "owned_site",
+   "phone": "+234 818 000 3945",
+   "rating": 4.7,
+   "reviews": 117,
+   "evidence": "Not inspected: HTTP 403 returned to the audit browser (likely bot protection); Google: 4.7 stars from 117 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6618,6 +7448,21 @@
    "rating": 5,
    "reviews": 47,
    "evidence": "Not loaded: robots.txt HTTP 500 (treated as disallow); Google: 5 stars from 47 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 378,
+   "name": "Kuku's Hair",
+   "category": "hair extensions",
+   "score": null,
+   "priority": "",
+   "website": "https://kukushair.net/",
+   "website_class": "owned_site",
+   "phone": "+234 810 540 5167",
+   "rating": 4.4,
+   "reviews": 44,
+   "evidence": "Not inspected: HTTP 403 returned to the audit browser (likely bot protection); Google: 4.4 stars from 44 reviews",
    "outreach": [],
    "replied": false
   },
@@ -6683,6 +7528,41 @@
   }
  ],
  "failures": [
+  {
+   "occurred_at": "2026-11-16T13:59:23.241Z",
+   "stage": "audit",
+   "lead_id": 341,
+   "name": "Pees Organic Skincare/ Natural Skincare Product Vendor in Lagos, Nigeria",
+   "message": "dead: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND www.peesorganicskincare.com) and HTTP (getaddrinfo ENOTFOUND www.peesorganicskincare.com)"
+  },
+  {
+   "occurred_at": "2026-11-16T13:59:13.384Z",
+   "stage": "audit",
+   "lead_id": 336,
+   "name": "All Things Chic | Best Online Fashion & Clothing Store for Women | Clothes | Bags | Hair | Shoes | in Lagos, Nigeria.",
+   "message": "dead: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND allthingschic.com.ng) and HTTP (getaddrinfo ENOTFOUND allthingschic.com.ng)"
+  },
+  {
+   "occurred_at": "2026-11-16T13:59:04.340Z",
+   "stage": "audit",
+   "lead_id": 334,
+   "name": "Kitan Fashion House",
+   "message": "dead: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND kitantailoring.com) and HTTP (getaddrinfo ENOTFOUND kitantailoring.com)"
+  },
+  {
+   "occurred_at": "2026-11-16T13:59:01.333Z",
+   "stage": "audit",
+   "lead_id": 332,
+   "name": "Osc college of fashion",
+   "message": "dead: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND www.osccollegeoffashion.com) and HTTP (getaddrinfo ENOTFOUND www.osccollegeoffashion.com)"
+  },
+  {
+   "occurred_at": "2026-11-16T13:58:58.330Z",
+   "stage": "audit",
+   "lead_id": 331,
+   "name": "OLUWAFEMI WOMAN CLOTHING",
+   "message": "dead: robots.txt request failed: getaddrinfo ENOTFOUND www.oluwafemiwomanclothing.com"
+  },
   {
    "occurred_at": "2026-11-10T23:35:48.291Z",
    "stage": "audit",
@@ -6822,41 +7702,6 @@
    "lead_id": 66,
    "name": "Original Cosmetics Nigeria",
    "message": "unreachable: robots.txt request failed: getaddrinfo EAI_AGAIN originalcosmetics.com.ng"
-  },
-  {
-   "occurred_at": "2026-11-10T20:56:02.643Z",
-   "stage": "audit",
-   "lead_id": 59,
-   "name": "DDfied Fashion Store - Lagos",
-   "message": "dead: robots.txt request failed over HTTPS (getaddrinfo ENOTFOUND ddfiedfashionstore.com.ng) and HTTP (getaddrinfo ENOTFOUND ddfiedfashionstore.com.ng)"
-  },
-  {
-   "occurred_at": "2026-11-10T20:52:35.346Z",
-   "stage": "audit",
-   "lead_id": 19,
-   "name": "KIKKI CLOTHING , Office wear, dress, skirt, dinner dress, Ikeja boutique, clothing store in Lagos",
-   "message": "dead: robots.txt request failed: getaddrinfo ENOTFOUND www.kikkiclothing.com"
-  },
-  {
-   "occurred_at": "2026-11-10T20:51:55.502Z",
-   "stage": "audit",
-   "lead_id": 7,
-   "name": "BASICWEARS FASHION BIOGRAPHY",
-   "message": "dead: homepage returned HTTP 404"
-  },
-  {
-   "occurred_at": "2026-11-09T14:18:03.181Z",
-   "stage": "agent:draft",
-   "lead_id": null,
-   "name": null,
-   "message": "Set \"sender.name\" in config/outreach.json before drafting messages"
-  },
-  {
-   "occurred_at": "2026-11-09T14:18:03.178Z",
-   "stage": "discover",
-   "lead_id": null,
-   "name": null,
-   "message": "google_places \"bags\" failed after 0 results: GOOGLE_PLACES_API_KEY is not set"
   }
  ]
 }
