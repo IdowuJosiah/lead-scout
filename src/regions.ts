@@ -159,16 +159,45 @@ interface PlacesResult {
     places?: {
         id: string;
         displayName?: { text?: string };
+        formattedAddress?: string;
+        types?: string[];
         location?: { latitude: number; longitude: number };
         viewport?: { low: { latitude: number; longitude: number }; high: { latitude: number; longitude: number } };
         addressComponents?: { longText?: string; shortText?: string; types?: string[] }[];
     }[];
 }
 
-/** Search radius from the place's size: half the diagonal of its map viewport, kept between 3 and 50 km. */
-export function radiusFromViewport(v: NonNullable<NonNullable<PlacesResult["places"]>[number]["viewport"]>): number {
+/** Search radius from the place's size: half the diagonal of its map viewport, kept between 3 km and max. */
+export function radiusFromViewport(v: NonNullable<NonNullable<PlacesResult["places"]>[number]["viewport"]>, max = 50): number {
     const half = haversineKm({ lat: v.low.latitude, lng: v.low.longitude }, { lat: v.high.latitude, lng: v.high.longitude }) / 2;
-    return Math.round(Math.min(50, Math.max(3, half)));
+    return Math.round(Math.min(max, Math.max(3, half)));
+}
+
+/** Largest search radius: a city stays local, a whole state or country is searched across (Google ranks the best-known first). */
+export const MAX_RADIUS_KM = { city: 50, wide: 600 };
+const WIDE_TYPES = ["country", "administrative_area_level_1", "administrative_area_level_2"];
+
+/** "Ireland" or "Republic of Ireland" -> "IE", using the country names built into Node. */
+export function countryCodeFromName(name: string | undefined): string | null {
+    const want = name?.trim().toLowerCase();
+    if (!want) return null;
+    if (/^[a-z]{2}$/.test(want)) return want.toUpperCase();
+    const names = new Intl.DisplayNames(["en"], { type: "region" });
+    for (let a = 65; a <= 90; a++) {
+        for (let b = 65; b <= 90; b++) {
+            const code = String.fromCharCode(a, b);
+            let n: string | undefined;
+            try {
+                n = names.of(code);
+            } catch {
+                continue;
+            }
+            if (!n || n === code) continue;
+            const low = n.toLowerCase();
+            if (low === want || want === `republic of ${low}` || low === `republic of ${want}`) return code;
+        }
+    }
+    return null;
 }
 
 /** One Google Places call: "Dubai" -> location, country, size. */
@@ -178,7 +207,7 @@ export async function resolvePlace(text: string, apiKey: string, language = "en"
         headers: {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": apiKey,
-            "X-Goog-FieldMask": "places.id,places.displayName,places.location,places.viewport,places.addressComponents",
+            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.types,places.location,places.viewport,places.addressComponents",
         },
         body: JSON.stringify({ textQuery: text, languageCode: language, pageSize: 1 }),
         signal: AbortSignal.timeout(30_000),
@@ -186,16 +215,27 @@ export async function resolvePlace(text: string, apiKey: string, language = "en"
     if (!res.ok) throw new Error(`Places API HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
     const p = ((await res.json()) as PlacesResult).places?.[0];
     if (!p?.location) throw new Error(`Couldn't find a place called "${text}". Try adding the country, e.g. "${text}, Ghana".`);
-    const country = p.addressComponents?.find((c) => c.types?.includes("country"));
-    if (!country?.shortText) throw new Error(`"${text}" didn't resolve to a place inside a country`);
+    // The country, from the address; failing that (Google sometimes leaves it out for a
+    // whole country), from the place's own name or the end of its address.
+    const comp = p.addressComponents?.find((c) => c.types?.includes("country"));
+    const isCountry = !!p.types?.includes("country");
+    const lastPart = p.formattedAddress?.split(",").pop();
+    const countryCode =
+        comp?.shortText?.toUpperCase() ||
+        (isCountry ? countryCodeFromName(p.displayName?.text) : null) ||
+        countryCodeFromName(lastPart) ||
+        countryCodeFromName(text.split(",").pop());
+    if (!countryCode) throw new Error(`Couldn't tell which country "${text}" is in. Try adding the country, e.g. "${text}, Ireland".`);
+    const country = comp?.longText || new Intl.DisplayNames(["en"], { type: "region" }).of(countryCode) || countryCode;
+    const wide = !!p.types?.some((t) => WIDE_TYPES.includes(t));
     return {
         placeRef: p.id,
         city: p.displayName?.text?.trim() || text.trim(),
-        country: country.longText ?? country.shortText,
-        countryCode: country.shortText.toUpperCase(),
+        country,
+        countryCode,
         lat: p.location.latitude,
         lng: p.location.longitude,
-        radiusKm: p.viewport ? radiusFromViewport(p.viewport) : 25,
+        radiusKm: p.viewport ? radiusFromViewport(p.viewport, wide ? MAX_RADIUS_KM.wide : MAX_RADIUS_KM.city) : 25,
     };
 }
 

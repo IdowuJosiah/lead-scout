@@ -13,7 +13,7 @@ import { exportCsv } from "../src/export.js";
 import { loadOutreachConfig } from "../src/outreach/config.js";
 import { runDraft } from "../src/outreach/draft.js";
 import { runSend } from "../src/outreach/send.js";
-import { currencyFor, defaultSendDays, ensureRegion, paymentExamples, radiusFromViewport, regionConfig, timezoneFor, type ResolvedPlace } from "../src/regions.js";
+import { countryCodeFromName, currencyFor, defaultSendDays, ensureRegion, paymentExamples, radiusFromViewport, resolvePlace, regionConfig, timezoneFor, type ResolvedPlace } from "../src/regions.js";
 import { dedupeKey, parseWebsite, websiteDomain } from "../src/url.js";
 
 const base = resolveConfig({
@@ -52,6 +52,42 @@ describe("region details from a place", () => {
         assert.equal(radiusFromViewport(wide), 50, "capped at 50 km");
         const town = { low: { latitude: 6.45, longitude: 3.38 }, high: { latitude: 6.47, longitude: 3.40 } };
         assert.equal(radiusFromViewport(town), 3, "at least 3 km");
+    });
+
+    it("knows country names", () => {
+        assert.equal(countryCodeFromName("Ireland"), "IE");
+        assert.equal(countryCodeFromName(" republic of ireland "), "IE");
+        assert.equal(countryCodeFromName("United Arab Emirates"), "AE");
+        assert.equal(countryCodeFromName("gh"), "GH");
+        assert.equal(countryCodeFromName("Atlantis"), null);
+    });
+
+    it("resolves a whole country even when Google leaves out the country part", async () => {
+        const realFetch = globalThis.fetch;
+        // What Places returns for "ireland": a country with no country address component.
+        globalThis.fetch = (async () =>
+            new Response(
+                JSON.stringify({
+                    places: [
+                        {
+                            id: "ChIJ-ireland",
+                            displayName: { text: "Ireland" },
+                            types: ["country", "political"],
+                            location: { latitude: 53.41, longitude: -8.24 },
+                            viewport: { low: { latitude: 51.42, longitude: -10.66 }, high: { latitude: 55.43, longitude: -5.99 } },
+                            addressComponents: [],
+                        },
+                    ],
+                }),
+            )) as typeof fetch;
+        try {
+            const p = await resolvePlace("ireland", "k");
+            assert.equal(p.countryCode, "IE");
+            assert.equal(p.country, "Ireland");
+            assert.ok(p.radiusKm > 200, `a country is searched across, not 50 km around its middle (got ${p.radiusKm})`);
+        } finally {
+            globalThis.fetch = realFetch;
+        }
     });
 });
 
