@@ -5,13 +5,16 @@ import type { LeadStore } from "../db.js";
 import type { OutreachConfig } from "../outreach/config.js";
 import { monthKey } from "../outreach/store.js";
 import { compareLeads, priorityOf } from "../scoring.js";
+import { RegionSet, singleRegionSet } from "../regions.js";
 import { verifierName } from "../contact/apis.js";
 
 /**
  * dashboard.json: everything the dashboard shows, written after every run.
  * The dashboard only reads this file (plus pending action files).
  */
-export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: OutreachConfig) {
+export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSet, cfg: OutreachConfig) {
+    const set = regions instanceof RegionSet ? regions : singleRegionSet(regions);
+    const region = set.base;
     const o = store.outreach;
     const rows = store.allLeadsWithAudits();
     const leadById = new Map(rows.map(({ lead }) => [lead.id, lead]));
@@ -28,6 +31,8 @@ export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: Outre
         return {
             id: r.id,
             lead_id: r.lead_id,
+            region_id: lead?.region_id ?? null,
+            region: set.label(lead?.region_id) ?? (lead ? (set.forLead(lead)?.city ?? null) : null),
             channel: r.channel,
             name: lead?.name ?? "",
             category: lead?.category ?? null,
@@ -66,6 +71,8 @@ export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: Outre
         .slice(0, 1000)
         .map((l) => ({
             id: l.id,
+            region_id: l.region_id ?? null,
+            region: set.label(l.region_id) ?? set.forLead(l)?.city ?? null,
             name: l.name,
             category: l.category,
             score: l.lead_score,
@@ -95,6 +102,21 @@ export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: Outre
             send_window: region.send_window,
             allowed_to_email: region.allowed_to_email,
         },
+        regions: set.rows.map((r) => ({
+            id: r.id,
+            label: r.label,
+            city: r.city,
+            country: r.country,
+            country_code: r.country_code,
+            timezone: r.timezone,
+            currency: r.currency,
+            radius_km: r.radius_km,
+            send_window: { days: r.send_days, start: r.send_start, end: r.send_end },
+            allowed_to_email: r.allowed_to_email == null ? null : r.allowed_to_email === 1,
+            keywords: r.keywords ? (JSON.parse(r.keywords) as string[]) : null,
+            last_scouted_at: r.last_scouted_at,
+            leads: rows.filter(({ lead }) => lead.region_id === r.id).length,
+        })),
         sender: { name: cfg.sender.name, configured: !!cfg.sender.name },
         limits: cfg.limits,
         stats: {
@@ -113,7 +135,7 @@ export function buildSnapshot(store: LeadStore, region: RegionConfig, cfg: Outre
             hunter: { used: o.usage("hunter"), limit: cfg.limits.hunter_calls_per_month },
             zerobounce: { used: o.usage("zerobounce"), limit: cfg.limits.zerobounce_calls_per_month },
         },
-        runs: { weekly: state("last_weekly"), tick: state("last_tick") },
+        runs: { weekly: state("last_weekly"), tick: state("last_tick"), scout: state("last_scout") },
         batches,
         chats,
         replies: replies.map((r) => ({ ...r, name: r.lead_id ? (leadById.get(r.lead_id)?.name ?? null) : null })),

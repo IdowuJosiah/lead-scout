@@ -5,6 +5,7 @@ import { exportQueues } from "../contact/export.js";
 import { verifierName } from "../contact/apis.js";
 import { runContacts, type ContactOptions } from "../contact/index.js";
 import { reconcileContacts } from "../contact/reconcile.js";
+import { ensureRegion, RegionSet } from "../regions.js";
 import type { LeadStore } from "../db.js";
 import { runDiscovery } from "../discovery/index.js";
 import { exportCsv } from "../export.js";
@@ -61,73 +62,125 @@ const commonStart = async (results: StepResult[], store: LeadStore, cfg: Outreac
     });
 };
 
-const finish = (store: LeadStore, region: RegionConfig, cfg: OutreachConfig, opts: AgentOptions, key: string, results: StepResult[], started: string) => {
-    store.outreach.setState(key, JSON.stringify({ started_at: started, finished_at: new Date().toISOString(), steps: results }));
+/** Every active region (config/region.json's city is region #1). */
+export function loadRegions(store: LeadStore, base: RegionConfig): RegionSet {
+    store.regions.ensureDefault(base);
+    return new RegionSet(base, store.regions.list().filter((r) => r.active));
+}
+
+const finish = (store: LeadStore, set: RegionSet, cfg: OutreachConfig, opts: AgentOptions, key: string, results: StepResult[], started: string, extra: Record<string, unknown> = {}) => {
+    store.outreach.setState(key, JSON.stringify({ started_at: started, finished_at: new Date().toISOString(), steps: results, ...extra }));
     const out = join(opts.stateDir, "output");
     try {
         exportCsv(store, join(out, "leads.csv"));
-        exportQueues(store, region, { email: join(out, "email_queue.csv"), fallback: join(out, "fallback_queue.csv") });
+        exportQueues(store, set, { email: join(out, "email_queue.csv"), fallback: join(out, "fallback_queue.csv") });
     } catch (err) {
         log.warn(`agent: could not write CSVs: ${errMessage(err)}`);
     }
-    writeSnapshot(join(opts.stateDir, "dashboard.json"), buildSnapshot(store, region, cfg));
+    writeSnapshot(join(opts.stateDir, "dashboard.json"), buildSnapshot(store, set, cfg));
     log.info(`agent: ${key} done: ${results.map((r) => `${r.step} ${r.ok ? "ok" : "FAILED"}`).join(", ")}`);
     return results;
 };
 
-export async function runWeekly(store: LeadStore, region: RegionConfig, cfg: OutreachConfig, opts: AgentOptions): Promise<StepResult[]> {
-    const started = new Date().toISOString();
-    const results: StepResult[] = [];
-    await commonStart(results, store, cfg, opts);
-    if (opts.discover) {
-        await step(results, store, "discover", async () => {
-            const d = await runDiscovery(store, region);
+/** Paid-call budget left this month. Hunter verifications share the Hunter pool. */
+function budgetLeft(store: LeadStore, cfg: OutreachConfig) {
+    const o = store.outreach;
+    const hunter = Math.max(0, cfg.limits.hunter_calls_per_month - o.usage("hunter"));
+    return { hunter, verify: verifierName() === "hunter" ? hunter : Math.max(0, cfg.limits.zerobounce_calls_per_month - o.usage("zerobounce")) };
+}
+
+/** Discover, audit and find contacts for one region. */
+async function regionSteps(results: StepResult[], store: LeadStore, set: RegionSet, regionId: number, cfg: OutreachConfig, opts: AgentOptions, discover: boolean) {
+    const region = set.config(regionId)!;
+    const label = set.label(regionId) ?? region.city;
+    if (discover) {
+        await step(results, store, `discover ${label}`, async () => {
+            const d = await runDiscovery(store, region, regionId);
+            store.regions.markScouted(regionId);
             return `${d.seen} found, ${d.inserted} new, ${d.failures} failure(s)`;
         });
     }
-    await step(results, store, "audit", async () => {
-        const a = await runAudit(store, region, { ...opts.audit, upgrade: true });
+    await step(results, store, `audit ${label}`, async () => {
+        const a = await runAudit(store, region, { ...opts.audit, upgrade: true, regionId });
         return `${a.attempted} audited ${JSON.stringify(a.byStatus)}`;
     });
-    await step(results, store, "reconcile", () => {
+    await step(results, store, `contacts ${label}`, async () => {
+        // Unattended: the monthly budget is the approval.
+        const c = await runContacts(store, region, { ...opts.contacts, regionId, budget: budgetLeft(store, cfg), confirm: async () => true });
+        return `${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.deferred} waiting for credits${region.allowed_to_email === true ? "" : " (email is off for this region)"}`;
+    });
+}
+
+const reconcileStep = (results: StepResult[], store: LeadStore) =>
+    step(results, store, "reconcile", () => {
         const r = reconcileContacts(store);
         const removed = Object.values(r.notOwnedSite).reduce((s, x) => s + x.results, 0) + r.domainMismatch.length;
         return `${removed} stage-3 result(s) invalidated, ${r.unverifiedRetried} unverified retried, ${r.freeProviderFlagged.length} flagged`;
     });
-    await step(results, store, "contacts", async () => {
-        const o = store.outreach;
-        const budget = {
-            hunter: Math.max(0, cfg.limits.hunter_calls_per_month - o.usage("hunter")),
-            // Hunter verifications share the Hunter pool (handled in runContacts).
-            verify: verifierName() === "hunter"
-                ? Math.max(0, cfg.limits.hunter_calls_per_month - o.usage("hunter"))
-                : Math.max(0, cfg.limits.zerobounce_calls_per_month - o.usage("zerobounce")),
-        };
-        // Unattended: the monthly budget is the approval.
-        const c = await runContacts(store, region, { ...opts.contacts, budget, confirm: async () => true });
-        return `${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.deferred} waiting for credits`;
-    });
-    await step(results, store, "draft", () => {
-        const d = runDraft(store, region, cfg);
-        return `${d.emailDrafts} email(s)${d.batchId ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
-    });
-    return finish(store, region, cfg, opts, "last_weekly", results, started);
-}
 
-export async function runTick(store: LeadStore, region: RegionConfig, cfg: OutreachConfig, opts: AgentOptions): Promise<StepResult[]> {
+export async function runWeekly(store: LeadStore, base: RegionConfig, cfg: OutreachConfig, opts: AgentOptions): Promise<StepResult[]> {
     const started = new Date().toISOString();
     const results: StepResult[] = [];
     await commonStart(results, store, cfg, opts);
+    const set = loadRegions(store, base); // after actions, so region switches apply
+    await reconcileStep(results, store);
+    for (const r of set.rows) await regionSteps(results, store, set, r.id, cfg, opts, opts.discover);
+    await step(results, store, "draft", () => {
+        const d = runDraft(store, set, cfg);
+        return `${d.emailDrafts} email(s)${d.batchId ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+    });
+    return finish(store, set, cfg, opts, "last_weekly", results, started);
+}
+
+/** Scout one place by name: work out the region, then find, audit and draft for it. */
+export async function runScout(
+    store: LeadStore,
+    base: RegionConfig,
+    cfg: OutreachConfig,
+    opts: AgentOptions,
+    place: string,
+    keywords: string[] | null,
+    resolve?: Parameters<typeof ensureRegion>[2]["resolve"],
+): Promise<StepResult[]> {
+    const started = new Date().toISOString();
+    const results: StepResult[] = [];
+    await commonStart(results, store, cfg, opts);
+    let regionId: number | null = null;
+    await step(results, store, "region", async () => {
+        const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+        if (!apiKey && !resolve) throw new Error("GOOGLE_PLACES_API_KEY is not set");
+        store.regions.ensureDefault(base);
+        const { region, created } = await ensureRegion(store.regions, place, { apiKey: apiKey ?? "", language: base.language, keywords: keywords ?? undefined, resolve });
+        regionId = region.id;
+        return `${created ? "new" : "existing"} region: ${region.city}, ${region.country} (${region.country_code}), ${region.radius_km} km, ${region.timezone}, ${region.currency}, email ${region.allowed_to_email === 1 ? "on" : "off"}`;
+    });
+    const set = loadRegions(store, base);
+    if (regionId != null) {
+        await reconcileStep(results, store);
+        await regionSteps(results, store, set, regionId, cfg, opts, true);
+        await step(results, store, "draft", () => {
+            const d = runDraft(store, set, cfg, regionId);
+            return `${d.emailDrafts} email(s)${d.batchId ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+        });
+    }
+    return finish(store, set, cfg, opts, "last_scout", results, started, { place, region_id: regionId });
+}
+
+export async function runTick(store: LeadStore, base: RegionConfig, cfg: OutreachConfig, opts: AgentOptions): Promise<StepResult[]> {
+    const started = new Date().toISOString();
+    const results: StepResult[] = [];
+    await commonStart(results, store, cfg, opts);
+    const set = loadRegions(store, base);
     await step(results, store, "send", async () => {
         const mail = mailSettingsFromEnv();
         if (!mail) return "skipped: no SMTP credentials";
         const transport = smtpTransport(mail);
         try {
-            const s = await runSend(store, region, cfg, { transport, from: mail.from });
+            const s = await runSend(store, set, cfg, { transport, from: mail.from });
             return `${s.sent} sent, ${s.failed} failed, ${s.skipped} skipped${s.stoppedBecause ? ` (${s.stoppedBecause})` : ""}`;
         } finally {
             transport.close();
         }
     });
-    return finish(store, region, cfg, opts, "last_tick", results, started);
+    return finish(store, set, cfg, opts, "last_tick", results, started);
 }

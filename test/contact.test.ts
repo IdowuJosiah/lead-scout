@@ -296,7 +296,7 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         exportCsv(store, join(dir, "leads.csv"));
         assert.deepEqual(exportQueues(store, config, q), { email: 4, fallback: 2, noWebsite: 0 });
         const emailCsv = readFileSync(q.email, "utf8").trim().split("\r\n");
-        assert.equal(emailCsv[0], "name,email,email_type,verification_status,evidence,lead_score,country,risk_flag,email_source,website,timezone,send_window,legal_basis");
+        assert.equal(emailCsv[0], "name,email,email_type,verification_status,evidence,lead_score,country,risk_flag,email_source,website,timezone,send_window,legal_basis,region");
         assert.ok(emailCsv[1]!.startsWith("brandthree.ng,"), "300 reviews beats 12 at the same score");
         assert.ok(!readFileSync(q.email, "utf8").includes("ade.okafor@brandtwo.ng"), "invalid addresses never queued");
         assert.match(readFileSync(q.fallback, "utf8"), /https:\/\/wa\.me\/2348099999999/);
@@ -419,12 +419,12 @@ describe("contacts stage (end to end, APIs mocked)", { timeout: 120_000 }, () =>
         const q = { email: join(dir, "nosite_email.csv"), fallback: join(dir, "nosite_fallback.csv") };
         assert.deepEqual(exportQueues(store, config, q), { email: 0, fallback: 4, noWebsite: 4 }, "closed and other-region leads left out");
         const lines = readFileSync(q.fallback, "utf8").trim().split("\r\n");
-        assert.equal(lines[0], "name,channel,contact,channel_note,phone,reason,lead_score,country,website,evidence,timezone,send_window,lead_type,category");
+        assert.equal(lines[0], "name,channel,contact,channel_note,phone,reason,lead_score,country,website,evidence,timezone,send_window,lead_type,category,region");
         assert.ok(lines[1]!.startsWith("Mobile Many Reviews,whatsapp,https://wa.me/2348055551234,"), "same score: more reviews first");
         assert.ok(lines[2]!.startsWith("Mobile Few Reviews,whatsapp,https://wa.me/2348031234567,"));
         assert.match(lines.find((l) => l.startsWith("Landline Only"))!, /^Landline Only,phone,/);
         assert.match(lines.find((l) => l.startsWith("No Phone"))!, /^No Phone,none,,no phone number listed,/);
-        assert.ok(lines.slice(1).every((l) => l.includes(",no_website,skincare")));
+        assert.ok(lines.slice(1).every((l) => l.includes(",no_website,skincare,")));
         assert.ok(lines.slice(1).every((l) => l.includes("no website listed by google_places")));
         store.close();
     });

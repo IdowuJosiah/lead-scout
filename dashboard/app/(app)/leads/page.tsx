@@ -6,8 +6,8 @@ import { CLASS_LABEL } from "@/lib/format";
 
 const PAGE = 100;
 
-export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ msg?: string; q?: string; cls?: string; page?: string }> }) {
-    const { msg, q = "", cls = "", page = "1" } = await searchParams;
+export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ msg?: string; q?: string; cls?: string; r?: string; page?: string }> }) {
+    const { msg, q = "", cls = "", r = "", page = "1" } = await searchParams;
     const { snap, error } = await loadDashboard();
     if (!snap)
         return (
@@ -18,16 +18,18 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                 {!error ? <NoData /> : null}
             </>
         );
+    const regions = snap.regions ?? [];
     const needle = q.trim().toLowerCase();
     const filtered = snap.leads.filter(
         (l) =>
             (!cls || l.website_class === cls) &&
+            (!r || String(l.region_id) === r) &&
             (!needle || [l.name, l.category, l.website, l.phone].some((v) => v?.toLowerCase().includes(needle))),
     );
     const p = Math.max(1, Number(page) || 1);
     const rows = filtered.slice((p - 1) * PAGE, p * PAGE);
     const pages = Math.ceil(filtered.length / PAGE);
-    const qs = (n: number) => `?${new URLSearchParams({ ...(q ? { q } : {}), ...(cls ? { cls } : {}), page: String(n) })}`;
+    const qs = (n: number) => `?${new URLSearchParams({ ...(q ? { q } : {}), ...(cls ? { cls } : {}), ...(r ? { r } : {}), page: String(n) })}`;
 
     return (
         <>
@@ -44,6 +46,16 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                         </option>
                     ))}
                 </select>
+                {regions.length > 1 ? (
+                    <select name="r" defaultValue={r} style={{ flex: "0 1 200px" }}>
+                        <option value="">All places</option>
+                        {regions.map((x) => (
+                            <option key={x.id} value={x.id}>
+                                {x.label}
+                            </option>
+                        ))}
+                    </select>
+                ) : null}
                 <button className="btn btn-quiet" type="submit">
                     Filter
                 </button>
@@ -71,6 +83,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                                     <strong>{l.name}</strong>
                                     <div className="muted small">
                                         {l.category}
+                                        {l.region && regions.length > 1 ? ` · ${l.region}` : ""}
                                         {l.phone ? ` · ${l.phone}` : ""}
                                     </div>
                                     {l.evidence ? (

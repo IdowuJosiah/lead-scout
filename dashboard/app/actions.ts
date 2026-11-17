@@ -92,3 +92,45 @@ export async function runNow(form: FormData) {
     }
     back("/", which === "weekly.yml" ? "Weekly run started. It can take 30-90 minutes; refresh later." : "Send run started. Refresh in a few minutes.");
 }
+
+/** Letters (any script), digits, spaces and simple punctuation: enough for "Austin, Texas" or "Lekki Phase 1". */
+const PLACE_RE = /^[\p{L}\p{M}\p{N} ,.'()&\/-]{2,80}$/u;
+
+export async function scout(form: FormData) {
+    await requireSession();
+    const place = String(form.get("place") ?? "").replace(/\s+/g, " ").trim();
+    const keywordsRaw = String(form.get("keywords") ?? "").replace(/\s+/g, " ").trim();
+    if (!PLACE_RE.test(place)) back("/regions", "Type a place name, e.g. Dubai or Austin, Texas (2-80 letters, no symbols).");
+    const keywords = keywordsRaw
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean);
+    if (keywords.length > 15 || keywords.some((k) => !PLACE_RE.test(k))) back("/regions", "Keywords: up to 15 short words or phrases, separated by commas.");
+    try {
+        await runWorkflow("scout.yml", { place, keywords: keywords.join(", ") });
+    } catch (err) {
+        back("/regions", (err as Error).message);
+    }
+    revalidatePath("/", "layout");
+    back("/regions", `Scouting ${place}. Finding, auditing and drafting takes 30-90 minutes; new leads will show up here and in Leads.`);
+}
+
+export async function setRegionEmail(form: FormData) {
+    await requireSession();
+    const id = int(form.get("region_id"));
+    const allowed = form.get("allowed") === "true";
+    if (!id) back("/regions", "That region is not valid.");
+    if (allowed && form.get("confirm") !== "on") back("/regions", "Tick the box to confirm you may email businesses there before turning email on.");
+    await saveAction({ type: "set_region_email", region_id: id!, allowed });
+    revalidatePath("/", "layout");
+    back("/regions", allowed ? "Email turned on. The next run will look up emails and draft them for your approval." : "Email turned off. Only WhatsApp messages will be drafted there.");
+}
+
+export async function removeRegion(form: FormData) {
+    await requireSession();
+    const id = int(form.get("region_id"));
+    if (!id) back("/regions", "That region is not valid.");
+    await saveAction({ type: "set_region_active", region_id: id!, active: false });
+    revalidatePath("/", "layout");
+    back("/regions", "Removed from weekly scouting. Its leads and messages stay; scout it again any time to bring it back.");
+}

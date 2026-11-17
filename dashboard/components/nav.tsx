@@ -7,6 +7,7 @@ export function Nav({ counts }: { counts: { approve: number; chats: number; repl
     const path = usePathname();
     const tabs = [
         { href: "/", label: "Overview" },
+        { href: "/regions", label: "Scout" },
         { href: "/approve", label: "Approve emails", count: counts.approve },
         { href: "/whatsapp", label: "WhatsApp", count: counts.chats },
         { href: "/leads", label: "Leads" },

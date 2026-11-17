@@ -21,6 +21,7 @@ function ChatCard({ it }: { it: OutreachItem }) {
             <div className="row small" style={{ marginTop: 4 }}>
                 {it.website_class ? <span className="badge">{CLASS_LABEL[it.website_class] ?? it.website_class}</span> : null}
                 {it.category ? <span className="badge">{it.category}</span> : null}
+                {it.region ? <span className="badge">{it.region}</span> : null}
                 <span className="muted">{it.channel === "whatsapp" ? "WhatsApp" : "Phone"}: {it.recipient}</span>
             </div>
             <div className="message">{it.body}</div>

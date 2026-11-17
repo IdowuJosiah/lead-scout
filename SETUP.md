@@ -90,6 +90,7 @@ The dashboard reads the agent's state and records your clicks through a limited 
 
 ## Using it
 
+- **New place:** open **Scout**, type the place (e.g. Dubai) and tap **Scout**. Results show up in 30-90 minutes. Email is off for a new country until you tick the box and tap **Turn email on**; check that country's cold-email rules first.
 - **Monday, after the weekly run:** open **Approve emails**, read each email, edit or untick any, and tap **Approve ticked emails**. Sending starts right away (inside the window), a few minutes apart, and continues hourly until the batch is done.
 - **WhatsApp:** tap **Open in WhatsApp**, press send in WhatsApp, come back and tap **I sent it**.
 - **Replies:** answer them from your own mail app. The dashboard shows who replied, who asked to stop, and what bounced.

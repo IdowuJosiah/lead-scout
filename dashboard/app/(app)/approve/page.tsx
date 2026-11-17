@@ -20,6 +20,7 @@ function EmailCard({ it }: { it: OutreachItem }) {
             </div>
             <div className="row small" style={{ marginTop: 6 }}>
                 <span>To: {it.recipient}</span>
+                {it.region ? <span className="badge">{it.region}</span> : null}
                 {it.verification_status ? <span className={`badge ${it.verification_status === "valid" ? "good" : "warn"}`}>{it.verification_status}</span> : null}
                 {it.risk_flag ? <span className="badge warn">{it.risk_flag}</span> : null}
                 {it.website ? (

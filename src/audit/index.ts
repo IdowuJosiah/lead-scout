@@ -27,6 +27,8 @@ export interface AuditOptions {
     reaudit: boolean;
     /** Also re-audit rows made by an older audit version. */
     upgrade?: boolean;
+    /** Only leads found in this region. */
+    regionId?: number;
     limit?: number;
     ids?: number[];
     lighthouse: boolean;
@@ -302,7 +304,7 @@ export async function runAudit(
     opts: AuditOptions,
     onLeadDone?: (done: number, total: number) => void,
 ): Promise<AuditSummary> {
-    const leads = store.leadsToAudit({ reaudit: opts.reaudit, upgrade: opts.upgrade, limit: opts.limit, ids: opts.ids });
+    const leads = store.leadsToAudit({ reaudit: opts.reaudit, upgrade: opts.upgrade, limit: opts.limit, ids: opts.ids, regionId: opts.regionId });
     const summary: AuditSummary = { attempted: 0, byStatus: {} };
     log.info(`audit: ${leads.length} lead(s) to audit`);
     if (!leads.length) return summary;

@@ -2,6 +2,7 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { OUTREACH_SCHEMA, OutreachStore } from "./outreach/store.js";
+import { REGIONS_SCHEMA, RegionStore } from "./regions.js";
 
 /**
  * SQLite storage (node:sqlite, no native addon). Every write is an upsert keyed
@@ -138,6 +139,8 @@ export interface LeadRow {
     business_status?: string | null;
     /** Computed: owned_site, social, messaging, link_in_bio, hosted_storefront, dead_listing, none. */
     website_class?: string | null;
+    /** The region (see regions.ts) the lead was found in. */
+    region_id?: number | null;
 }
 
 export type AuditStatus =
@@ -211,6 +214,7 @@ export interface NewLead {
     rating?: number | null;
     user_ratings_total?: number | null;
     business_status?: string | null;
+    region_id?: number | null;
 }
 
 export type EmailSource = "mailto" | "page_text" | "hunter";
@@ -277,6 +281,7 @@ export function isDeadError(error: string): boolean {
 export class LeadStore {
     readonly db: DatabaseSync;
     readonly outreach: OutreachStore;
+    readonly regions: RegionStore;
 
     constructor(path: string) {
         if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
@@ -284,8 +289,10 @@ export class LeadStore {
         this.db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
         this.db.exec(SCHEMA);
         this.db.exec(OUTREACH_SCHEMA);
+        this.db.exec(REGIONS_SCHEMA);
         this.migrate();
         this.outreach = new OutreachStore(this.db);
+        this.regions = new RegionStore(this.db);
     }
 
     /** Bring databases made by older versions up to the current schema. */
@@ -296,7 +303,7 @@ export class LeadStore {
                 if (!have.has(name)) this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
             }
         };
-        addColumns("leads", { country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT" });
+        addColumns("leads", { country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT", region_id: "INTEGER" });
         const auditCols = new Set((this.db.prepare("PRAGMA table_info(audits)").all() as { name: string }[]).map((c) => c.name));
         addColumns("audits", { password_protected: "INTEGER", password_signal: "TEXT", commerce_pages: "TEXT", unreachable_runs: "INTEGER", audit_version: "INTEGER" });
         if (!auditCols.has("audit_version")) {
@@ -337,6 +344,7 @@ export class LeadStore {
                         website_domain = COALESCE(website_domain, @website_domain),
                         source_ref = COALESCE(source_ref, @source_ref),
                         country = COALESCE(country, @country),
+                        region_id = COALESCE(region_id, @region_id),
                         rating = COALESCE(@rating, rating),
                         user_ratings_total = COALESCE(@user_ratings_total, user_ratings_total),
                         business_status = COALESCE(@business_status, business_status),
@@ -356,6 +364,7 @@ export class LeadStore {
                         source_ref: existing.source === lead.source ? lead.source_ref : null,
                         high_priority: website ? 0 : 1,
                         country: lead.country,
+                        region_id: lead.region_id,
                         rating: lead.rating,
                         user_ratings_total: lead.user_ratings_total,
                         business_status: lead.business_status,
@@ -369,10 +378,10 @@ export class LeadStore {
             .prepare(
                 `INSERT INTO leads (dedupe_key, name, category, address, phone, website_url, website_domain,
                                     source, source_ref, discovered_at, updated_at, high_priority, country,
-                                    rating, user_ratings_total, business_status)
+                                    rating, user_ratings_total, business_status, region_id)
                  VALUES (@dedupe_key, @name, @category, @address, @phone, @website_url, @website_domain,
                          @source, @source_ref, @now, @now, @high_priority, @country,
-                         @rating, @user_ratings_total, @business_status)`,
+                         @rating, @user_ratings_total, @business_status, @region_id)`,
             )
             .run(
                 params({
@@ -381,6 +390,7 @@ export class LeadStore {
                     rating: lead.rating ?? null,
                     user_ratings_total: lead.user_ratings_total ?? null,
                     business_status: lead.business_status ?? null,
+                    region_id: lead.region_id ?? null,
                     now,
                     high_priority: lead.website_url ? 0 : 1,
                 }),
@@ -389,8 +399,9 @@ export class LeadStore {
     }
 
     /** Leads with a website that need auditing. */
-    leadsToAudit(opts: { reaudit: boolean; upgrade?: boolean; limit?: number; ids?: number[] }): LeadRow[] {
+    leadsToAudit(opts: { reaudit: boolean; upgrade?: boolean; limit?: number; ids?: number[]; regionId?: number }): LeadRow[] {
         const where = ["l.website_url IS NOT NULL"];
+        if (opts.regionId != null) where.push(`l.region_id = ${Number(opts.regionId)}`);
         if (!opts.reaudit) {
             const pending = [
                 "a.lead_id IS NULL",
@@ -467,8 +478,9 @@ export class LeadStore {
     // ---- Stage 3: contacts ----
 
     /** Leads eligible for contact finding: scored high enough and with a loaded site. */
-    leadsForContact(opts: { minScore: number; recontact: boolean; limit?: number; ids?: number[] }): { lead: LeadRow; audit: AuditRow }[] {
+    leadsForContact(opts: { minScore: number; recontact: boolean; limit?: number; ids?: number[]; regionId?: number }): { lead: LeadRow; audit: AuditRow }[] {
         const where = ["l.lead_score >= @min", "a.status = 'ok'"];
+        if (opts.regionId != null) where.push(`l.region_id = ${Number(opts.regionId)}`);
         if (!opts.recontact) where.push("(r.lead_id IS NULL OR r.outcome = 'failed')");
         if (opts.ids?.length) where.push(`l.id IN (${opts.ids.map(Number).join(",")})`);
         const rows = this.db

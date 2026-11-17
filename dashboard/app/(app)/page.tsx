@@ -60,6 +60,12 @@ export default async function Overview({ searchParams }: { searchParams: Promise
     const waiting = snap.batches.find((b) => b.status === "awaiting_approval" && !b.pending);
     const waitingCount = waiting?.items.filter((i) => i.status === "draft").length ?? 0;
     const chats = snap.chats.filter((c) => c.status === "draft" && !c.pending).length;
+    const regions = snap.regions ?? [];
+    const emailOff = regions.length
+        ? regions.filter((r) => r.allowed_to_email !== true)
+        : snap.region.allowed_to_email !== true
+          ? [{ label: snap.region.city }]
+          : [];
     const s = snap.stats;
     const tiles: [string, number | string][] = [
         ["Leads", s.leads ?? 0],
@@ -75,7 +81,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             <div className="spread">
                 <h1>Overview</h1>
                 <span className="muted small">
-                    {snap.region.city}, {snap.region.country} · updated {when(snap.generated_at, tz)}
+                    {regions.length > 1 ? `${regions.length} places` : `${snap.region.city}, ${snap.region.country}`} · updated {when(snap.generated_at, tz)}
                 </span>
             </div>
             <Flash msg={msg} />
@@ -84,8 +90,10 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             {!snap.sender.configured ? (
                 <div className="notice warn">Add your name in config/outreach.json (sender.name) so the agent can write messages.</div>
             ) : null}
-            {snap.region.allowed_to_email !== true ? (
-                <div className="notice warn">Email is switched off for this region (allowed_to_email in config/region.json). Only WhatsApp messages will be drafted.</div>
+            {emailOff.length ? (
+                <div className="notice">
+                    Email is off for {emailOff.map((r) => r.label).join(", ")}: only WhatsApp messages are drafted there. <Link href="/regions">Change it →</Link>
+                </div>
             ) : null}
             {waitingCount ? (
                 <div className="notice warn">
@@ -119,10 +127,12 @@ export default async function Overview({ searchParams }: { searchParams: Promise
 
             <h2>Agent runs</h2>
             <p className="muted small">
-                Weekly run: Mondays early morning. Sending: hourly, {snap.region.send_window.days} {snap.region.send_window.start}–{snap.region.send_window.end} ({tz}).
+                Weekly run: Mondays early morning, every place. Sending: hourly, each email only inside its own place&apos;s business hours
+                {regions.length > 1 ? "" : ` (${snap.region.send_window.days} ${snap.region.send_window.start}–${snap.region.send_window.end}, ${tz})`}.
             </p>
             <Run title="Weekly run (find, audit, draft)" run={snap.runs.weekly} tz={tz} />
             <Run title="Latest send run" run={snap.runs.tick} tz={tz} />
+            {snap.runs.scout ? <Run title={`Latest scout${snap.runs.scout.place ? `: ${snap.runs.scout.place}` : ""}`} run={snap.runs.scout} tz={tz} /> : null}
             <div className="row">
                 <form action={runNow}>
                     <input type="hidden" name="workflow" value="weekly" />

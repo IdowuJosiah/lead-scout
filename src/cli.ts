@@ -11,7 +11,7 @@ import { LeadStore } from "./db.js";
 import { runDiscovery, SOURCES } from "./discovery/index.js";
 import { exportCsv } from "./export.js";
 import { errMessage, log, setLogLevel } from "./log.js";
-import { runTick, runWeekly } from "./agent/index.js";
+import { loadRegions, runScout, runTick, runWeekly } from "./agent/index.js";
 import { buildSnapshot, writeSnapshot } from "./agent/snapshot.js";
 import { loadOutreachConfig } from "./outreach/config.js";
 import { runDraft } from "./outreach/draft.js";
@@ -35,6 +35,7 @@ Commands:
   snapshot    Write dashboard.json
   agent weekly   Unattended: actions, inbox, discover, audit, contacts (within budget), draft
   agent tick     Unattended: actions, inbox, send approved emails
+  agent scout    Scout any place: --place "Dubai" [--keywords "perfume,abayas"]
   failures    Show recent per-lead failures
   stats       Show row counts
 
@@ -134,6 +135,7 @@ async function main() {
             outreach: { type: "string", default: "config/outreach.json" },
             lighthouse: { type: "boolean", default: false },
             "no-discover": { type: "boolean", default: false },
+            place: { type: "string" },
             out: { type: "string", default: "output/leads.csv" },
             screenshots: { type: "string", default: "output/screenshots" },
             country: { type: "string" },
@@ -224,7 +226,7 @@ async function main() {
         const writeCsv = (why: string) => {
             try {
                 const n = exportCsv(store, out);
-                const q = config ? exportQueues(store, config, queues) : null;
+                const q = config ? exportQueues(store, loadRegions(store, config), queues) : null;
                 log.info(`csv: wrote ${n} lead(s) to ${values.out}${q ? `, ${q.email} to email_queue.csv, ${q.fallback} to fallback_queue.csv (${q.noWebsite} with no website)` : ""} (${why})`);
             } catch (err) {
                 log.warn(`csv: could not write CSVs: ${errMessage(err)}`);
@@ -294,7 +296,7 @@ async function main() {
                 process.stdout.write(`${JSON.stringify(store.counts(), null, 2)}\n`);
                 break;
             case "draft": {
-                runDraft(store, config!, loadOutreachConfig(values.outreach));
+                runDraft(store, loadRegions(store, config!), loadOutreachConfig(values.outreach));
                 writeCsv("drafted");
                 break;
             }
@@ -303,7 +305,7 @@ async function main() {
                 if (!mail) throw new Error("Set SMTP_USER and SMTP_PASS (in .env) to send email");
                 const transport = smtpTransport(mail);
                 try {
-                    await runSend(store, config!, loadOutreachConfig(values.outreach), { transport, from: mail.from });
+                    await runSend(store, loadRegions(store, config!), loadOutreachConfig(values.outreach), { transport, from: mail.from });
                 } finally {
                     transport.close();
                 }
@@ -318,21 +320,28 @@ async function main() {
             }
             case "snapshot": {
                 const path = join(stateDir ?? dirname(out), "dashboard.json");
-                writeSnapshot(path, buildSnapshot(store, config!, loadOutreachConfig(values.outreach)));
+                writeSnapshot(path, buildSnapshot(store, loadRegions(store, config!), loadOutreachConfig(values.outreach)));
                 log.info(`snapshot: wrote ${path}`);
                 break;
             }
             case "agent": {
                 const which = positionals[1];
-                if (which !== "weekly" && which !== "tick") throw new Error('Use "agent weekly" or "agent tick"');
+                if (which !== "weekly" && which !== "tick" && which !== "scout") throw new Error('Use "agent weekly", "agent tick" or "agent scout --place <name>"');
                 const agentOpts = {
                     stateDir: stateDir ?? resolve("."),
                     audit: { ...auditOpts, lighthouse: values.lighthouse, screenshotsDir: join(stateDir ?? ".", "output", "screenshots") },
                     contacts: contactOpts,
                     discover: !values["no-discover"],
                 };
-                const run = which === "weekly" ? runWeekly : runTick;
-                const steps = await run(store, config!, loadOutreachConfig(values.outreach), agentOpts);
+                const outreachCfg = loadOutreachConfig(values.outreach);
+                let steps;
+                if (which === "scout") {
+                    if (!values.place?.trim()) throw new Error('Name a place: agent scout --place "Dubai"');
+                    const kw = values.keywords ? values.keywords.split(",").map((k) => k.trim()).filter(Boolean) : null;
+                    steps = await runScout(store, config!, outreachCfg, agentOpts, values.place, kw);
+                } else {
+                    steps = await (which === "weekly" ? runWeekly : runTick)(store, config!, outreachCfg, agentOpts);
+                }
                 if (steps.every((s) => !s.ok)) process.exitCode = 1;
                 break;
             }

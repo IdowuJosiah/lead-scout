@@ -30,6 +30,8 @@ export interface PaidPlan {
 
 export interface ContactOptions {
     minScore: number;
+    /** Only leads found in this region. */
+    regionId?: number;
     recontact: boolean;
     limit?: number;
     ids?: number[];

@@ -1,6 +1,7 @@
 import { createTransport, type Transporter } from "nodemailer";
 import type { RegionConfig } from "../config.js";
 import { emailAllowed } from "../contact/index.js";
+import { RegionSet, singleRegionSet } from "../regions.js";
 import type { LeadStore } from "../db.js";
 import { errMessage, log } from "../log.js";
 import { sleep } from "../rateLimit.js";
@@ -54,7 +55,9 @@ export interface SendSummary {
  * emails_per_run per run and daily_email_limit per local day, with a random
  * gap between messages. Re-checks the do-not-contact list right before each.
  */
-export async function runSend(store: LeadStore, region: RegionConfig, cfg: OutreachConfig, deps: SendDeps): Promise<SendSummary> {
+export async function runSend(store: LeadStore, regions: RegionConfig | RegionSet, cfg: OutreachConfig, deps: SendDeps): Promise<SendSummary> {
+    const set = regions instanceof RegionSet ? regions : singleRegionSet(regions);
+    const home = set.base; // the mailbox's own timezone, for the daily limit
     const o = store.outreach;
     const now = deps.now ?? (() => new Date());
     const wait = deps.sleep ?? sleep;
@@ -71,35 +74,42 @@ export async function runSend(store: LeadStore, region: RegionConfig, cfg: Outre
         log.info(`send: ${why}`);
         return summary;
     };
-    if (!emailAllowed(region)) return stop(`allowed_to_email is not true for ${region.country_code}`);
 
     const queue = o.list("channel = 'email' AND status = 'approved'");
     if (!queue.length) return stop("nothing approved to send");
 
     const leads = new Map(store.allLeadsWithAudits().map(({ lead }) => [lead.id, lead]));
+    const outside = new Set<string>();
     for (const row of queue) {
         const t = now();
-        if (!inSendWindow(t, region.send_window, region.timezone)) return stop(`outside the send window (${region.send_window.days} ${region.send_window.start}-${region.send_window.end} ${region.timezone})`);
-        const today = localParts(t, region.timezone).dateKey;
-        const sentToday = o.list("channel = 'email' AND status = 'sent' AND sent_at IS NOT NULL").filter((r) => localParts(new Date(r.sent_at!), region.timezone).dateKey === today).length;
+        const today = localParts(t, home.timezone).dateKey;
+        const sentToday = o.list("channel = 'email' AND status = 'sent' AND sent_at IS NOT NULL").filter((r) => localParts(new Date(r.sent_at!), home.timezone).dateKey === today).length;
         if (sentToday >= cfg.limits.daily_email_limit) return stop(`daily limit reached (${cfg.limits.daily_email_limit})`);
         if (summary.sent >= cfg.limits.emails_per_run) return stop(`per-run limit reached (${cfg.limits.emails_per_run}); the rest go out on the next run`);
 
         const lead = leads.get(row.lead_id);
+        const region = lead ? set.forLead(lead) : null;
         const reason = !lead
             ? "lead no longer exists"
-            : (lead.country ?? region.country_code) !== region.country_code
-              ? `lead is in region ${lead.country}`
-              : o.leadHasReplied(row.lead_id)
-                ? "lead has replied"
-                : o.isSuppressed(row.recipient)
-                  ? "address is on the do-not-contact list"
-                  : !row.recipient
-                    ? "no recipient"
-                    : null;
+            : !region
+              ? "lead's region is unknown"
+              : !emailAllowed(region)
+                ? `email not permitted for ${region.city}, ${region.country_code} (allowed_to_email is not on)`
+                : o.leadHasReplied(row.lead_id)
+                  ? "lead has replied"
+                  : o.isSuppressed(row.recipient)
+                    ? "address is on the do-not-contact list"
+                    : !row.recipient
+                      ? "no recipient"
+                      : null;
         if (reason) {
             o.update(row.id, { status: "skipped", error: reason });
             summary.skipped++;
+            continue;
+        }
+        // Each email waits for business hours where the brand is.
+        if (!inSendWindow(t, region!.send_window, region!.timezone)) {
+            outside.add(`${region!.send_window.days} ${region!.send_window.start}-${region!.send_window.end} ${region!.timezone}`);
             continue;
         }
 
@@ -128,6 +138,7 @@ export async function runSend(store: LeadStore, region: RegionConfig, cfg: Outre
         }
     }
     o.settleBatches();
+    if (outside.size && !summary.sent) stop(`outside the send window (${[...outside].join("; ")})`);
     log.info(`send: ${summary.sent} sent, ${summary.failed} failed, ${summary.skipped} skipped`);
     return summary;
 }

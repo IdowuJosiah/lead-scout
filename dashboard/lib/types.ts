@@ -3,6 +3,8 @@
 export interface OutreachItem {
     id: number;
     lead_id: number;
+    region_id: number | null;
+    region: string | null;
     channel: "email" | "whatsapp" | "phone";
     name: string;
     category: string | null;
@@ -46,10 +48,33 @@ export interface RunInfo {
     started_at: string;
     finished_at: string;
     steps: StepResult[];
+    /** Scout runs only. */
+    place?: string;
+    region_id?: number | null;
+}
+
+export interface Region {
+    id: number;
+    label: string;
+    city: string;
+    country: string;
+    country_code: string;
+    timezone: string;
+    currency: string | null;
+    radius_km: number;
+    send_window: { days: string; start: string; end: string };
+    allowed_to_email: boolean | null;
+    keywords: string[] | null;
+    last_scouted_at: string | null;
+    leads: number;
+    /** Set by the dashboard when a click hasn't been applied by the agent yet. */
+    pending?: string;
 }
 
 export interface Lead {
     id: number;
+    region_id: number | null;
+    region: string | null;
     name: string;
     category: string | null;
     score: number | null;
@@ -88,11 +113,13 @@ export interface Snapshot {
         send_window: { days: string; start: string; end: string };
         allowed_to_email: boolean | null;
     };
+    /** Every place being scouted. Missing in snapshots from before regions existed. */
+    regions?: Region[];
     sender: { name: string; configured: boolean };
     limits: Record<string, number>;
     stats: Record<string, number>;
     usage: { month: string; verifier?: "hunter" | "zerobounce"; hunter: { used: number; limit: number }; zerobounce: { used: number; limit: number } };
-    runs: { weekly: RunInfo | null; tick: RunInfo | null };
+    runs: { weekly: RunInfo | null; tick: RunInfo | null; scout?: RunInfo | null };
     batches: Batch[];
     chats: OutreachItem[];
     replies: Reply[];
@@ -107,4 +134,6 @@ export type DashboardAction =
     | { id: string; at: string; type: "approve_batch"; batch_id: number; items: { id: number; approve: boolean; subject?: string; body?: string }[] }
     | { id: string; at: string; type: "whatsapp_done"; outreach_id: number }
     | { id: string; at: string; type: "skip"; outreach_id: number }
-    | { id: string; at: string; type: "do_not_contact"; lead_id: number };
+    | { id: string; at: string; type: "do_not_contact"; lead_id: number }
+    | { id: string; at: string; type: "set_region_email"; region_id: number; allowed: boolean }
+    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean };

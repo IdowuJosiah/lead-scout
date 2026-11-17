@@ -9,15 +9,16 @@ import { parseWebsite } from "../url.js";
 import { isFreeProvider, isOwnDomain } from "./classify.js";
 import { fallbackChannel } from "./fallback.js";
 import { emailAllowed } from "./index.js";
+import { RegionSet, singleRegionSet } from "../regions.js";
 
 const EMAIL_COLUMNS = [
     "name", "email", "email_type", "verification_status", "evidence", "lead_score", "country",
-    "risk_flag", "email_source", "website", "timezone", "send_window", "legal_basis",
+    "risk_flag", "email_source", "website", "timezone", "send_window", "legal_basis", "region",
 ] as const;
 
 const FALLBACK_COLUMNS = [
     "name", "channel", "contact", "channel_note", "phone", "reason", "lead_score", "country",
-    "website", "evidence", "timezone", "send_window", "lead_type", "category",
+    "website", "evidence", "timezone", "send_window", "lead_type", "category", "region",
 ] as const;
 
 /**
@@ -55,8 +56,9 @@ function writeCsv(path: string, columns: readonly string[], rows: Record<string,
  * find an email on), so they are added to the fallback queue here, with their
  * WhatsApp/phone channel. That needs no API call.
  */
-export function exportQueues(store: LeadStore, config: RegionConfig, paths: { email: string; fallback: string }) {
-    const window = `${config.send_window.days} ${config.send_window.start}-${config.send_window.end} ${config.timezone}`;
+export function exportQueues(store: LeadStore, regions: RegionConfig | RegionSet, paths: { email: string; fallback: string }) {
+    const set = regions instanceof RegionSet ? regions : singleRegionSet(regions);
+    const windowOf = (c: RegionConfig) => `${c.send_window.days} ${c.send_window.start}-${c.send_window.end} ${c.timezone}`;
     const emailRows: Record<string, unknown>[] = [];
     const fallback: { lead: LeadRow; row: Record<string, unknown> }[] = [];
     let otherRegion = 0;
@@ -69,7 +71,14 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
         .sort((a, b) => compareLeads(a.lead, b.lead));
 
     for (const { lead, result } of results) {
+        // Each lead is checked against its own region's settings.
+        const config = set.forLead(lead);
+        if (!config) {
+            otherRegion++;
+            continue;
+        }
         const country = lead.country ?? config.country_code;
+        const window = windowOf(config);
         // Stage 3 only applies to owned sites at or above the threshold (reconcile cleans the DB;
         // this guards the CSVs in case it hasn't run since the rules or scores changed).
         const excluded = stage3Exclusion(lead, result, config);
@@ -77,7 +86,7 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
         if (excluded === "not_owned") notOwned++;
         if (excluded === "below_score") belowScore++;
         if (excluded) continue;
-        const common = { name: lead.name, lead_score: lead.lead_score, country, website: lead.website_url, timezone: config.timezone, send_window: window };
+        const common = { name: lead.name, lead_score: lead.lead_score, country, website: lead.website_url, timezone: config.timezone, send_window: window, region: config.city };
         if (result.outcome === "email" && emailAllowed(config)) {
             emailRows.push({
                 ...common,
@@ -111,8 +120,10 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
     let noWebsite = 0;
     for (const { lead } of store.allLeadsWithAudits()) {
         if (lead.website_url || lead.lead_score == null) continue;
+        const config = set.forLead(lead);
+        if (!config) continue;
         const country = lead.country ?? config.country_code;
-        if (country !== config.country_code) continue;
+        const window = windowOf(config);
         const ch = fallbackChannel(lead.phone, country, null);
         noWebsite++;
         fallback.push({
@@ -132,6 +143,7 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
                 evidence: lead.evidence,
                 lead_type: "no_website",
                 category: lead.category,
+                region: config.city,
             },
         });
     }
@@ -140,8 +152,8 @@ export function exportQueues(store: LeadStore, config: RegionConfig, paths: { em
 
     writeCsv(paths.email, EMAIL_COLUMNS, emailRows);
     writeCsv(paths.fallback, FALLBACK_COLUMNS, fallbackRows);
-    if (otherRegion) log.warn(`queues: ${otherRegion} lead(s) from other regions left out; export with their region config`);
+    if (otherRegion) log.warn(`queues: ${otherRegion} lead(s) in no known region were left out`);
     if (notOwned) log.warn(`queues: ${notOwned} stage-3 result(s) left out: not an owned site or email at another domain. Run: npm run cli -- reconcile`);
-    if (belowScore) log.info(`queues: ${belowScore} lead(s) now score below contact_min_score (${config.contact_min_score}) and were left out`);
+    if (belowScore) log.info(`queues: ${belowScore} lead(s) now score below contact_min_score and were left out`);
     return { email: emailRows.length, fallback: fallbackRows.length, noWebsite };
 }

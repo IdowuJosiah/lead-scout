@@ -4,6 +4,7 @@ import type { AuditRow, LeadRow } from "../db.js";
 import { scoreLead } from "../scoring.js";
 import { classifyUrl, parseWebsite } from "../url.js";
 import type { OutreachConfig, Placeholder } from "./config.js";
+import { paymentExamples } from "../regions.js";
 
 /**
  * Turns a lead's stored measurements into a message. Every {placeholder} is
@@ -73,6 +74,7 @@ export function leadVars(lead: LeadRow, audit: AuditRow | null, region: RegionCo
         brand: lead.name.trim(),
         category: (lead.category ?? "").split(",")[0]?.trim().toLowerCase() || "local",
         city: region.city,
+        payment_examples: paymentExamples(region.country_code),
         sender_name: cfg.sender.name,
         sender_role: cfg.sender.role,
         sender_business_suffix: cfg.sender.business ? ` at ${cfg.sender.business}` : "",

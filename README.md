@@ -18,7 +18,18 @@ web dashboard; **[SETUP.md](SETUP.md)** walks through it step by step. In short:
 
 - **Weekly** (`.github/workflows/weekly.yml`): find, audit, find and verify emails within the monthly credit limits, then draft messages.
 - **Hourly on weekdays** (`.github/workflows/send.yml`): apply your dashboard clicks, read replies, and send approved emails inside the send window.
-- **Dashboard** (`dashboard/`, deployed on Vercel): approve or edit emails, one-tap WhatsApp, leads, replies.
+- **Scout** (`.github/workflows/scout.yml`, started from the dashboard's **Scout** tab): type any place (a city, area or country). The agent resolves it with one Google Places call (location, search radius, country, timezone, currency, local payment providers, working week), then finds, audits and drafts for it. The place is included in every weekly run from then on.
+- **Dashboard** (`dashboard/`, deployed on Vercel): scout places, approve or edit emails, one-tap WhatsApp, leads, replies.
+
+### Places (regions)
+
+`config/region.json` is the home place (region #1). Every place you scout is
+stored in the `regions` table with its own settings; each lead belongs to the
+place it was found in, and messages, payment examples and send windows follow
+that lead's place. **Email starts off for a scouted place in a new country**:
+cold-email rules differ by country, so you switch it on per place in the
+dashboard once you've checked. Until then those leads get WhatsApp drafts only
+and no Hunter credits are spent on them.
 
 The same steps can be run by hand:
 
@@ -28,6 +39,7 @@ npm run cli -- send                   # send approved emails now (needs SMTP_USE
 npm run cli -- inbox                  # read replies, stop requests, bounces
 npm run cli -- agent weekly --state state
 npm run cli -- agent tick --state state
+npm run cli -- agent scout --state state --place "Dubai" [--keywords "fashion boutique, skincare"]
 ```
 
 Messages are built from `config/outreach.json`. Each sentence there is tied

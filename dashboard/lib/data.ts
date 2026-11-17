@@ -116,13 +116,13 @@ export async function saveAction(action: DistributiveOmit<DashboardAction, "id" 
     return full;
 }
 
-/** Start a workflow run now (send.yml or weekly.yml). */
-export async function runWorkflow(file: "send.yml" | "weekly.yml"): Promise<void> {
+/** Start a workflow run now (send.yml, weekly.yml, or scout.yml with its inputs). */
+export async function runWorkflow(file: "send.yml" | "weekly.yml" | "scout.yml", inputs?: Record<string, string>): Promise<void> {
     if (localDir()) {
-        console.log(`[local] would start ${file}`);
+        console.log(`[local] would start ${file}`, inputs ?? "");
         return;
     }
-    const res = await gh(`/actions/workflows/${file}/dispatches`, { method: "POST", body: JSON.stringify({ ref: codeBranch() }) });
+    const res = await gh(`/actions/workflows/${file}/dispatches`, { method: "POST", body: JSON.stringify({ ref: codeBranch(), ...(inputs ? { inputs } : {}) }) });
     if (!res.ok) throw new Error(`GitHub: could not start ${file} (HTTP ${res.status}). Check the token has Actions: write.`);
 }
 
@@ -149,6 +149,14 @@ export function withPending(snap: Snapshot, actions: DashboardAction[]): Snapsho
             const lead = s.leads.find((l) => l.id === a.lead_id);
             if (lead) lead.pending = "do not contact";
             for (const it of items) if (it.lead_id === a.lead_id && it.status === "draft") it.pending = "do not contact";
+        } else if (a.type === "set_region_email") {
+            const r = s.regions?.find((x) => x.id === a.region_id);
+            if (r) {
+                r.allowed_to_email = a.allowed;
+                r.pending = a.allowed ? "email turning on" : "email turning off";
+            }
+        } else if (a.type === "set_region_active") {
+            if (!a.active && s.regions) s.regions = s.regions.filter((x) => x.id !== a.region_id);
         }
     }
     return s;

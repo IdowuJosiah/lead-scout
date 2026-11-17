@@ -19,7 +19,7 @@ export interface DiscoverySummary {
     failures: number;
 }
 
-export async function runDiscovery(store: LeadStore, config: RegionConfig): Promise<DiscoverySummary> {
+export async function runDiscovery(store: LeadStore, config: RegionConfig, regionId: number | null = null): Promise<DiscoverySummary> {
     const summary: DiscoverySummary = { seen: 0, inserted: 0, merged: 0, failures: 0 };
 
     for (const sourceName of config.sources) {
@@ -54,6 +54,7 @@ export async function runDiscovery(store: LeadStore, config: RegionConfig): Prom
                             source_ref: found.sourceRef,
                             dedupe_key: dedupeKey(found.name, found.address, site),
                             country: config.country_code,
+                            region_id: regionId,
                             rating: found.rating ?? null,
                             user_ratings_total: found.userRatingsTotal ?? null,
                             business_status: found.businessStatus ?? null,

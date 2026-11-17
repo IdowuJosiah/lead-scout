@@ -1,0 +1,69 @@
+# Scout any place on demand: the dashboard's Scout box starts this. It works
+# out the region (location, country, timezone, currency), then finds, audits
+# and drafts for it. Sends nothing; new countries start with email off.
+name: Scout a place
+
+on:
+  workflow_dispatch:
+    inputs:
+      place:
+        description: "Place to scout, e.g. Dubai or Austin, Texas"
+        required: true
+        type: string
+      keywords:
+        description: "Optional comma-separated categories (default: the usual list)"
+        required: false
+        type: string
+
+concurrency:
+  group: lead-scout-state
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Load state
+        run: bash scripts/state.sh pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Inputs reach the command only through environment variables, never
+      # pasted into the script, so text typed in the dashboard can't run as code.
+      - name: Scout
+        run: |
+          set -- agent scout --state state --place "$PLACE"
+          if [ -n "$KEYWORDS" ]; then set -- "$@" --keywords "$KEYWORDS"; fi
+          npm run cli -- "$@"
+        env:
+          PLACE: ${{ inputs.place }}
+          KEYWORDS: ${{ inputs.keywords }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+          ZEROBOUNCE_API_KEY: ${{ secrets.ZEROBOUNCE_API_KEY }}
+          EMAIL_VERIFIER: ${{ vars.EMAIL_VERIFIER }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+
+      - name: Save state
+        if: always()
+        run: bash scripts/state.sh push "scout run ${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

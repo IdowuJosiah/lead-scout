@@ -13,7 +13,9 @@ export type DashboardAction =
     | { id: string; at: string; type: "approve_batch"; batch_id: number; items: { id: number; approve: boolean; subject?: string; body?: string }[] }
     | { id: string; at: string; type: "whatsapp_done"; outreach_id: number }
     | { id: string; at: string; type: "skip"; outreach_id: number }
-    | { id: string; at: string; type: "do_not_contact"; lead_id: number };
+    | { id: string; at: string; type: "do_not_contact"; lead_id: number }
+    | { id: string; at: string; type: "set_region_email"; region_id: number; allowed: boolean }
+    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean };
 
 const MAX_SUBJECT = 200;
 const MAX_BODY = 5000;
@@ -68,6 +70,19 @@ export function applyAction(store: LeadStore, cfg: OutreachConfig, a: DashboardA
                 if (row.status === "draft" || row.status === "approved") o.update(row.id, { status: "skipped", error: "do not contact" });
             }
             return `lead ${a.lead_id} added to do-not-contact`;
+        }
+        case "set_region_email": {
+            const r = store.regions.get(a.region_id);
+            if (!r) throw new Error(`region ${a.region_id} not found`);
+            if (typeof a.allowed !== "boolean") throw new Error("allowed must be true or false");
+            store.regions.setEmail(r.id, a.allowed);
+            return `email ${a.allowed ? "allowed" : "turned off"} for ${r.label}`;
+        }
+        case "set_region_active": {
+            const r = store.regions.get(a.region_id);
+            if (!r) throw new Error(`region ${a.region_id} not found`);
+            store.regions.setActive(r.id, a.active !== false);
+            return `${r.label} ${a.active !== false ? "will be scouted again" : "removed from weekly scouting"}`;
         }
         default:
             throw new Error(`unknown action type ${(a as { type?: string }).type}`);

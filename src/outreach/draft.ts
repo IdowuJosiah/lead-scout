@@ -5,6 +5,7 @@ import { emailAllowed } from "../contact/index.js";
 import type { LeadRow, LeadStore } from "../db.js";
 import { rescoreAll } from "../export.js";
 import { log } from "../log.js";
+import { RegionSet, singleRegionSet } from "../regions.js";
 import { compareLeads } from "../scoring.js";
 import { parseWebsite } from "../url.js";
 import { websiteClass } from "../websiteClass.js";
@@ -41,8 +42,11 @@ const DAY = 24 * 3600 * 1000;
  * Leads that already have outreach, replied, or are on the do-not-contact
  * list are never drafted again. Nothing is sent here.
  */
-export function runDraft(store: LeadStore, region: RegionConfig, cfg: OutreachConfig): DraftSummary {
+export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cfg: OutreachConfig, onlyRegionId: number | null = null): DraftSummary {
     assertSenderSet(cfg);
+    const set = regions instanceof RegionSet ? regions : singleRegionSet(regions);
+    // Each lead is written for, and checked against, its own region's settings.
+    const regionOf = (lead: LeadRow) => (onlyRegionId != null && lead.region_id !== onlyRegionId ? null : set.forLead(lead));
     rescoreAll(store);
     const o = store.outreach;
     const summary: DraftSummary = { batchId: null, emailDrafts: 0, whatsappDrafts: 0, phoneDrafts: 0, noStatableIssue: 0 };
@@ -57,17 +61,20 @@ export function runDraft(store: LeadStore, region: RegionConfig, cfg: OutreachCo
     if (open) {
         summary.batchId = open;
         log.info(`draft: batch #${open} is still waiting for your approval; new email drafts wait for it`);
-    } else if (emailAllowed(region)) {
+    } else {
         const candidates = store
             .contactResults()
-            .filter(({ lead, result }) => result.outcome === "email" && result.email && !stage3Exclusion(lead, result, region))
+            .filter(({ lead, result }) => {
+                const region = regionOf(lead);
+                return !!region && emailAllowed(region) && result.outcome === "email" && !!result.email && !stage3Exclusion(lead, result, region);
+            })
             .filter(({ lead, result }) => !o.hasOutreach(lead.id, "email") && !blocked(lead, result.email))
             .sort((a, b) => compareLeads(a.lead, b.lead));
         let batchId: number | null = null;
         let room = cfg.limits.batch_size;
         for (const { lead, result } of candidates) {
             if (room <= 0) break;
-            const msg = composeEmail(lead, audits.get(lead.id)?.audit ?? null, region, cfg);
+            const msg = composeEmail(lead, audits.get(lead.id)?.audit ?? null, regionOf(lead)!, cfg);
             if (!msg) {
                 summary.noStatableIssue++;
                 continue;
@@ -86,11 +93,14 @@ export function runDraft(store: LeadStore, region: RegionConfig, cfg: OutreachCo
     const recent = o.list("channel IN ('whatsapp', 'phone') AND created_at >= ?", weekAgo).length;
     let room = Math.max(0, cfg.limits.whatsapp_drafts_per_week - recent);
     const leads = [...audits.values()]
-        .filter(({ lead }) => lead.lead_score != null && lead.lead_score >= region.contact_min_score)
-        .filter(({ lead }) => (lead.country ?? region.country_code) === region.country_code)
+        .filter(({ lead }) => {
+            const region = regionOf(lead);
+            return !!region && lead.lead_score != null && lead.lead_score >= region.contact_min_score;
+        })
         .sort((a, b) => compareLeads(a.lead, b.lead));
     for (const { lead, audit } of leads) {
         if (room <= 0) break;
+        const region = regionOf(lead)!;
         if (o.hasOutreach(lead.id)) continue;
         const cls = websiteClass(lead.website_url, audit);
         const result = results.get(lead.id);

@@ -34,7 +34,7 @@
     ],
     "transition": ["A couple of things stood out:", "Two things I noticed:"],
     "offer": [
-      "I'm {sender_name}, a {sender_role} in {city}. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer (Paystack or Flutterwave) without leaving your site.",
+      "I'm {sender_name}, a {sender_role} in {city}. I build fast, mobile-first online stores where customers can browse, add to cart and pay by card or transfer ({payment_examples}) without leaving your site.",
       "I'm {sender_name}, a {sender_role}. I help brands like {brand} sell directly from their own website, with a proper cart and checkout that works well on phones."
     ],
     "cta": [
@@ -85,7 +85,7 @@
       "There's no way to add items to a cart or pay on {domain} (I checked {pages_checked})."
     ],
     "hosted_storefront": [
-      "Your shop is on {host}, so it's on the platform's address rather than your own .com or .ng.",
+      "Your shop is on {host}, so it's on the platform's address rather than a website address of your own.",
       "Your store lives on {host} rather than a domain of your own."
     ],
     "load_timed_out": ["On a phone, {domain} still hadn't finished loading when my test timed out."],
@@ -100,6 +100,6 @@
       "{domain} doesn't have a working secure (https) connection, so some browsers show a \"Not secure\" warning.",
       "Browsers can mark {domain} as \"Not secure\" because it has no valid https certificate."
     ],
-    "no_payment_provider_detected": ["I couldn't see an online payment option (like Paystack or Flutterwave) on {domain}."]
+    "no_payment_provider_detected": ["I couldn't see an online payment option (like {payment_examples}) on {domain}."]
   }
 }

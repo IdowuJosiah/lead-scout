@@ -45,6 +45,7 @@ export const PLACEHOLDERS = [
     "load_seconds",
     "lighthouse",
     "dead_reason",
+    "payment_examples",
     "sender_name",
     "sender_role",
     "sender_business_suffix",
