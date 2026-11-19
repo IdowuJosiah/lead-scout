@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-18T17:11:03.762Z",
+ "generated_at": "2026-11-19T08:52:45.407Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -32,6 +32,27 @@
    "keywords": null,
    "last_scouted_at": null,
    "leads": 384
+  },
+  {
+   "id": 2,
+   "label": "ireland",
+   "city": "Ireland",
+   "country": "Ireland",
+   "country_code": "IE",
+   "timezone": "Europe/Dublin",
+   "currency": "EUR",
+   "radius_km": 50,
+   "send_window": {
+    "days": "Mon-Fri",
+    "start": "09:00",
+    "end": "17:00"
+   },
+   "allowed_to_email": null,
+   "keywords": [
+    "fashion"
+   ],
+   "last_scouted_at": null,
+   "leads": 36
   }
  ],
  "sender": {
@@ -49,17 +70,17 @@
   "zerobounce_calls_per_month": 100
  },
  "stats": {
-  "leads": 384,
-  "noWebsite": 166,
-  "audited": 218,
+  "leads": 420,
+  "noWebsite": 170,
+  "audited": 250,
   "failedAudits": 0,
-  "failures": 43,
+  "failures": 44,
   "emailQueue": 11,
-  "fallbackQueue": 14,
+  "fallbackQueue": 25,
   "emails_sent": 0,
   "emails_waiting_approval": 11,
   "emails_approved": 0,
-  "chats_to_send": 37,
+  "chats_to_send": 56,
   "replies": 0,
   "opt_outs": 0,
   "bounces": 0
@@ -140,8 +161,8 @@
    ]
   },
   "scout": {
-   "started_at": "2026-11-17T22:28:07.934Z",
-   "finished_at": "2026-11-17T22:28:09.391Z",
+   "started_at": "2026-11-19T08:46:00.063Z",
+   "finished_at": "2026-11-19T08:52:45.373Z",
    "steps": [
     {
      "step": "actions",
@@ -155,12 +176,37 @@
     },
     {
      "step": "region",
-     "ok": false,
-     "detail": "\"ireland\" didn't resolve to a place inside a country"
+     "ok": true,
+     "detail": "new region: Ireland, Ireland (IE), 50 km, Europe/Dublin, EUR, email off"
+    },
+    {
+     "step": "reconcile",
+     "ok": true,
+     "detail": "0 stage-3 result(s) invalidated, 0 unverified retried, 0 flagged"
+    },
+    {
+     "step": "discover ireland",
+     "ok": true,
+     "detail": "40 found, 36 new, 0 failure(s)"
+    },
+    {
+     "step": "audit ireland",
+     "ok": true,
+     "detail": "32 audited {\"ok\":28,\"blocked\":1,\"social_profile\":2,\"dead\":1}"
+    },
+    {
+     "step": "contacts ireland",
+     "ok": true,
+     "detail": "11 processed: 0 email, 11 fallback, 0 waiting for credits (email is off for this region)"
+    },
+    {
+     "step": "draft",
+     "ok": true,
+     "detail": "0 email(s) in batch #1, 4 WhatsApp, 15 phone"
     }
    ],
    "place": "ireland",
-   "region_id": null
+   "region_id": 2
   }
  },
  "batches": [
@@ -1598,6 +1644,538 @@
    "status": "draft",
    "error": null,
    "created_at": "2026-11-10T21:23:01.999Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 52,
+   "lead_id": 409,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "The Fashion Shop",
+   "category": "fashion",
+   "score": 100,
+   "reviews": 8,
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 44 934 0339",
+   "recipient": "+353449340339",
+   "subject": null,
+   "body": "Hello The Fashion Shop 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for The Fashion Shop on your Google listing.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.363Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 53,
+   "lead_id": 389,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Annissa Plus Size Clothes",
+   "category": "fashion",
+   "score": 100,
+   "reviews": 2,
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 49 952 9775",
+   "recipient": "+353499529775",
+   "subject": null,
+   "body": "Hi Annissa Plus Size Clothes team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Annissa Plus Size Clothes on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.364Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 54,
+   "lead_id": 385,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "whatsapp",
+   "name": "Darlynn",
+   "category": "fashion",
+   "score": 100,
+   "reviews": 2,
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 87 135 0923",
+   "recipient": "https://wa.me/353871350923",
+   "subject": null,
+   "body": "Hello Darlynn 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Darlynn on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.365Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 55,
+   "lead_id": 394,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Tatters of Mount Street",
+   "category": "fashion",
+   "score": 100,
+   "reviews": 2,
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 44 934 2509",
+   "recipient": "+353449342509",
+   "subject": null,
+   "body": "Hi Tatters of Mount Street team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Tatters of Mount Street on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.365Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 56,
+   "lead_id": 419,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Ebony",
+   "category": "fashion",
+   "score": 95,
+   "reviews": 29,
+   "website": "https://m.facebook.com/Ebony-Boutique-205122249641156/",
+   "website_class": "social",
+   "phone": "+353 46 948 6842",
+   "recipient": "+353469486842",
+   "subject": null,
+   "body": "Hello Ebony 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing links to your facebook.com page rather than a website of your own.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "social_only"
+   ],
+   "evidence": "Listed website is a social profile (facebook.com); not loaded; Google: 4.7 stars from 29 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.366Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 57,
+   "lead_id": 413,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "whatsapp",
+   "name": "Karlos conlon menswear",
+   "category": "fashion",
+   "score": 95,
+   "reviews": 16,
+   "website": "http://karlosconlonmenswear.ie/",
+   "website_class": "dead_listing",
+   "phone": "+353 86 386 1740",
+   "recipient": "https://wa.me/353863861740",
+   "subject": null,
+   "body": "Hello Karlos conlon menswear 👋\n\nMy name is Josiah Idowu, I'm a web developer. When I tried karlosconlonmenswear.ie from your Google listing, it didn't load (the domain doesn't resolve).\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "dead_listing"
+   ],
+   "evidence": "Listed website does not exist: robots.txt request failed: getaddrinfo ENOTFOUND karlosconlonmenswear.ie; Google: 5 stars from 16 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.367Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 58,
+   "lead_id": 407,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Dolls Boutique Longford",
+   "category": "fashion",
+   "score": 95,
+   "reviews": 9,
+   "website": "https://m.facebook.com/dollsboutique.longford/",
+   "website_class": "social",
+   "phone": "+353 43 333 6801",
+   "recipient": "+353433336801",
+   "subject": null,
+   "body": "Hi Dolls Boutique Longford team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing links to your facebook.com page rather than a website of your own.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "social_only"
+   ],
+   "evidence": "Listed website is a social profile (facebook.com); not loaded; Google: 5 stars from 9 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.367Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 59,
+   "lead_id": 414,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Marks & Spencer",
+   "category": "fashion",
+   "score": 90,
+   "reviews": 401,
+   "website": "https://www.marksandspencer.com/ie/stores/navan-283?extid=local",
+   "website_class": "owned_site",
+   "phone": "+353 46 907 5554",
+   "recipient": "+353469075554",
+   "subject": null,
+   "body": "Hello Marks & Spencer 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on marksandspencer.com (I checked the homepage and /ie/content/category/kids-and-baby), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.marksandspencer.com/ie/stores/navan-283?extid=local loaded in 10.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/ie/content/category/kids-and-baby); no configured payment provider found on homepage or 1 shop page(s) (/ie/content/category/kids-and-baby); valid HTTPS; Google: 4.3 stars from 401 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.368Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 60,
+   "lead_id": 398,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Dunnes Stores",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 1483,
+   "website": "https://www.dunnesstores.com/",
+   "website_class": "owned_site",
+   "phone": "+353 46 902 8914",
+   "recipient": "+353469028914",
+   "subject": null,
+   "body": "Hi Dunnes Stores team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on dunnesstores.com (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.dunnesstores.com/ loaded in 1.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 1483 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.368Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 61,
+   "lead_id": 397,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "River Island",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 70,
+   "website": "http://www.riverisland.com/",
+   "website_class": "owned_site",
+   "phone": "+353 46 904 6988",
+   "recipient": "+353469046988",
+   "subject": null,
+   "body": "Hi River Island team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on riverisland.com (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "http://www.riverisland.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; payment providers: Stripe (request to js.stripe.com); valid HTTPS; Google: 4.4 stars from 70 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.369Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 62,
+   "lead_id": 406,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "DT One Limited",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 65,
+   "website": "https://dt-one.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 437 2897",
+   "recipient": "+353494372897",
+   "subject": null,
+   "body": "Hi DT One Limited team 👋\n\nMy name is Josiah Idowu, I'm a web developer. There's no way to add items to a cart or pay on dt-one.ie (I checked the homepage).\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://dt-one.ie/ loaded in 350ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 65 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.369Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 63,
+   "lead_id": 416,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "whatsapp",
+   "name": "Cherche La Femme",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 57,
+   "website": "https://www.cherchelafemme.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 83 405 1307",
+   "recipient": "https://wa.me/353834051307",
+   "subject": null,
+   "body": "Hello Cherche La Femme 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on cherchelafemme.ie (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.cherchelafemme.ie/ loaded in 347ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 57 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.370Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 64,
+   "lead_id": 412,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Daisy",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 20,
+   "website": "https://www.daisyclothing.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 42 969 0899",
+   "recipient": "+353429690899",
+   "subject": null,
+   "body": "Hi Daisy team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on daisyclothing.ie (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.daisyclothing.ie/ loaded on Pixel 7 viewport; HTTP 202; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 20 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.370Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 65,
+   "lead_id": 415,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "JACK & JONES",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 20,
+   "website": "https://www.jackjones.com/en-ie?utm_campaign=google_stores&utm_content=Navan&utm_medium=organic&utm_source=google",
+   "website_class": "owned_site",
+   "phone": "+353 46 907 3712",
+   "recipient": "+353469073712",
+   "subject": null,
+   "body": "Hello JACK & JONES 👋\n\nMy name is Josiah Idowu, I'm a web developer. There's no way to add items to a cart or pay on jackjones.com (I checked the homepage).\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.jackjones.com/en-ie?utm_campaign=google_stores&utm_content=Navan&utm_medium=organic&utm_source=google loaded in 3.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 20 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.371Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 66,
+   "lead_id": 404,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "DV8",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 18,
+   "website": "http://www.dv8fashion.com/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 6551",
+   "recipient": "+353433346551",
+   "subject": null,
+   "body": "Hi DV8 team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on dv8fashion.com (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "http://www.dv8fashion.com/ -> https://www.dv8fashion.com/Mobile/ loaded in 2.7s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; payment providers: PayPal (request to www.paypal.com), klarna (klarnaservices.com referenced in page source); valid HTTPS; Google: 2.8 stars from 18 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.371Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 67,
+   "lead_id": 396,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Kenny Fashion House Longford",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 10,
+   "website": "https://quietlighthouse.vip/business/kenny-fashion-house-longford-f43022f999",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 6146",
+   "recipient": "+353433346146",
+   "subject": null,
+   "body": "Hello Kenny Fashion House Longford 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on abelarine.com (I checked the homepage and /business/kenny-fashion-house-longford-f43022f999/menu), so customers can't buy directly.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://quietlighthouse.vip/business/kenny-fashion-house-longford-f43022f999 -> https://abelarine.com/business/kenny-fashion-house-longford-f43022f999 loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/business/kenny-fashion-house-longford-f43022f999/menu); no configured payment provider found on homepage or 1 shop page(s) (/business/kenny-fashion-house-longford-f43022f999/menu); valid HTTPS; Google: 4.9 stars from 10 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.372Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 68,
+   "lead_id": 390,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "whatsapp",
+   "name": "VERO MODA",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 6,
+   "website": "https://www.veromoda.com/en-ie?utm_campaign=google_stores&utm_content=Vero+Moda+Navan&utm_medium=organic&utm_source=google",
+   "website_class": "owned_site",
+   "phone": "+353 86 701 3549",
+   "recipient": "https://wa.me/353867013549",
+   "subject": null,
+   "body": "Hi VERO MODA team 👋\n\nMy name is Josiah Idowu, I'm a web developer. There's no way to add items to a cart or pay on veromoda.com (I checked the homepage).\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://www.veromoda.com/en-ie?utm_campaign=google_stores&utm_content=Vero+Moda+Navan&utm_medium=organic&utm_source=google loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.5 stars from 6 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.372Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 69,
+   "lead_id": 395,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "Infinitif Boutique Limited",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 5,
+   "website": "https://infinitifboutique.wordpress.com/",
+   "website_class": "hosted_storefront",
+   "phone": "+353 49 436 1411",
+   "recipient": "+353494361411",
+   "subject": null,
+   "body": "Hi Infinitif Boutique Limited team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on infinitifboutique.wordpress.com (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "https://infinitifboutique.wordpress.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (wordpress.com), not the brand's own; platform WordPress (generator meta \"WordPress.com\"); no cart or checkout found on homepage; payment providers: PayPal (paypal.com referenced in page source); valid HTTPS; Google: 4.8 stars from 5 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.373Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false
+  },
+  {
+   "id": 70,
+   "lead_id": 386,
+   "region_id": 2,
+   "region": "ireland",
+   "channel": "phone",
+   "name": "The Fashion Loft",
+   "category": "fashion",
+   "score": 65,
+   "reviews": 2,
+   "website": "http://www.thefashionloft.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 555 2357",
+   "recipient": "+353495552357",
+   "subject": null,
+   "body": "Hi The Fashion Loft team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a cart or checkout on thefashionloft.ie (I checked the homepage), so customers can't buy directly.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_cart_or_checkout"
+   ],
+   "evidence": "http://www.thefashionloft.ie/ -> https://www.thefashionloft.ie/ loaded in 502ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 2 reviews",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-19T08:52:45.373Z",
    "sent_at": null,
    "verification_status": null,
    "risk_flag": null,
@@ -3122,6 +3700,29 @@
    "replied": false
   },
   {
+   "id": 409,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "The Fashion Shop",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 44 934 0339",
+   "rating": 4.5,
+   "reviews": 8,
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 272,
    "region_id": 1,
    "region": "Lagos",
@@ -3836,6 +4437,29 @@
    "replied": false
   },
   {
+   "id": 389,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Annissa Plus Size Clothes",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 49 952 9775",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 287,
    "region_id": 1,
    "region": "Lagos",
@@ -3850,6 +4474,29 @@
    "reviews": 2,
    "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 385,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Darlynn",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 87 135 0923",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4071,6 +4718,29 @@
    "reviews": 2,
    "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 394,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Tatters of Mount Street",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 44 934 2509",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -4896,6 +5566,29 @@
    "replied": false
   },
   {
+   "id": 419,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Ebony",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://m.facebook.com/Ebony-Boutique-205122249641156/",
+   "website_class": "social",
+   "phone": "+353 46 948 6842",
+   "rating": 4.7,
+   "reviews": 29,
+   "evidence": "Listed website is a social profile (facebook.com); not loaded; Google: 4.7 stars from 29 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 135,
    "region_id": 1,
    "region": "Lagos",
@@ -5049,6 +5742,29 @@
    "replied": false
   },
   {
+   "id": 413,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Karlos conlon menswear",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "http://karlosconlonmenswear.ie/",
+   "website_class": "dead_listing",
+   "phone": "+353 86 386 1740",
+   "rating": 5,
+   "reviews": 16,
+   "evidence": "Listed website does not exist: robots.txt request failed: getaddrinfo ENOTFOUND karlosconlonmenswear.ie; Google: 5 stars from 16 reviews",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 9,
    "region_id": 1,
    "region": "Lagos",
@@ -5148,6 +5864,29 @@
    "reviews": 10,
    "evidence": "Listed website does not exist: robots.txt request failed: getaddrinfo ENOTFOUND www.shopthoche.com.ng; Google: 5 stars from 10 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 407,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Dolls Boutique Longford",
+   "category": "fashion",
+   "score": 95,
+   "priority": "high",
+   "website": "https://m.facebook.com/dollsboutique.longford/",
+   "website_class": "social",
+   "phone": "+353 43 333 6801",
+   "rating": 5,
+   "reviews": 9,
+   "evidence": "Listed website is a social profile (facebook.com); not loaded; Google: 5 stars from 9 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -5641,6 +6380,29 @@
    "reviews": null,
    "evidence": "Listed website is a link-in-bio page (linktr.ee); Not loaded: robots.txt HTTP 200, disallows /O.nathsignatures",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 414,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Marks & Spencer",
+   "category": "fashion",
+   "score": 90,
+   "priority": "high",
+   "website": "https://www.marksandspencer.com/ie/stores/navan-283?extid=local",
+   "website_class": "owned_site",
+   "phone": "+353 46 907 5554",
+   "rating": 4.3,
+   "reviews": 401,
+   "evidence": "https://www.marksandspencer.com/ie/stores/navan-283?extid=local loaded in 10.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/ie/content/category/kids-and-baby); no configured payment provider found on homepage or 1 shop page(s) (/ie/content/category/kids-and-baby); valid HTTPS; Google: 4.3 stars from 401 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -6144,6 +6906,52 @@
    "replied": false
   },
   {
+   "id": 398,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Dunnes Stores",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://www.dunnesstores.com/",
+   "website_class": "owned_site",
+   "phone": "+353 46 902 8914",
+   "rating": 4.3,
+   "reviews": 1483,
+   "evidence": "https://www.dunnesstores.com/ loaded in 1.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 1483 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
+   "id": 397,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "River Island",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "http://www.riverisland.com/",
+   "website_class": "owned_site",
+   "phone": "+353 46 904 6988",
+   "rating": 4.4,
+   "reviews": 70,
+   "evidence": "http://www.riverisland.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; payment providers: Stripe (request to js.stripe.com); valid HTTPS; Google: 4.4 stars from 70 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 1,
    "region_id": 1,
    "region": "Lagos",
@@ -6167,6 +6975,29 @@
    "replied": false
   },
   {
+   "id": 406,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "DT One Limited",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://dt-one.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 437 2897",
+   "rating": 4.7,
+   "reviews": 65,
+   "evidence": "https://dt-one.ie/ loaded in 350ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 65 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 12,
    "region_id": 1,
    "region": "Lagos",
@@ -6181,6 +7012,29 @@
    "reviews": 62,
    "evidence": "http://www.bibakulture.com/ -> https://bibakulture.com/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 62 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 416,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Cherche La Femme",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://www.cherchelafemme.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 83 405 1307",
+   "rating": 4.8,
+   "reviews": 57,
+   "evidence": "https://www.cherchelafemme.ie/ loaded in 347ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 57 reviews",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -6275,6 +7129,52 @@
    "replied": false
   },
   {
+   "id": 412,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Daisy",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://www.daisyclothing.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 42 969 0899",
+   "rating": 5,
+   "reviews": 20,
+   "evidence": "https://www.daisyclothing.ie/ loaded on Pixel 7 viewport; HTTP 202; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 20 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
+   "id": 415,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "JACK & JONES",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://www.jackjones.com/en-ie?utm_campaign=google_stores&utm_content=Navan&utm_medium=organic&utm_source=google",
+   "website_class": "owned_site",
+   "phone": "+353 46 907 3712",
+   "rating": 4.7,
+   "reviews": 20,
+   "evidence": "https://www.jackjones.com/en-ie?utm_campaign=google_stores&utm_content=Navan&utm_medium=organic&utm_source=google loaded in 3.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 20 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 198,
    "region_id": 1,
    "region": "Lagos",
@@ -6291,6 +7191,29 @@
    "outreach": [
     {
      "channel": "email",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
+   "id": 404,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "DV8",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "http://www.dv8fashion.com/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 6551",
+   "rating": 2.8,
+   "reviews": 18,
+   "evidence": "http://www.dv8fashion.com/ -> https://www.dv8fashion.com/Mobile/ loaded in 2.7s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; payment providers: PayPal (request to www.paypal.com), klarna (klarnaservices.com referenced in page source); valid HTTPS; Google: 2.8 stars from 18 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
      "status": "draft",
      "sent_at": null
     }
@@ -6423,6 +7346,29 @@
    "replied": false
   },
   {
+   "id": 396,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Kenny Fashion House Longford",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://quietlighthouse.vip/business/kenny-fashion-house-longford-f43022f999",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 6146",
+   "rating": 4.9,
+   "reviews": 10,
+   "evidence": "https://quietlighthouse.vip/business/kenny-fashion-house-longford-f43022f999 -> https://abelarine.com/business/kenny-fashion-house-longford-f43022f999 loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage or 1 shop page(s) (/business/kenny-fashion-house-longford-f43022f999/menu); no configured payment provider found on homepage or 1 shop page(s) (/business/kenny-fashion-house-longford-f43022f999/menu); valid HTTPS; Google: 4.9 stars from 10 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
    "id": 260,
    "region_id": 1,
    "region": "Lagos",
@@ -6471,6 +7417,52 @@
    "reviews": 9,
    "evidence": "https://triciabeautyempire.bumpa.shop/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (bumpa.shop), not the brand's own; platform Bumpa (hosted on bumpa.shop); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 9 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 390,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "VERO MODA",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://www.veromoda.com/en-ie?utm_campaign=google_stores&utm_content=Vero+Moda+Navan&utm_medium=organic&utm_source=google",
+   "website_class": "owned_site",
+   "phone": "+353 86 701 3549",
+   "rating": 3.5,
+   "reviews": 6,
+   "evidence": "https://www.veromoda.com/en-ie?utm_campaign=google_stores&utm_content=Vero+Moda+Navan&utm_medium=organic&utm_source=google loaded in 2.0s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.5 stars from 6 reviews",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false
+  },
+  {
+   "id": 395,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Infinitif Boutique Limited",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "https://infinitifboutique.wordpress.com/",
+   "website_class": "hosted_storefront",
+   "phone": "+353 49 436 1411",
+   "rating": 4.8,
+   "reviews": 5,
+   "evidence": "https://infinitifboutique.wordpress.com/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (wordpress.com), not the brand's own; platform WordPress (generator meta \"WordPress.com\"); no cart or checkout found on homepage; payment providers: PayPal (paypal.com referenced in page source); valid HTTPS; Google: 4.8 stars from 5 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -6568,6 +7560,29 @@
    "reviews": 3,
    "evidence": "https://ladefragrancehub.bumpa.shop/ loaded in 1.6s on Pixel 7 viewport; HTTP 200; hosted on a platform domain (bumpa.shop), not the brand's own; platform Bumpa (hosted on bumpa.shop); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 3.7 stars from 3 reviews",
    "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 386,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "The Fashion Loft",
+   "category": "fashion",
+   "score": 65,
+   "priority": "high",
+   "website": "http://www.thefashionloft.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 555 2357",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "http://www.thefashionloft.ie/ -> https://www.thefashionloft.ie/ loaded in 502ms on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); no cart or checkout found on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 2 reviews",
+   "outreach": [
+    {
+     "channel": "phone",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false
   },
   {
@@ -6979,6 +7994,23 @@
    "replied": false
   },
   {
+   "id": 392,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Aines Boutique",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.aines.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 5918",
+   "rating": 4.9,
+   "reviews": 269,
+   "evidence": "http://www.aines.ie/ -> https://aines.ie/ loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 269 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 261,
    "region_id": 1,
    "region": "Lagos",
@@ -6992,6 +8024,23 @@
    "rating": 5,
    "reviews": 252,
    "evidence": "http://www.bisolahair.com/ -> https://www.bisolahair.com/ loaded in 2.6s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); 8 WhatsApp link(s) on homepage; no configured payment provider found on homepage; valid HTTPS; Google: 5 stars from 252 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 420,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Geoghegans",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.geoghegans.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 46 902 1722",
+   "rating": 4.8,
+   "reviews": 236,
+   "evidence": "http://www.geoghegans.ie/ -> https://www.geoghegans.ie/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 236 reviews",
    "outreach": [],
    "replied": false
   },
@@ -7217,6 +8266,23 @@
    "replied": false
   },
   {
+   "id": 408,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Matt O'Brien Fashions",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.mattobrienfashions.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 5829",
+   "rating": 4.7,
+   "reviews": 87,
+   "evidence": "https://www.mattobrienfashions.ie/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 87 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 149,
    "region_id": 1,
    "region": "Lagos",
@@ -7336,6 +8402,40 @@
    "replied": false
   },
   {
+   "id": 388,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Charles Fay",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.charlesfay.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 433 2036",
+   "rating": 4.9,
+   "reviews": 57,
+   "evidence": "http://www.charlesfay.ie/ -> https://charlesfay.ie/ loaded in 1.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.9 stars from 57 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 387,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Sally West Cavan",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.mysallywest.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 437 3022",
+   "rating": 4.4,
+   "reviews": 55,
+   "evidence": "http://www.mysallywest.ie/ -> https://www.mysallywest.ie/ loaded in 2.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.4 stars from 55 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 146,
    "region_id": 1,
    "region": "Lagos",
@@ -7349,6 +8449,23 @@
    "rating": 4.4,
    "reviews": 53,
    "evidence": "https://www.bozjewelry.com/ loaded in 1.8s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.4 stars from 53 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 405,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "E & M Stores Ltd.",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.eandmstores.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 49 555 2224",
+   "rating": 4.7,
+   "reviews": 50,
+   "evidence": "https://www.eandmstores.ie/ loaded in 1.9s on Pixel 7 viewport; HTTP 200; platform WordPress (\"/wp-content/\" in page source); cart/checkout found (checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 50 reviews",
    "outreach": [],
    "replied": false
   },
@@ -7417,6 +8534,23 @@
    "rating": 4.2,
    "reviews": 41,
    "evidence": "https://www.yinkabodyline.com/ loaded in 1.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (cart link /cart, checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.2 stars from 41 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 403,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Nina's Boutique",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.ninasboutique.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 46 943 1281",
+   "rating": 4.8,
+   "reviews": 38,
+   "evidence": "http://www.ninasboutique.ie/ -> https://www.ninasboutique.ie/ loaded in 2.3s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check Out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 38 reviews",
    "outreach": [],
    "replied": false
   },
@@ -7519,6 +8653,40 @@
    "rating": 4.8,
    "reviews": 28,
    "evidence": "https://www.kiisasperfumes.com/ -> https://kiisasperfumes.com/ loaded in 2.2s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 28 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 401,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Pamela Scott Navan",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "https://www.pamelascott.com/?utm_source=GMB&utm_medium=organic&utm_content=Navan",
+   "website_class": "owned_site",
+   "phone": "+353 46 907 2585",
+   "rating": 4.7,
+   "reviews": 27,
+   "evidence": "https://www.pamelascott.com/?utm_source=GMB&utm_medium=organic&utm_content=Navan loaded in 3.4s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"CHECKOUT\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.7 stars from 27 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 417,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Ribbon Rouge Ltd",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.ribbonrouge.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 46 905 1767",
+   "rating": 4.4,
+   "reviews": 26,
+   "evidence": "http://www.ribbonrouge.ie/ -> https://ribbonrouge.ie/ loaded in 1.3s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, checkout link /checkout); no configured payment provider found on homepage; valid HTTPS; Google: 4.4 stars from 26 reviews",
    "outreach": [],
    "replied": false
   },
@@ -7778,6 +8946,23 @@
    "replied": false
   },
   {
+   "id": 402,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Paco Cavan",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.paco.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 86 839 9851",
+   "rating": 3.9,
+   "reviews": 14,
+   "evidence": "http://www.paco.ie/ -> https://paco.ie/ loaded in 2.5s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 3.9 stars from 14 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 194,
    "region_id": 1,
    "region": "Lagos",
@@ -8033,6 +9218,23 @@
    "replied": false
   },
   {
+   "id": 418,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Butterfly Boutique",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.butterflyboutique.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 46 902 8698",
+   "rating": 4.5,
+   "reviews": 6,
+   "evidence": "http://www.butterflyboutique.ie/ -> https://www.butterflyboutique.ie/ loaded in 961ms on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.5 stars from 6 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 153,
    "region_id": 1,
    "region": "Lagos",
@@ -8050,6 +9252,40 @@
    "replied": false
   },
   {
+   "id": 391,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "The Purple Orange Boutique",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "https://thepurpleorange.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 86 230 4803",
+   "rating": 4.8,
+   "reviews": 6,
+   "evidence": "https://thepurpleorange.ie/ loaded in 808ms on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart, button \"Check out\"); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 6 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 399,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Unique Boutique",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.uniquelongford.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 5116",
+   "rating": 4.3,
+   "reviews": 6,
+   "evidence": "http://www.uniquelongford.ie/ -> https://uniquelongford.ie/ loaded in 2.1s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (cart link /bag/); no configured payment provider found on homepage; valid HTTPS; Google: 4.3 stars from 6 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 169,
    "region_id": 1,
    "region": "Lagos",
@@ -8063,6 +9299,23 @@
    "rating": 4.8,
    "reviews": 5,
    "evidence": "http://www.essenza.ng/ -> https://www.essenza.ng/ loaded in 2.4s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); no configured payment provider found on homepage; valid HTTPS; Google: 4.8 stars from 5 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 411,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "L’École Apparel Carrickmacross",
+   "category": "fashion",
+   "score": 10,
+   "priority": "low",
+   "website": "http://www.lecoleapparel.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 87 100 4150",
+   "rating": 5,
+   "reviews": 5,
+   "evidence": "http://www.lecoleapparel.ie/ -> https://www.lecoleapparel.ie/ loaded in 843ms on Pixel 7 viewport; HTTP 200; platform Wix (x-wix-request-id response header); cart/checkout found (button \"Add to Cart\" on /category/all-products); no configured payment provider found on homepage or 1 shop page(s) (/category/all-products); valid HTTPS; Google: 5 stars from 5 reviews",
    "outreach": [],
    "replied": false
   },
@@ -8271,6 +9524,23 @@
    "replied": false
   },
   {
+   "id": 410,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Fabiani",
+   "category": "fashion",
+   "score": 5,
+   "priority": "low",
+   "website": "http://fabiani.ie/",
+   "website_class": "owned_site",
+   "phone": "+353 43 334 6049",
+   "rating": 4.6,
+   "reviews": 178,
+   "evidence": "http://fabiani.ie/ -> https://www.fabiani.ie/ loaded in 1.7s on Pixel 7 viewport; HTTP 200; platform Shopify (powered-by: Shopify header); cart/checkout found (cart link /cart); 2 WhatsApp link(s) on homepage; payment providers: klarna (request to skosm.klarna.com); valid HTTPS; Google: 4.6 stars from 178 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
    "id": 346,
    "region_id": 1,
    "region": "Lagos",
@@ -8301,6 +9571,23 @@
    "rating": 4.5,
    "reviews": 16,
    "evidence": "http://slayonextensions.com/ -> https://slayonextensions.com/ loaded in 2.3s on Pixel 7 viewport; HTTP 200; platform WooCommerce (\"wp-content/plugins/woocommerce\" in page source); cart/checkout found (cart link /cart/); 2 WhatsApp link(s) on homepage; payment providers: Flutterwave (flutterwave.com referenced in page source); valid HTTPS; Google: 4.5 stars from 16 reviews",
+   "outreach": [],
+   "replied": false
+  },
+  {
+   "id": 400,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "Boyle for Men",
+   "category": "fashion",
+   "score": 5,
+   "priority": "low",
+   "website": "https://www.boyleformen.com/",
+   "website_class": "owned_site",
+   "phone": "+353 49 555 2201",
+   "rating": 4.7,
+   "reviews": 12,
+   "evidence": "https://www.boyleformen.com/ loaded in 1.4s on Pixel 7 viewport; HTTP 200; platform custom (no known platform signature matched); cart/checkout found (cart link /cart, link \"Checkout\"); payment providers: Stripe (request to js.stripe.com); valid HTTPS; Google: 4.7 stars from 12 reviews",
    "outreach": [],
    "replied": false
   },
@@ -8439,9 +9726,33 @@
    "evidence": "Not loaded: robots.txt HTTP 200, disallows /; Google: 4.1 stars from 21 reviews",
    "outreach": [],
    "replied": false
+  },
+  {
+   "id": 393,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "F&F Clothing",
+   "category": "fashion",
+   "score": null,
+   "priority": "",
+   "website": "https://www.tesco.ie/store-locator/bailieborough/thomas-street/f-f-clothing?sc_cmp=ref*yg*stc*5797&utm_source=yext_google&utm_campaign=local_f-f_ROI&utm_medium=organic",
+   "website_class": "owned_site",
+   "phone": "+353 818 555 797",
+   "rating": 2.8,
+   "reviews": 4,
+   "evidence": "Not inspected: HTTP 403 returned to the audit browser (likely bot protection); Google: 2.8 stars from 4 reviews",
+   "outreach": [],
+   "replied": false
   }
  ],
  "failures": [
+  {
+   "occurred_at": "2026-11-19T08:49:17.576Z",
+   "stage": "audit",
+   "lead_id": 413,
+   "name": "Karlos conlon menswear",
+   "message": "dead: robots.txt request failed: getaddrinfo ENOTFOUND karlosconlonmenswear.ie"
+  },
   {
    "occurred_at": "2026-11-17T22:28:09.389Z",
    "stage": "agent:region",
@@ -8609,13 +9920,6 @@
    "lead_id": 100,
    "name": "Allure Essence by Ag ( Skincare Store)",
    "message": "unreachable: robots.txt request failed over HTTPS (timeout after 10000ms (ETIMEDOUT)) and HTTP (timeout after 10000ms (ETIMEDOUT))"
-  },
-  {
-   "occurred_at": "2026-11-10T20:58:20.758Z",
-   "stage": "audit",
-   "lead_id": 83,
-   "name": "Rtees Natural Cosmetics Skincare And Spa Shitta Surulere Lagos Nigeria",
-   "message": "failed: page.evaluate: TypeError: (text(...) || b.value || b.getAttribute(...) || \"\").trim is not a function\n    at eval (eval at evaluate (:311:30), <anonymous>:9:80)\n    at Array.map (<anonymous>)\n    at eval (eval at evaluate (:311:30), <anonymous>:9:10)\n    at eval (eval at evaluate (:311:30), <anonymous>:15:3)\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:311:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
   }
  ]
 }
