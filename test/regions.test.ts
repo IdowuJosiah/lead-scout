@@ -89,6 +89,21 @@ describe("region details from a place", () => {
             globalThis.fetch = realFetch;
         }
     });
+
+    it("searches an island across, and keeps a city local", async () => {
+        const realFetch = globalThis.fetch;
+        const answer = (types: string[], viewport: object) => (async () =>
+            new Response(JSON.stringify({ places: [{ id: "x", displayName: { text: "Ireland" }, types, location: { latitude: 53.4, longitude: -8.2 }, viewport, addressComponents: [] }] }))) as typeof fetch;
+        const island = { low: { latitude: 51.42, longitude: -10.66 }, high: { latitude: 55.43, longitude: -5.99 } };
+        try {
+            globalThis.fetch = answer(["island", "natural_feature"], island);
+            assert.ok((await resolvePlace("ireland", "k")).radiusKm > 200, "the island of Ireland, as Google returned it");
+            globalThis.fetch = answer(["locality", "political"], island);
+            assert.equal((await resolvePlace("ireland", "k")).radiusKm, 50, "a city stays within 50 km");
+        } finally {
+            globalThis.fetch = realFetch;
+        }
+    });
 });
 
 describe("regions in the store", () => {
@@ -113,6 +128,9 @@ describe("regions in the store", () => {
         const counting = async (t: string) => (calls++, fakeResolve(t));
         assert.equal((await ensureRegion(store.regions, "dubai", { apiKey: "", language: "en", resolve: counting })).created, false);
         assert.equal(calls, 0, "same name: no Google call");
+        const bigger = async (t: string) => ({ ...(await fakeResolve(t)), radiusKm: 48 });
+        await ensureRegion(store.regions, "Dubai", { apiKey: "", language: "en", resolve: bigger, refresh: true });
+        assert.equal(store.regions.get(region.id)!.radius_km, 48, "scouting again refreshes the search area");
         assert.equal((await ensureRegion(store.regions, "Dubai, UAE", { apiKey: "", language: "en", resolve: counting })).region.id, region.id, "same place, different words");
         await assert.rejects(ensureRegion(store.regions, "Nowhereville", { apiKey: "", language: "en", resolve: fakeResolve }), /Couldn't find/);
 

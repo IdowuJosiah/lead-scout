@@ -127,7 +127,7 @@ export async function runWeekly(store: LeadStore, base: RegionConfig, cfg: Outre
     for (const r of set.rows) await regionSteps(results, store, set, r.id, cfg, opts, opts.discover);
     await step(results, store, "draft", () => {
         const d = runDraft(store, set, cfg);
-        return `${d.emailDrafts} email(s)${d.batchId ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+        return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
     });
     return finish(store, set, cfg, opts, "last_weekly", results, started);
 }
@@ -150,7 +150,7 @@ export async function runScout(
         const apiKey = process.env.GOOGLE_PLACES_API_KEY;
         if (!apiKey && !resolve) throw new Error("GOOGLE_PLACES_API_KEY is not set");
         store.regions.ensureDefault(base);
-        const { region, created } = await ensureRegion(store.regions, place, { apiKey: apiKey ?? "", language: base.language, keywords: keywords ?? undefined, resolve });
+        const { region, created } = await ensureRegion(store.regions, place, { apiKey: apiKey ?? "", language: base.language, keywords: keywords ?? undefined, resolve, refresh: true });
         regionId = region.id;
         return `${created ? "new" : "existing"} region: ${region.city}, ${region.country} (${region.country_code}), ${region.radius_km} km, ${region.timezone}, ${region.currency}, email ${region.allowed_to_email === 1 ? "on" : "off"}`;
     });
@@ -160,7 +160,7 @@ export async function runScout(
         await regionSteps(results, store, set, regionId, cfg, opts, true);
         await step(results, store, "draft", () => {
             const d = runDraft(store, set, cfg, regionId);
-            return `${d.emailDrafts} email(s)${d.batchId ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+            return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
         });
     }
     return finish(store, set, cfg, opts, "last_scout", results, started, { place, region_id: regionId });

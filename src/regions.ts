@@ -173,9 +173,10 @@ export function radiusFromViewport(v: NonNullable<NonNullable<PlacesResult["plac
     return Math.round(Math.min(max, Math.max(3, half)));
 }
 
-/** Largest search radius: a city stays local, a whole state or country is searched across (Google ranks the best-known first). */
+/** Largest search radius: a city stays local; a country, state or island is searched across (Google ranks the best-known first). */
 export const MAX_RADIUS_KM = { city: 50, wide: 600 };
-const WIDE_TYPES = ["country", "administrative_area_level_1", "administrative_area_level_2"];
+/** Place types that are a town or part of one. Anything else (country, state, island, region) is searched across its whole size. */
+const CITY_TYPES = ["locality", "postal_town", "sublocality", "sublocality_level_1", "neighborhood", "postal_code", "administrative_area_level_3", "administrative_area_level_4", "route", "street_address", "premise", "establishment", "point_of_interest"];
 
 /** "Ireland" or "Republic of Ireland" -> "IE", using the country names built into Node. */
 export function countryCodeFromName(name: string | undefined): string | null {
@@ -227,7 +228,7 @@ export async function resolvePlace(text: string, apiKey: string, language = "en"
         countryCodeFromName(text.split(",").pop());
     if (!countryCode) throw new Error(`Couldn't tell which country "${text}" is in. Try adding the country, e.g. "${text}, Ireland".`);
     const country = comp?.longText || new Intl.DisplayNames(["en"], { type: "region" }).of(countryCode) || countryCode;
-    const wide = !!p.types?.some((t) => WIDE_TYPES.includes(t));
+    const wide = !!p.types?.length && !p.types.some((t) => CITY_TYPES.includes(t));
     return {
         placeRef: p.id,
         city: p.displayName?.text?.trim() || text.trim(),
@@ -281,6 +282,10 @@ export class RegionStore {
         this.db.prepare("UPDATE regions SET active = ? WHERE id = ?").run(active ? 1 : 0, id);
     }
 
+    setArea(id: number, lat: number, lng: number, radiusKm: number) {
+        this.db.prepare("UPDATE regions SET lat = ?, lng = ?, radius_km = ? WHERE id = ?").run(lat, lng, radiusKm, id);
+    }
+
     setKeywords(id: number, keywords: string[] | null) {
         this.db.prepare("UPDATE regions SET keywords = ? WHERE id = ?").run(keywords?.length ? JSON.stringify(keywords) : null, id);
     }
@@ -326,12 +331,17 @@ export class RegionStore {
 export async function ensureRegion(
     regions: RegionStore,
     text: string,
-    opts: { apiKey: string; language: string; keywords?: string[] | null; resolve?: typeof resolvePlace },
+    /** refresh: look the place up again and update its search area (Scout box), instead of trusting what was stored. */
+    opts: { apiKey: string; language: string; keywords?: string[] | null; resolve?: typeof resolvePlace; refresh?: boolean },
 ): Promise<{ region: RegionRow; created: boolean }> {
     const label = text.trim().replace(/\s+/g, " ");
     if (!label || label.length > 80) throw new Error("Type a place name, e.g. Dubai or Austin, Texas");
     const existing = regions.findByLabel(label);
     if (existing) {
+        if (opts.refresh && !existing.place_ref?.startsWith("config:")) {
+            const fresh = await (opts.resolve ?? resolvePlace)(label, opts.apiKey, opts.language);
+            if (fresh.countryCode === existing.country_code) regions.setArea(existing.id, fresh.lat, fresh.lng, fresh.radiusKm);
+        }
         if (opts.keywords !== undefined) regions.setKeywords(existing.id, opts.keywords);
         if (!existing.active) regions.setActive(existing.id, true);
         return { region: regions.get(existing.id)!, created: false };
