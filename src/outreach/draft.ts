@@ -9,7 +9,7 @@ import { RegionSet, singleRegionSet } from "../regions.js";
 import { compareLeads } from "../scoring.js";
 import { parseWebsite } from "../url.js";
 import { websiteClass } from "../websiteClass.js";
-import { composeEmail, composeWhatsapp } from "./compose.js";
+import { composeEmail, composeWhatsapp, supportedIssues } from "./compose.js";
 import { assertSenderSet, type OutreachConfig } from "./config.js";
 
 export interface DraftSummary {
@@ -17,6 +17,8 @@ export interface DraftSummary {
     emailDrafts: number;
     whatsappDrafts: number;
     phoneDrafts: number;
+    /** Unsent drafts pulled back because a re-audit no longer supports what they said. */
+    withdrawn: number;
     /** Leads skipped because no measured issue could be put into words. */
     noStatableIssue: number;
 }
@@ -49,9 +51,22 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
     const regionOf = (lead: LeadRow) => (onlyRegionId != null && lead.region_id !== onlyRegionId ? null : set.forLead(lead));
     rescoreAll(store);
     const o = store.outreach;
-    const summary: DraftSummary = { batchId: null, emailDrafts: 0, whatsappDrafts: 0, phoneDrafts: 0, noStatableIssue: 0 };
+    const summary: DraftSummary = { batchId: null, emailDrafts: 0, whatsappDrafts: 0, phoneDrafts: 0, noStatableIssue: 0, withdrawn: 0 };
     const audits = new Map(store.allLeadsWithAudits().map(({ lead, audit }) => [lead.id, { lead, audit }]));
     const results = new Map(store.contactResults().map(({ lead, result }) => [lead.id, result]));
+    // A re-audit can change what's true about a site. Unsent drafts that claim
+    // something the latest audit no longer supports are pulled back and redrafted.
+    for (const row of o.list("status = 'draft'")) {
+        const entry = audits.get(row.lead_id);
+        const claims = row.issues ? (JSON.parse(row.issues) as string[]) : [];
+        if (!entry || !claims.length) continue;
+        const supported = new Set(supportedIssues(entry.lead, entry.audit));
+        const stale = claims.filter((k) => !supported.has(k));
+        if (!stale.length) continue;
+        o.withdrawDraft(row.id);
+        summary.withdrawn++;
+        log.info(`draft: withdrew ${row.channel} draft for ${entry.lead.name}: latest audit no longer supports ${stale.join(", ")}`);
+    }
     const blocked = (lead: LeadRow, recipient: string | null) => o.leadHasReplied(lead.id) || o.isSuppressed(recipient) || o.isSuppressed(lead.phone);
 
     // ---- Emails, into a batch awaiting approval ----

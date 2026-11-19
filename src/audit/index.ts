@@ -16,6 +16,7 @@ import {
     linkInBioHost,
     localCurrencySeen,
     shopPageLinks,
+    productPageLinks,
     type Detection,
 } from "./detect.js";
 import { lighthouseMobileScore } from "./lighthouse.js";
@@ -218,31 +219,43 @@ export class Auditor {
         rec.password_protected = password.value;
         rec.password_signal = password.value ? password.signal : null;
 
-        // No cart on the homepage: look at a few of the site's own shop pages before concluding.
+        // No cart on the homepage: look at a few of the site's own shop pages, then one
+        // product page (where "add to cart" usually is), before concluding anything.
         const extraPages: string[] = [];
-        if (!commerce.hasCart && !commerce.hasCheckout && !password.value) {
-            for (const pageUrl of shopPageLinks(s, 3)) {
-                const path = new URL(pageUrl).pathname;
-                const allowed = await this.robots.check(pageUrl).then((v) => v.allowed, () => false);
-                if (!allowed) continue;
-                await this.limiter.wait(new URL(pageUrl).host);
-                const sub = await loadPage(browser, pageUrl, { ...loadOpts, screenshotPath: null, ignoreHttpsErrors: true }).catch(() => null);
-                if (sub?.kind !== "loaded" || (sub.httpStatus ?? 0) >= 400) continue;
-                extraPages.push(path);
-                const c = detectCommerce(sub.snapshot);
-                if (c.hasCart || c.hasCheckout) {
-                    commerce.hasCart ||= c.hasCart;
-                    commerce.hasCheckout ||= c.hasCheckout;
-                    commerce.signals.push(...c.signals.map((sig) => `${sig} on ${path}`));
-                }
-                const seen = new Set(providers.map((p) => p.value));
-                for (const p of detectPaymentProviders(sub.snapshot, this.config.payment_providers)) {
-                    if (!seen.has(p.value)) providers.push({ value: p.value, signal: `${p.signal} on ${path}` } as Detection);
-                }
-                if (commerce.hasCart || commerce.hasCheckout) break;
+        const visit = async (pageUrl: string) => {
+            const path = new URL(pageUrl).pathname;
+            const allowed = await this.robots.check(pageUrl).then((v) => v.allowed, () => false);
+            if (!allowed) return null;
+            await this.limiter.wait(new URL(pageUrl).host);
+            const sub = await loadPage(browser, pageUrl, { ...loadOpts, screenshotPath: null, ignoreHttpsErrors: true }).catch(() => null);
+            if (sub?.kind !== "loaded" || (sub.httpStatus ?? 0) >= 400) return null;
+            extraPages.push(path);
+            const c = detectCommerce(sub.snapshot);
+            if (c.hasCart || c.hasCheckout) {
+                commerce.hasCart ||= c.hasCart;
+                commerce.hasCheckout ||= c.hasCheckout;
+                commerce.signals.push(...c.signals.map((sig) => `${sig} on ${path}`));
             }
+            for (const sign of c.sellingSigns) if (!commerce.sellingSigns.some((x) => x.startsWith(sign))) commerce.sellingSigns.push(`${sign} on ${path}`);
+            const seen = new Set(providers.map((p) => p.value));
+            for (const p of detectPaymentProviders(sub.snapshot, this.config.payment_providers)) {
+                if (!seen.has(p.value)) providers.push({ value: p.value, signal: `${p.signal} on ${path}` } as Detection);
+            }
+            return sub.snapshot;
+        };
+        const found = () => commerce.hasCart || commerce.hasCheckout;
+        if (!found() && !password.value) {
+            const productCandidates = productPageLinks(s, 1);
+            for (const pageUrl of shopPageLinks(s, 3)) {
+                const snap = await visit(pageUrl);
+                if (found()) break;
+                if (snap) productCandidates.push(...productPageLinks(snap, 1));
+            }
+            const product = productCandidates.find((u) => !extraPages.includes(new URL(u).pathname));
+            if (!found() && product) await visit(product);
         }
         rec.commerce_pages = JSON.stringify(extraPages);
+        const unsure = !commerce.hasCart && !commerce.hasCheckout && commerce.sellingSigns.length > 0;
         const wa = countWhatsappLinks(s);
         const currency = localCurrencySeen(s, this.config.currency);
 
@@ -250,12 +263,13 @@ export class Auditor {
             status: "ok",
             platform: platform.value,
             platform_signal: platform.signal,
-            has_cart: commerce.hasCart,
-            has_checkout: commerce.hasCheckout,
-            cart_signal: commerce.signals.join(", ") || null,
+            // Products for sale but no cart found: we may have missed it, so claim nothing either way.
+            has_cart: unsure ? null : commerce.hasCart,
+            has_checkout: unsure ? null : commerce.hasCheckout,
+            cart_signal: unsure ? `not sure: ${commerce.sellingSigns.join(", ")}, but no cart or checkout found` : commerce.signals.join(", ") || null,
             payment_providers: JSON.stringify(providers.map((p) => ({ name: p.value, signal: p.signal }))),
             whatsapp_links: wa,
-            whatsapp_order_only: wa > 0 && !commerce.hasCart && !commerce.hasCheckout,
+            whatsapp_order_only: !unsure && wa > 0 && !commerce.hasCart && !commerce.hasCheckout,
             local_currency_seen: currency.value,
         } satisfies Partial<AuditRecord>);
 

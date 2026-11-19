@@ -153,7 +153,8 @@ The audit runs only for leads with a website. Each lead goes through these steps
 3. **Playwright, Pixel 7 profile.** Records the load time (Navigation Timing `loadEventEnd`), HTTP status and final URL, and saves a viewport screenshot.
 4. **Detection** on the homepage (`src/audit/detect.ts`). Every hit records the signal that matched:
    - platform (Shopify / WooCommerce / Wix / Squarespace / BigCommerce / Ecwid / Bumpa / Selar / WordPress / `custom` = no known signature)
-   - cart / checkout links, buttons and forms. If the homepage has none, up to 3 of the site's own shop pages (`/shop`, `/products`, `/collections`, …) are loaded and checked too
+   - cart / checkout, under the names stores use: cart, bag, basket, trolley, "Buy now", "Add to order", "3 items in cart", and the French, Spanish, Portuguese, German, Italian, Dutch and Arabic equivalents; icon-only cart widgets (mini-cart, cart drawer, cart counter markup); store software running on the page (Shopify, WooCommerce, Wix Stores, Squarespace Commerce, Ecwid, Snipcart, BigCommerce, Magento, PrestaShop, OpenCart, Webflow, Square); and "buy" links to outside checkouts (Stripe, Paystack, Flutterwave, Selar, PayPal, Etsy, Jumia, Amazon…). If the homepage has none, up to 3 of the site's own shop pages and then one product page are checked too
+   - when a page carries product/price data (schema.org Product/Offer, price markup) but no cart was found, the result is **not sure**: neither "has a cart" nor "no cart" is claimed, and no message mentions it
    - a password page (e.g. Shopify's "opening soon" `/password` page): the store exists but is closed to the public
    - a parked or for-sale domain, which makes it a `dead_listing`
    - configured payment providers, from network requests, page source or text
@@ -280,7 +281,7 @@ npm run typecheck
 
 ## Limits
 
-- Cart detection covers the homepage plus up to 3 linked shop pages. A store that only shows its cart deeper than that reads as "not found", and the evidence names the pages that were checked.
+- Cart detection covers the homepage, up to 3 linked shop pages and one product page. A store that only shows its cart deeper than that, under a name not listed above, and without product data reads as "not found"; the evidence names the pages that were checked. When a re-audit finds a cart, any unsent draft that said there was none is withdrawn.
 - `personal` means "not a known role mailbox". The tool can't confirm that an address belongs to a named person.
 - Platform detection is signature-based. Unknown or headless stacks show as `custom`.
 - Node's `http`/`fetch` ignore `HTTPS_PROXY`. Chromium uses it when set.

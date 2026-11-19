@@ -193,7 +193,7 @@ export interface AuditRecord {
 }
 
 /** Bump when the audit gains checks, so old rows can be refreshed with --upgrade. */
-export const AUDIT_VERSION = 2;
+export const AUDIT_VERSION = 3;
 
 /** Row shape as read back from SQLite (booleans become 0/1). */
 export type AuditRow = {

@@ -168,6 +168,12 @@ export class OutreachStore {
     }
 
     /** Close batches whose emails are all finished. */
+    /** Remove an unsent draft (so the lead can be drafted again), and any batch it leaves empty. */
+    withdrawDraft(id: number) {
+        this.db.prepare("DELETE FROM outreach WHERE id = ? AND status = 'draft'").run(id);
+        this.db.exec(`DELETE FROM batches WHERE status = 'awaiting_approval' AND NOT EXISTS (SELECT 1 FROM outreach o WHERE o.batch_id = batches.id)`);
+    }
+
     settleBatches() {
         this.db.exec(`UPDATE batches SET status = 'done' WHERE status = 'approved'
             AND NOT EXISTS (SELECT 1 FROM outreach o WHERE o.batch_id = batches.id AND o.status IN ('approved', 'sending'))`);

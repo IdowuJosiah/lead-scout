@@ -90,64 +90,133 @@ export function detectPlatform(s: PageSnapshot): Detection {
     return { value: "custom", signal: "no known platform signature matched" };
 }
 
-const CART_PATH = /\/(cart|basket|bag|shopping-cart)(\/|$|\?|#|\.)/i;
-const CHECKOUT_PATH = /\/checkout(\/|$|\?|#|\.)/i;
-const ADD_TO_CART_TEXT = /\badd\s+to\s+(cart|bag|basket)\b/i;
-const CHECKOUT_TEXT = /\bcheck\s?out\b/i;
+// Cart / checkout under the names stores actually use, in the languages we meet most.
+const CART_WORDS = "cart|basket|bag|trolley|shopping-cart|shopping-bag|my-cart|panier|carrito|carrinho|warenkorb|carrello|winkelwagen";
+const CART_PATH = new RegExp(`/(${CART_WORDS})(/|$|\\?|#|\\.)|/cart\\.php|route=checkout/cart`, "i");
+const CHECKOUT_PATH = /\/(checkouts?|kasse|caisse|pago|finalizar-compra)(\/|$|\?|#|\.)|route=checkout\/checkout/i;
+/** Link or button text that adds something to a cart, or buys it outright. */
+const ADD_TO_CART_TEXT =
+    /\b(add\s+to\s+(cart|bag|basket|trolley|order)|buy\s+(it\s+)?now|ajouter\s+au\s+panier|a[ñn]adir\s+al\s+carrito|agregar\s+al\s+carrito|adicionar\s+ao\s+carrinho|in\s+den\s+warenkorb|aggiungi\s+al\s+carrello|in\s+winkelwagen)\b|(أضف|إضافة)\s+(إلى|الى|ل)\s*السلة/i;
+/** A link that is just the cart itself: "Cart", "My bag (2)", "Basket 0". */
+const CART_LINK_TEXT = new RegExp(`\\b\\d*\\s*items?\\s+in\\s+(your\\s+|the\\s+)?(cart|bag|basket)\\b|^\\s*(my\\s+|your\\s+|view\\s+|open\\s+|go\\s+to\\s+)?(cart|basket|bag|trolley|shopping\\s+(cart|bag)|panier|carrito|carrinho|warenkorb|carrello|السلة)\\s*(\\(?\\s*\\d+\\s*\\)?|items?)?\\s*$`, "i");
+const CHECKOUT_TEXT = /\b(check\s?out|place\s+order|proceed\s+to\s+payment|pay\s+now|commander|finalizar\s+compra|zur\s+kasse)\b|إتمام\s+الشراء|الدفع/i;
+/** Cart widgets that are only an icon: drawer / mini-cart / counter markup. */
+const CART_MARKUP =
+    /\b(?:class|id|data-[\w-]+)\s*=\s*["'][^"']*?((?:mini-?|header-?)?(?:cart|bag|basket)[-_]?(?:drawer|count|icon|link|toggle|button|bubble|items|popup|sidebar|trigger|wrapper|counter|qty|quantity|badge)|mini-?(?:cart|bag|basket)|js-cart|w-commerce-commercecart|wc-block-mini-cart|sqs-cart)/i;
+
+/** Store software running on the page: if it's there, the site has a cart even if we can't see the button. */
+const STORE_ENGINES: [string, (s: PageSnapshot) => boolean][] = [
+    ["Shopify cart", (s) => /\/cart(\.js|\/add)\b|Shopify\.routes|"cart_add_url"|sdks\.shopifycdn\.com\/buy-button/.test(s.html) || s.requestUrls.some((u) => /\/cart\.js\b/.test(u))],
+    ["WooCommerce cart", (s) => /wc-cart-fragments|wc-ajax=|add_to_cart_button|wc_add_to_cart_params|woocommerce-cart/.test(s.html) || s.requestUrls.some((u) => /wc-ajax=|wc-cart-fragments/.test(u))],
+    ["Wix Stores", (s) => /wixstores|wix-ecommerce|ecom-platform|"cartIconLink"/i.test(s.html) || s.requestUrls.some((u) => /wixstores|\/ecom\//.test(u))],
+    ["Squarespace Commerce", (s) => /sqs-add-to-cart-button|commerce-cart|Static\.SQUARESPACE_CONTEXT[^;]*"commerce/.test(s.html)],
+    ["Ecwid store", (s) => /app\.ecwid\.com\/script\.js|ecwid-productBrowser/i.test(s.html) || s.requestUrls.some((u) => /app\.ecwid\.com/.test(u))],
+    ["Snipcart", (s) => /snipcart/i.test(s.html)],
+    ["BigCommerce cart", (s) => /cart\.php|data-cart-preview|BCData/.test(s.html)],
+    ["Magento cart", (s) => /Magento_Checkout|mage\/cookies|minicart-wrapper/.test(s.html)],
+    ["PrestaShop cart", (s) => /prestashop|blockcart/i.test(s.html)],
+    ["OpenCart cart", (s) => /route=checkout\/cart|catalog\/view\/theme/.test(s.html)],
+    ["Webflow Ecommerce", (s) => /w-commerce-commerce(cart|addtocart)/.test(s.html)],
+    ["Square Online", (s) => s.requestUrls.some((u) => /square\.site|squareup\.com\/.*online/.test(u))],
+];
+
+/** Where a "buy" link can send people to pay or order outside the site. */
+const EXTERNAL_CHECKOUT_HOSTS = [
+    "buy.stripe.com", "checkout.stripe.com", "paystack.com", "paystack.shop", "flutterwave.com", "selar.co", "selar.com", "gumroad.com",
+    "paypal.com", "paypal.me", "square.link", "checkout.square.site", "sumup.link", "lemonsqueezy.com", "payhip.com", "bumpa.shop",
+    "etsy.com", "jumia.com.ng", "jumia.com", "konga.com", "amazon.com", "amazon.co.uk", "amazon.ae", "noon.com", "takealot.com", "ko-fi.com",
+];
+const EXTERNAL_CHECKOUT_PATH: Record<string, RegExp> = { "paystack.com": /^\/(pay|buy)\b/, "flutterwave.com": /^\/(pay|store)\b/, "paypal.com": /webscr|\/paypalme|\/donate|\/ncp\/payment/ };
 
 const isWhatsapp = (href: string) => /^whatsapp:/i.test(href) || !!hostMatches(hostOf(href), WHATSAPP_HOSTS);
 
-export function detectCommerce(s: PageSnapshot): { hasCart: boolean; hasCheckout: boolean; signals: string[] } {
+export interface Commerce {
+    hasCart: boolean;
+    hasCheckout: boolean;
+    signals: string[];
+    /** Structured product/price data on the page: the site sells, even if we found no cart. */
+    sellingSigns: string[];
+}
+
+export function detectCommerce(s: PageSnapshot): Commerce {
     const signals: string[] = [];
     let hasCart = false;
     let hasCheckout = false;
+    const cart = (sig: string) => {
+        if (!hasCart) signals.push(sig);
+        hasCart = true;
+    };
+    const checkout = (sig: string) => {
+        if (!hasCheckout) signals.push(sig);
+        hasCheckout = true;
+    };
 
     for (const l of s.links) {
         if (isWhatsapp(l.href)) continue;
-        let path = "";
+        let u: URL;
         try {
-            path = new URL(l.href, s.finalUrl).pathname;
+            u = new URL(l.href, s.finalUrl);
         } catch {
             continue;
         }
-        if (!hasCart && CART_PATH.test(path)) {
-            hasCart = true;
-            signals.push(`cart link ${path}`);
-        }
-        if (!hasCheckout && CHECKOUT_PATH.test(path)) {
-            hasCheckout = true;
-            signals.push(`checkout link ${path}`);
-        }
-        if (!hasCart && ADD_TO_CART_TEXT.test(l.text)) {
-            hasCart = true;
-            signals.push(`link "${l.text.trim().slice(0, 40)}"`);
-        }
-        if (!hasCheckout && CHECKOUT_TEXT.test(l.text)) {
-            hasCheckout = true;
-            signals.push(`link "${l.text.trim().slice(0, 40)}"`);
-        }
+        const pathAndQuery = u.pathname + u.search;
+        if (CART_PATH.test(pathAndQuery)) cart(`cart link ${u.pathname}`);
+        if (CHECKOUT_PATH.test(pathAndQuery)) checkout(`checkout link ${u.pathname}`);
+        if (ADD_TO_CART_TEXT.test(l.text) || CART_LINK_TEXT.test(l.text)) cart(`link "${l.text.trim().slice(0, 40)}"`);
+        if (CHECKOUT_TEXT.test(l.text)) checkout(`link "${l.text.trim().slice(0, 40)}"`);
+        const host = hostMatches(u.hostname.toLowerCase(), EXTERNAL_CHECKOUT_HOSTS);
+        if (host && (!EXTERNAL_CHECKOUT_PATH[host] || EXTERNAL_CHECKOUT_PATH[host]!.test(u.pathname + u.search))) checkout(`buy link to ${host}`);
     }
     for (const b of s.buttons) {
-        if (!hasCart && ADD_TO_CART_TEXT.test(b)) {
-            hasCart = true;
-            signals.push(`button "${b.trim().slice(0, 40)}"`);
-        }
-        if (!hasCheckout && CHECKOUT_TEXT.test(b)) {
-            hasCheckout = true;
-            signals.push(`button "${b.trim().slice(0, 40)}"`);
-        }
+        if (ADD_TO_CART_TEXT.test(b) || CART_LINK_TEXT.test(b)) cart(`button "${b.trim().slice(0, 40)}"`);
+        if (CHECKOUT_TEXT.test(b)) checkout(`button "${b.trim().slice(0, 40)}"`);
     }
     for (const a of s.formActions) {
-        if (!hasCart && /\/cart(\/add)?\b/i.test(a)) {
-            hasCart = true;
-            signals.push(`form action ${a.slice(0, 60)}`);
-        }
-        if (!hasCheckout && CHECKOUT_PATH.test(a)) {
-            hasCheckout = true;
-            signals.push(`form action ${a.slice(0, 60)}`);
-        }
+        if (CART_PATH.test(a) || /\/cart\/add\b|add-to-cart=/i.test(a)) cart(`form action ${a.slice(0, 60)}`);
+        if (CHECKOUT_PATH.test(a)) checkout(`form action ${a.slice(0, 60)}`);
     }
-    return { hasCart, hasCheckout, signals };
+    if (!hasCart) {
+        const m = CART_MARKUP.exec(s.html);
+        if (m) cart(`cart widget "${m[1]}" in page`);
+    }
+    if (!hasCart) {
+        const engine = STORE_ENGINES.find(([, test]) => test(s));
+        if (engine) cart(`${engine[0]} running on the page`);
+    }
+
+    const sellingSigns: string[] = [];
+    if (/"@type"\s*:\s*"(Product|Offer|AggregateOffer)"/.test(s.html)) sellingSigns.push("product data (schema.org Product/Offer)");
+    if (/itemprop=["'](price|offers)["']/.test(s.html)) sellingSigns.push("price markup (itemprop)");
+    if (/<meta[^>]+property=["']og:type["'][^>]+content=["']product/i.test(s.html)) sellingSigns.push("og:type product");
+    if (/<meta[^>]+property=["'](product:price:amount|og:price:amount)["']/i.test(s.html)) sellingSigns.push("product price meta tag");
+    return { hasCart, hasCheckout, signals, sellingSigns };
+}
+
+const PRODUCT_PATH = /\/(products?|items?|p|shop|store|collections\/[^/]+\/products)\/[^/?#]{3,}\/?$|\/product-page\/|[?&](product_id|item_id)=/i;
+
+/** One or two links that look like a single product page (where "add to cart" usually lives). */
+export function productPageLinks(s: PageSnapshot, max = 1): string[] {
+    let origin = "";
+    try {
+        origin = new URL(s.finalUrl).origin;
+    } catch {
+        return [];
+    }
+    const out = new Set<string>();
+    for (const l of s.links) {
+        let u: URL;
+        try {
+            u = new URL(l.href, s.finalUrl);
+        } catch {
+            continue;
+        }
+        if (u.origin !== origin || !PRODUCT_PATH.test(u.pathname + u.search)) continue;
+        if (/\/(products?|shop|store|collections?|categor(y|ies))\/?$/i.test(u.pathname)) continue; // a listing, not a product
+        u.hash = "";
+        if (u.href !== s.finalUrl) out.add(u.href);
+        if (out.size >= max) break;
+    }
+    return [...out];
 }
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

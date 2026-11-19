@@ -62,6 +62,7 @@ export function buildEvidence(lead: LeadRow, audit: AuditRow | null): string {
                 if (audit.password_protected) parts.push(`store is password-protected (${audit.password_signal})`);
                 else if (audit.has_cart === 1 || audit.has_checkout === 1) parts.push(`cart/checkout found (${audit.cart_signal})`);
                 else if (audit.has_cart === 0) parts.push(`no cart or checkout found on ${pagesChecked(audit)}`);
+                else if (audit.cart_signal?.startsWith("not sure")) parts.push(`cart ${audit.cart_signal} (checked ${pagesChecked(audit)})`);
                 if (audit.whatsapp_links) parts.push(`${audit.whatsapp_links} WhatsApp link(s) on homepage`);
                 if (providers) {
                     parts.push(

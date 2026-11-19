@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { PageSnapshot } from "../src/audit/detect.js";
-import { countWhatsappLinks, detectCommerce, detectPaymentProviders, detectPlatform, localCurrencySeen } from "../src/audit/detect.js";
+import { countWhatsappLinks, detectCommerce, productPageLinks, detectPaymentProviders, detectPlatform, localCurrencySeen } from "../src/audit/detect.js";
 import { normalizeProvider, resolveConfig } from "../src/config.js";
 import { LeadStore, type AuditRecord, type AuditRow } from "../src/db.js";
 import { buildEvidence } from "../src/evidence.js";
@@ -155,8 +155,54 @@ describe("detect", () => {
         assert.equal(c.hasCheckout, false);
 
         const wa = snap({ links: [{ href: "https://wa.me/234800?text=checkout", text: "Order on WhatsApp" }] });
-        assert.deepEqual(detectCommerce(wa), { hasCart: false, hasCheckout: false, signals: [] });
+        assert.deepEqual(detectCommerce(wa), { hasCart: false, hasCheckout: false, signals: [], sellingSigns: [] });
         assert.equal(countWhatsappLinks(wa), 1);
+    });
+
+    it("finds carts under other names, icons, store software and outside checkouts", () => {
+        const has = (o: Partial<PageSnapshot>) => {
+            const c = detectCommerce(snap(o));
+            return c.hasCart || c.hasCheckout;
+        };
+        assert.ok(has({ buttons: ["Buy now"] }), "buy now");
+        assert.ok(has({ links: [{ href: "https://shop.example/my-bag", text: "Bag (2)" }] }), "bag with a count");
+        assert.ok(has({ links: [{ href: "https://shop.example/basket", text: "" }] }), "basket path");
+        assert.ok(has({ buttons: ["Add to order"] }), "add to order");
+        assert.ok(has({ buttons: ["Ajouter au panier"] }), "French");
+        assert.ok(has({ buttons: ["أضف إلى السلة"] }), "Arabic");
+        assert.ok(has({ links: [{ href: "https://shop.example/panier", text: "" }] }), "French path");
+        assert.ok(has({ html: '<button class="header__cart-icon js-cart" aria-hidden="true"></button>' }), "icon-only cart widget");
+        assert.ok(has({ html: '<div class="cart-drawer"></div>' }), "cart drawer");
+        assert.ok(has({ html: '<button class="cart-trigger_minicartTrigger__2tGxP"></button>' }), "CSS-module class names");
+        assert.ok(has({ buttons: ["3 items in cart"] }), "count-only label");
+        assert.ok(has({ buttons: ["Open bag"] }), "open bag");
+        assert.ok(!has({ html: '<a class="nav-link" data-testid="collection-bags">Bags</a>', links: [{ href: "https://shop.example/collections/bags", text: "Bags" }] }), "a 'bags' category isn't a cart");
+        assert.ok(has({ requestUrls: ["https://shop.example/cart.js"] }), "Shopify cart running");
+        assert.ok(has({ html: "<script src='/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?wc-ajax=get_refreshed_fragments'></script>" }), "WooCommerce cart");
+        assert.ok(has({ html: "<script src='https://app.ecwid.com/script.js?123'></script>" }), "Ecwid");
+        assert.ok(has({ links: [{ href: "https://buy.stripe.com/abc123", text: "Order" }] }), "Stripe payment link");
+        assert.ok(has({ links: [{ href: "https://paystack.com/pay/brand-dress", text: "Pay" }] }), "Paystack payment page");
+        assert.ok(has({ links: [{ href: "https://www.etsy.com/shop/BrandName", text: "Shop on Etsy" }] }), "sells on Etsy");
+
+        assert.ok(!has({ links: [{ href: "https://paystack.com/", text: "Paystack" }] }), "a Paystack logo link isn't a checkout");
+        assert.ok(!has({ links: [{ href: "https://shop.example/about", text: "Our story" }], html: "<div class='hero'></div>" }), "plain brochure site");
+    });
+
+    it("knows when a site sells but the cart wasn't found", () => {
+        const c = detectCommerce(snap({ html: '<script type="application/ld+json">{"@type":"Product","offers":{"@type":"Offer","price":"20"}}</script>' }));
+        assert.equal(c.hasCart, false);
+        assert.ok(c.sellingSigns.length > 0, "product data means: don't claim there's no cart");
+    });
+
+    it("picks a product page to check", () => {
+        const s = snap({
+            links: [
+                { href: "/products", text: "All" },
+                { href: "/products/linen-shirt", text: "Linen shirt" },
+                { href: "https://other.example/products/x", text: "elsewhere" },
+            ],
+        });
+        assert.deepEqual(productPageLinks(s, 2), ["https://shop.example/products/linen-shirt"]);
     });
 
     it("matches payment providers by request, source, and (opt-in) text", () => {

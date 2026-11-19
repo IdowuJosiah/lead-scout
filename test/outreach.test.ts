@@ -147,6 +147,23 @@ describe("draft", () => {
         store.close();
     });
 
+    it("withdraws an unsent draft when a re-audit finds the cart it said was missing", () => {
+        const { store, ids } = seeded();
+        const cfg = baseCfg();
+        const first = runDraft(store, region, cfg);
+        const draft = store.outreach.list("lead_id = ? AND channel = 'email'", ids.shop)[0]!;
+        assert.ok((JSON.parse(draft.issues!) as string[]).includes("no_cart_or_checkout"));
+
+        // The new audit finds the cart under another name.
+        store.saveAudit(auditRec(ids.shop, "https://adunnibeauty.ng/", { has_cart: true, cart_signal: 'button "Buy now"', audit_version: 3 }));
+        const again = runDraft(store, region, cfg);
+        assert.equal(again.withdrawn, 1);
+        // With a working cart and only a slow site, it no longer scores high enough to contact.
+        assert.equal(store.outreach.list("lead_id = ?", ids.shop).length, 0, "nothing left that claims there's no cart");
+        assert.ok(!store.outreach.batches().some((b) => b.id === first.batchId), "no empty batch left to approve");
+        store.close();
+    });
+
     it("needs a sender name and respects the do-not-contact list", () => {
         const { store, ids } = seeded();
         const cfg = baseCfg();

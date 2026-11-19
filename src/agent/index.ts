@@ -127,7 +127,7 @@ export async function runWeekly(store: LeadStore, base: RegionConfig, cfg: Outre
     for (const r of set.rows) await regionSteps(results, store, set, r.id, cfg, opts, opts.discover);
     await step(results, store, "draft", () => {
         const d = runDraft(store, set, cfg);
-        return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+        return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
     });
     return finish(store, set, cfg, opts, "last_weekly", results, started);
 }
@@ -160,7 +160,7 @@ export async function runScout(
         await regionSteps(results, store, set, regionId, cfg, opts, true);
         await step(results, store, "draft", () => {
             const d = runDraft(store, set, cfg, regionId);
-            return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone`;
+            return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
         });
     }
     return finish(store, set, cfg, opts, "last_scout", results, started, { place, region_id: regionId });

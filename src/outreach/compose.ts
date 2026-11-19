@@ -53,6 +53,17 @@ const DEAD_REASONS: [RegExp, string][] = [
     [/parked domain/, "the domain shows a parking / for-sale page"],
 ];
 
+/** Every issue the latest audit supports (a draft may only claim these). */
+export function supportedIssues(lead: LeadRow, audit: AuditRow | null): string[] {
+    const { breakdown } = scoreLead(lead, audit);
+    if (!breakdown) return [];
+    if (breakdown.startsWith("no_website")) return ["no_website"];
+    return breakdown
+        .split(";")
+        .map((p) => p.trim().split("+")[0]!)
+        .filter((k) => k && k !== "baseline");
+}
+
 /** Issues to mention, most important first: the main gap, then the biggest secondary one. */
 export function leadIssues(lead: LeadRow, audit: AuditRow | null): string[] {
     const { breakdown } = scoreLead(lead, audit);
