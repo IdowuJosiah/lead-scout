@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-20T12:23:57.686Z",
+ "generated_at": "2026-11-20T16:55:00.992Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -30,7 +30,7 @@
    },
    "allowed_to_email": true,
    "keywords": null,
-   "last_scouted_at": "2026-11-20T00:53:11.952Z",
+   "last_scouted_at": "2026-11-20T12:23:52.248Z",
    "leads": 297
   },
   {
@@ -51,7 +51,7 @@
    "keywords": [
     "fashion"
    ],
-   "last_scouted_at": "2026-11-20T01:23:09.031Z",
+   "last_scouted_at": "2026-11-20T12:23:57.252Z",
    "leads": 6
   }
  ],
@@ -166,8 +166,8 @@
    ]
   },
   "tick": {
-   "started_at": "2026-11-19T17:18:12.800Z",
-   "finished_at": "2026-11-19T17:18:13.603Z",
+   "started_at": "2026-11-20T16:55:00.460Z",
+   "finished_at": "2026-11-20T16:55:00.944Z",
    "steps": [
     {
      "step": "actions",
