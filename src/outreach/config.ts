@@ -62,6 +62,7 @@ export const ISSUE_KEYS = [
     "whatsapp_order_only",
     "site_unreachable",
     "password_protected",
+    "coming_soon",
     "no_cart_or_checkout",
     "hosted_storefront",
     "load_timed_out",

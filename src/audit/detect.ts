@@ -299,6 +299,28 @@ export function detectPasswordProtected(s: PageSnapshot): Detection<boolean> {
     return { value: false, signal: "no password page" };
 }
 
+/** Coming-soon / under-construction / maintenance pages: the site exists but isn't open yet. */
+const COMING_SOON_SOURCE: [RegExp, string][] = [
+    [/wp-content\/plugins\/coming-soon\/|seedprod/i, "SeedProd coming-soon page"],
+    [/wp-content\/plugins\/(wp-maintenance-mode|under-construction-page|cmp-coming-soon-maintenance|maintenance|coming-soon-page|minimal-coming-soon)/i, "WordPress maintenance / coming-soon plugin"],
+    [/elementor-maintenance-mode|class="[^"]*\bmaintenance-mode\b/i, "maintenance mode"],
+];
+const COMING_SOON_TEXT = /\b(coming soon|launching soon|under construction|under maintenance|site is (currently )?(down for|under) maintenance|we('|’)?ll be (back|live) soon|website (is )?coming soon|stay tuned|opening soon)\b/i;
+
+export function detectComingSoon(s: PageSnapshot): Detection<boolean> {
+    for (const [re, label] of COMING_SOON_SOURCE) if (re.test(s.html)) return { value: true, signal: label };
+    const title = /<title[^>]*>([^<]*)<\/title>/i.exec(s.html)?.[1] ?? "";
+    const wording = COMING_SOON_TEXT.exec(title) ?? COMING_SOON_TEXT.exec(s.text.slice(0, 2000));
+    // Only a bare placeholder: a real shop that merely says "new collection coming soon" has navigation.
+    if (wording && s.links.length + s.buttons.length < 8) return { value: true, signal: `"${wording[0]}" on a page with almost no links` };
+    return { value: false, signal: "no coming-soon page" };
+}
+
+/** Too little on the page (no navigation, no buttons, no WhatsApp ordering link) to tell whether there's a cart. */
+export function tooSparseToJudge(s: PageSnapshot): boolean {
+    return s.links.length + s.buttons.length < 3 && !s.links.some((l) => isWhatsapp(l.href));
+}
+
 const PARKING_HOSTS = ["sedoparking.com", "sedo.com", "dan.com", "afternic.com", "hugedomains.com", "parkingcrew.net", "bodis.com", "above.com", "undeveloped.com", "parklogic.com"];
 const PARKED_TEXT = /(this domain (name )?(is|may be) for sale|buy this domain|domain is parked|parked free|courtesy of godaddy|this domain has expired|renew (this|your) domain)/i;
 

@@ -22,6 +22,7 @@
     "subjects": {
       "no_cart_or_checkout": ["Quick idea for {brand}'s website", "Selling online from {domain}"],
       "password_protected": ["{brand}'s store is still locked", "About the password page on {domain}"],
+      "coming_soon": ["Getting {brand}'s website live", "About {domain}"],
       "whatsapp_order_only": ["Taking {brand}'s orders online", "Quick idea for {brand}'s website"],
       "dead_listing": ["{brand}'s website link isn't working", "About {domain}"],
       "site_unreachable": ["{brand}'s website isn't loading", "About {domain}"],
@@ -72,6 +73,10 @@
       "When I tried {domain} from your Google listing, it didn't load ({dead_reason})."
     ],
     "site_unreachable": ["{domain} didn't load on two separate checks."],
+    "coming_soon": [
+      "{domain} currently shows a \"coming soon\" page, so customers who look you up can't browse or buy yet.",
+      "Your website at {domain} is still on a coming-soon page, so there's nowhere for customers to see your work or order."
+    ],
     "password_protected": [
       "Your store at {domain} is behind a password page, so customers can't browse or buy yet.",
       "{domain} currently shows a password page, so visitors can't get into the store."

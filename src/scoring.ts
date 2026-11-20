@@ -32,6 +32,7 @@ export const WEIGHTS = {
     whatsappOrderOnly: 85, // own site, but ordering is only via WhatsApp
     siteUnreachable: 80, // failed to load on 2 separate audit runs
     passwordProtected: 70, // store exists but is closed to the public
+    comingSoon: 75, // a coming-soon / under-construction placeholder instead of a site
     noCartOrCheckout: 60, // checked homepage + up to 3 shop pages
     hostedStorefront: 40, // sells on a platform's domain, not its own
 
@@ -89,8 +90,9 @@ export function scoreLead(lead: LeadForScore, audit: AuditRow | null): ScoreResu
     if (loaded && audit) {
         if (websiteClass === "hosted_storefront") primary.push(["hosted_storefront", WEIGHTS.hostedStorefront]);
         if (audit.password_protected) primary.push(["password_protected", WEIGHTS.passwordProtected]);
+        if (audit.coming_soon) primary.push(["coming_soon", WEIGHTS.comingSoon]);
         if (audit.whatsapp_order_only) primary.push(["whatsapp_order_only", WEIGHTS.whatsappOrderOnly]);
-        if (!audit.password_protected && audit.has_cart === 0 && audit.has_checkout === 0) primary.push(["no_cart_or_checkout", WEIGHTS.noCartOrCheckout]);
+        if (!audit.password_protected && !audit.coming_soon && audit.has_cart === 0 && audit.has_checkout === 0) primary.push(["no_cart_or_checkout", WEIGHTS.noCartOrCheckout]);
 
         if (audit.load_timed_out) secondary.push(["load_timed_out", WEIGHTS.loadTimedOut]);
         else if (audit.load_time_ms != null && audit.load_time_ms >= THRESHOLDS.verySlowLoadMs) secondary.push(["very_slow_load", WEIGHTS.verySlowLoad]);

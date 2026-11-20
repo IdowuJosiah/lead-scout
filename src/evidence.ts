@@ -60,6 +60,7 @@ export function buildEvidence(lead: LeadRow, audit: AuditRow | null): string {
                 if (audit.link_in_bio_only) parts.push(`page is a link-in-bio/social page (${audit.link_in_bio_host})`);
                 if (audit.platform) parts.push(`platform ${audit.platform} (${audit.platform_signal})`);
                 if (audit.password_protected) parts.push(`store is password-protected (${audit.password_signal})`);
+                else if (audit.coming_soon) parts.push(`site shows a coming-soon / under-construction page (${audit.coming_soon_signal})`);
                 else if (audit.has_cart === 1 || audit.has_checkout === 1) parts.push(`cart/checkout found (${audit.cart_signal})`);
                 else if (audit.has_cart === 0) parts.push(`no cart or checkout found on ${pagesChecked(audit)}`);
                 else if (audit.cart_signal?.startsWith("not sure")) parts.push(`cart ${audit.cart_signal} (checked ${pagesChecked(audit)})`);

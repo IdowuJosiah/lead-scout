@@ -184,6 +184,9 @@ export interface AuditRecord {
     /** Store behind a password page (e.g. Shopify "opening soon"). */
     password_protected?: boolean | null;
     password_signal?: string | null;
+    /** Coming-soon / under-construction / maintenance placeholder instead of a site. */
+    coming_soon?: boolean | null;
+    coming_soon_signal?: string | null;
     /** JSON array of extra shop pages checked for cart/checkout. */
     commerce_pages?: string | null;
     /** Consecutive audit runs that ended "unreachable". */
@@ -193,7 +196,7 @@ export interface AuditRecord {
 }
 
 /** Bump when the audit gains checks, so old rows can be refreshed with --upgrade. */
-export const AUDIT_VERSION = 3;
+export const AUDIT_VERSION = 4;
 
 /** Row shape as read back from SQLite (booleans become 0/1). */
 export type AuditRow = {
@@ -305,7 +308,7 @@ export class LeadStore {
         };
         addColumns("leads", { country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT", region_id: "INTEGER" });
         const auditCols = new Set((this.db.prepare("PRAGMA table_info(audits)").all() as { name: string }[]).map((c) => c.name));
-        addColumns("audits", { password_protected: "INTEGER", password_signal: "TEXT", commerce_pages: "TEXT", unreachable_runs: "INTEGER", audit_version: "INTEGER" });
+        addColumns("audits", { password_protected: "INTEGER", password_signal: "TEXT", coming_soon: "INTEGER", coming_soon_signal: "TEXT", commerce_pages: "TEXT", unreachable_runs: "INTEGER", audit_version: "INTEGER" });
         if (!auditCols.has("audit_version")) {
             // Version-1 rows lumped every load failure into "unreachable". Split out the
             // ones whose recorded error proves the site doesn't exist; the rest count as

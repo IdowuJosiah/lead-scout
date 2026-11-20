@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { PageSnapshot } from "../src/audit/detect.js";
-import { countWhatsappLinks, detectCommerce, productPageLinks, detectPaymentProviders, detectPlatform, localCurrencySeen } from "../src/audit/detect.js";
+import { countWhatsappLinks, detectComingSoon, detectCommerce, productPageLinks, tooSparseToJudge, detectPaymentProviders, detectPlatform, localCurrencySeen } from "../src/audit/detect.js";
 import { normalizeProvider, resolveConfig } from "../src/config.js";
 import { LeadStore, type AuditRecord, type AuditRow } from "../src/db.js";
 import { buildEvidence } from "../src/evidence.js";
@@ -52,6 +52,8 @@ const audit = (o: Partial<AuditRow>): AuditRow => ({
     error: null,
     password_protected: 0,
     password_signal: null,
+    coming_soon: 0,
+    coming_soon_signal: null,
     commerce_pages: "[]",
     unreachable_runs: 0,
     audit_version: 2,
@@ -192,6 +194,16 @@ describe("detect", () => {
         const c = detectCommerce(snap({ html: '<script type="application/ld+json">{"@type":"Product","offers":{"@type":"Offer","price":"20"}}</script>' }));
         assert.equal(c.hasCart, false);
         assert.ok(c.sellingSigns.length > 0, "product data means: don't claim there's no cart");
+    });
+
+    it("spots coming-soon pages and pages too bare to judge", () => {
+        const seedprod = snap({ html: '<link href="https://x.ng/wp-content/plugins/coming-soon/public/css/tailwind.min.css">' });
+        assert.equal(detectComingSoon(seedprod).value, true);
+        assert.equal(detectComingSoon(snap({ html: "<title>Under Construction</title>" })).value, true);
+        const shop = snap({ text: "New collection coming soon", links: Array.from({ length: 12 }, (_, i) => ({ href: `/c/${i}`, text: `Cat ${i}` })) });
+        assert.equal(detectComingSoon(shop).value, false, "a real shop teasing a collection isn't a placeholder");
+        assert.equal(tooSparseToJudge(snap({})), true);
+        assert.equal(tooSparseToJudge(snap({ links: [{ href: "https://wa.me/234800", text: "Order on WhatsApp" }] })), false, "WhatsApp ordering is a clear answer");
     });
 
     it("picks a product page to check", () => {

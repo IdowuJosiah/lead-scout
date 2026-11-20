@@ -17,6 +17,8 @@ import {
     localCurrencySeen,
     shopPageLinks,
     productPageLinks,
+    detectComingSoon,
+    tooSparseToJudge,
     type Detection,
 } from "./detect.js";
 import { lighthouseMobileScore } from "./lighthouse.js";
@@ -90,6 +92,8 @@ const blank = (lead: LeadRow): AuditRecord => ({
     error: null,
     password_protected: null,
     password_signal: null,
+    coming_soon: null,
+    coming_soon_signal: null,
     commerce_pages: null,
     unreachable_runs: 0,
     audit_version: AUDIT_VERSION,
@@ -218,6 +222,10 @@ export class Auditor {
         const password = detectPasswordProtected(s);
         rec.password_protected = password.value;
         rec.password_signal = password.value ? password.signal : null;
+        const comingSoon = password.value ? { value: false, signal: "" } : detectComingSoon(s);
+        rec.coming_soon = comingSoon.value;
+        rec.coming_soon_signal = comingSoon.value ? comingSoon.signal : null;
+        const sparse = tooSparseToJudge(s);
 
         // No cart on the homepage: look at a few of the site's own shop pages, then one
         // product page (where "add to cart" usually is), before concluding anything.
@@ -244,7 +252,7 @@ export class Auditor {
             return sub.snapshot;
         };
         const found = () => commerce.hasCart || commerce.hasCheckout;
-        if (!found() && !password.value) {
+        if (!found() && !password.value && !comingSoon.value) {
             const productCandidates = productPageLinks(s, 1);
             for (const pageUrl of shopPageLinks(s, 3)) {
                 const snap = await visit(pageUrl);
@@ -255,7 +263,10 @@ export class Auditor {
             if (!found() && product) await visit(product);
         }
         rec.commerce_pages = JSON.stringify(extraPages);
-        const unsure = !commerce.hasCart && !commerce.hasCheckout && commerce.sellingSigns.length > 0;
+        const nothingFound = !commerce.hasCart && !commerce.hasCheckout;
+        // Products for sale but no cart, or a page too bare to judge (and not a known placeholder): claim nothing.
+        const unsure = nothingFound && !comingSoon.value && (commerce.sellingSigns.length > 0 || (sparse && !extraPages.length));
+        if (unsure && !commerce.sellingSigns.length) commerce.sellingSigns.push("page has almost no links or buttons");
         const wa = countWhatsappLinks(s);
         const currency = localCurrencySeen(s, this.config.currency);
 
@@ -266,10 +277,10 @@ export class Auditor {
             // Products for sale but no cart found: we may have missed it, so claim nothing either way.
             has_cart: unsure ? null : commerce.hasCart,
             has_checkout: unsure ? null : commerce.hasCheckout,
-            cart_signal: unsure ? `not sure: ${commerce.sellingSigns.join(", ")}, but no cart or checkout found` : commerce.signals.join(", ") || null,
+            cart_signal: unsure ? `not sure: ${commerce.sellingSigns.join(", ")}; no cart or checkout found` : commerce.signals.join(", ") || null,
             payment_providers: JSON.stringify(providers.map((p) => ({ name: p.value, signal: p.signal }))),
             whatsapp_links: wa,
-            whatsapp_order_only: !unsure && wa > 0 && !commerce.hasCart && !commerce.hasCheckout,
+            whatsapp_order_only: !unsure && !comingSoon.value && wa > 0 && !commerce.hasCart && !commerce.hasCheckout,
             local_currency_seen: currency.value,
         } satisfies Partial<AuditRecord>);
 
