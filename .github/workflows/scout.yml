@@ -55,6 +55,7 @@ jobs:
           PLACE: ${{ inputs.place }}
           KEYWORDS: ${{ inputs.keywords }}
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
           HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
           ZEROBOUNCE_API_KEY: ${{ secrets.ZEROBOUNCE_API_KEY }}
           EMAIL_VERIFIER: ${{ vars.EMAIL_VERIFIER }}

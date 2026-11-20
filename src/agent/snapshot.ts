@@ -7,6 +7,7 @@ import { monthKey } from "../outreach/store.js";
 import { compareLeads, priorityOf } from "../scoring.js";
 import { RegionSet, singleRegionSet } from "../regions.js";
 import { verifierName } from "../contact/apis.js";
+import { hasOwnWebsite } from "../websiteClass.js";
 
 /**
  * dashboard.json: everything the dashboard shows, written after every run.
@@ -53,6 +54,8 @@ export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSe
             verification_status: r.channel === "email" ? (result?.verification_status ?? null) : null,
             risk_flag: r.channel === "email" ? (result?.risk_flag ?? null) : null,
             replied: replied.has(r.lead_id),
+            activity: lead?.activity ?? null,
+            activity_note: lead?.activity_note ?? null,
         };
     };
 
@@ -67,6 +70,7 @@ export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSe
 
     const leads = rows
         .map(({ lead }) => lead)
+        .filter((l) => !hasOwnWebsite(l.website_class))
         .sort(compareLeads)
         .slice(0, 1000)
         .map((l) => ({
@@ -85,6 +89,9 @@ export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSe
             evidence: l.evidence,
             outreach: (byLead.get(l.id) ?? []).map((r) => ({ channel: r.channel, status: r.status, sent_at: r.sent_at })),
             replied: replied.has(l.id),
+            activity: l.activity ?? null,
+            activity_note: l.activity_note ?? null,
+            source: l.source,
         }));
 
     const state = (k: string) => {
@@ -115,7 +122,7 @@ export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSe
             allowed_to_email: r.allowed_to_email == null ? null : r.allowed_to_email === 1,
             keywords: r.keywords ? (JSON.parse(r.keywords) as string[]) : null,
             last_scouted_at: r.last_scouted_at,
-            leads: rows.filter(({ lead }) => lead.region_id === r.id).length,
+            leads: rows.filter(({ lead }) => lead.region_id === r.id && !hasOwnWebsite(lead.website_class)).length,
         })),
         sender: { name: cfg.sender.name, configured: !!cfg.sender.name },
         limits: cfg.limits,
@@ -133,6 +140,7 @@ export function buildSnapshot(store: LeadStore, regions: RegionConfig | RegionSe
             month: monthKey(),
             verifier: verifierName(),
             hunter: { used: o.usage("hunter"), limit: cfg.limits.hunter_calls_per_month },
+            google_place_details: o.usage("google_place_details"),
             zerobounce: { used: o.usage("zerobounce"), limit: cfg.limits.zerobounce_calls_per_month },
         },
         runs: { weekly: state("last_weekly"), tick: state("last_tick"), scout: state("last_scout") },

@@ -8,7 +8,8 @@ import { reconcileContacts } from "../contact/reconcile.js";
 import { ensureRegion, RegionSet } from "../regions.js";
 import type { LeadStore } from "../db.js";
 import { runDiscovery } from "../discovery/index.js";
-import { exportCsv } from "../export.js";
+import { exportCsv, rescoreAll } from "../export.js";
+import { runActivityChecks } from "../activity.js";
 import { errMessage, log } from "../log.js";
 import type { OutreachConfig } from "../outreach/config.js";
 import { runDraft } from "../outreach/draft.js";
@@ -109,6 +110,11 @@ async function regionSteps(results: StepResult[], store: LeadStore, set: RegionS
         const c = await runContacts(store, region, { ...opts.contacts, regionId, budget: budgetLeft(store, cfg), confirm: async () => true });
         return `${c.processed} processed: ${c.email} email, ${c.fallback} fallback, ${c.deferred} waiting for credits${region.allowed_to_email === true ? "" : " (email is off for this region)"}`;
     });
+    await step(results, store, `activity ${label}`, async () => {
+        rescoreAll(store);
+        const a = await runActivityChecks(store, { regionId, minScore: region.contact_min_score, apiKey: process.env.GOOGLE_PLACES_API_KEY ?? null });
+        return `${a.checked} checked: ${a.active} active, ${a.inactive} inactive (skipped), ${a.unknown} not confirmed${a.failed ? `, ${a.failed} failed` : ""}`;
+    });
 }
 
 const reconcileStep = (results: StepResult[], store: LeadStore) =>
@@ -126,8 +132,8 @@ export async function runWeekly(store: LeadStore, base: RegionConfig, cfg: Outre
     await reconcileStep(results, store);
     for (const r of set.rows) await regionSteps(results, store, set, r.id, cfg, opts, opts.discover);
     await step(results, store, "draft", () => {
-        const d = runDraft(store, set, cfg);
-        return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
+        const d = runDraft(store, set, cfg, null, { requireActivityCheck: true });
+        return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.socialDrafts} profile DM(s), ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
     });
     return finish(store, set, cfg, opts, "last_weekly", results, started);
 }
@@ -159,8 +165,8 @@ export async function runScout(
         await reconcileStep(results, store);
         await regionSteps(results, store, set, regionId, cfg, opts, true);
         await step(results, store, "draft", () => {
-            const d = runDraft(store, set, cfg, regionId);
-            return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
+            const d = runDraft(store, set, cfg, regionId, { requireActivityCheck: true });
+            return `${d.emailDrafts} email(s)${d.batchId && d.emailDrafts ? ` in batch #${d.batchId}` : ""}, ${d.whatsappDrafts} WhatsApp, ${d.socialDrafts} profile DM(s), ${d.phoneDrafts} phone${d.withdrawn ? `, ${d.withdrawn} outdated draft(s) withdrawn` : ""}`;
         });
     }
     return finish(store, set, cfg, opts, "last_scout", results, started, { place, region_id: regionId });

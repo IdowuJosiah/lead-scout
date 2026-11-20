@@ -134,3 +134,14 @@ export async function removeRegion(form: FormData) {
     revalidatePath("/", "layout");
     back("/regions", "Removed from weekly scouting. Its leads and messages stay; scout it again any time to bring it back.");
 }
+
+export async function markInactive(form: FormData) {
+    await requireSession();
+    const id = int(form.get("lead_id"));
+    const from = String(form.get("from") ?? "/whatsapp");
+    const path = ["/leads", "/whatsapp", "/approve"].includes(from) ? from : "/whatsapp";
+    if (!id) back(path, "That lead is not valid.");
+    await saveAction({ type: "mark_inactive", lead_id: id! });
+    revalidatePath("/", "layout");
+    back(path, "Marked inactive. Its messages are removed and it won't be contacted.");
+}

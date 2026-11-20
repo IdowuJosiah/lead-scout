@@ -147,6 +147,7 @@ describe("scouting a place end to end (Google mocked)", { timeout: 120_000 }, ()
     const realFetch = globalThis.fetch;
     let dir: string;
     const queries: string[] = [];
+    const details: string[] = [];
 
     before(() => {
         dir = mkdtempSync(join(tmpdir(), "lead-scout-regions-"));
@@ -164,6 +165,10 @@ describe("scouting a place end to end (Google mocked)", { timeout: 120_000 }, ()
                         { id: `${kw}-far`, displayName: { text: "Abu Dhabi shop" }, location: { latitude: 24.45, longitude: 54.38 } },
                     ],
                 });
+            }
+            if (url.includes("places.googleapis.com/v1/places/")) {
+                details.push(url);
+                return Response.json({ businessStatus: "OPERATIONAL", reviews: [{ publishTime: new Date(Date.now() - 20 * 86_400_000).toISOString() }] });
             }
             throw new Error(`unexpected fetch ${url}`);
         }) as typeof fetch;
@@ -198,6 +203,8 @@ describe("scouting a place end to end (Google mocked)", { timeout: 120_000 }, ()
         const noSite = chats.find((c) => /House Dubai/.test(store.allLeadsWithAudits().find((x) => x.lead.id === c.lead_id)!.lead.name))!;
         assert.equal(noSite.recipient, "https://wa.me/971501234567", "UAE mobile becomes a WhatsApp link");
         assert.equal(store.outreach.list("channel = 'email'").length, 0, "no email drafted while email is off");
+        assert.match(steps.find((s) => s.step.startsWith("activity"))!.detail, /active/);
+        assert.ok(details.length > 0, "checked recent Google reviews before drafting");
 
         const snap = JSON.parse(readFileSync(join(dir, "dashboard.json"), "utf8"));
         assert.deepEqual(snap.regions.map((r: { label: string }) => r.label), ["Lagos", "Dubai"]);

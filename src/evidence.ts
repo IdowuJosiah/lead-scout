@@ -82,6 +82,7 @@ export function buildEvidence(lead: LeadRow, audit: AuditRow | null): string {
     }
     if (lead.user_ratings_total != null) parts.push(`Google: ${lead.rating ?? "-"} stars from ${lead.user_ratings_total} reviews`);
     if (lead.business_status && lead.business_status !== "OPERATIONAL") parts.push(`Google business status: ${lead.business_status}`);
+    if (lead.activity) parts.push(`activity: ${lead.activity} (${lead.activity_note ?? ""})`);
     // Strip separators from quoted page text so the field stays one line.
     return parts.join("; ").replace(/[\r\n\t]+/g, " ");
 }

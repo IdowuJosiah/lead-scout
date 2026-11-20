@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS processed_actions (
 );
 `;
 
-export type OutreachChannel = "email" | "whatsapp" | "phone";
+/** social: a direct message you send on their Instagram / Facebook / TikTok profile. */
+export type OutreachChannel = "email" | "whatsapp" | "phone" | "social";
 export type OutreachStatus = "draft" | "approved" | "sending" | "sent" | "skipped" | "failed" | "bounced";
 
 export interface OutreachRow {

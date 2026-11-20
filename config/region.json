@@ -14,9 +14,11 @@
     "PayPal",
     { "name": "Monnify", "domains": ["monnify.com"] }
   ],
-  "sources": ["google_places"],
+  "sources": ["google_places", "brave_search"],
+  "source_options": { "brave_search": { "networks": ["instagram", "facebook", "tiktok"], "blog_pages": 3 } },
 
   "contact_min_score": 60,
+  "include_businesses_with_websites": false,
   "allowed_to_email": true,
   "legal_basis": "B2B outreach to publicly listed business contacts under legitimate interest (Nigeria Data Protection Act 2023). Identify yourself, keep it relevant to their business, include an opt-out and honour removal requests. Confirm this yourself before sending.",
   "send_window": { "days": "Mon-Fri", "start": "09:00", "end": "17:00" }

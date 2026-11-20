@@ -4,6 +4,7 @@ import { createInterface } from "node:readline/promises";
 import { parseArgs } from "node:util";
 import { runAudit, type AuditOptions } from "./audit/index.js";
 import { loadConfigFile, resolveConfig, type ConfigOverrides } from "./config.js";
+import { setOwnWebsitesInScope } from "./websiteClass.js";
 import { exportQueues } from "./contact/export.js";
 import { runContacts, type ContactOptions, type PaidPlan } from "./contact/index.js";
 import { formatReconcileReport, reconcileContacts } from "./contact/reconcile.js";
@@ -193,6 +194,7 @@ async function main() {
             lng: values.lng,
         };
         const config = needsConfig ? resolveConfig(loadConfigFile(values.config), overrides) : null;
+        setOwnWebsitesInScope(config?.include_businesses_with_websites === true);
 
         const auditOpts: AuditOptions = {
             reaudit: values.reaudit,

@@ -18,6 +18,7 @@ import { runDraft, waLink } from "../src/outreach/draft.js";
 import { applyInbound, classifyInbound, freshText, type InboundMessage } from "../src/outreach/inbox.js";
 import { runSend } from "../src/outreach/send.js";
 import { inSendWindow, parseDays } from "../src/outreach/window.js";
+import { setOwnWebsitesInScope } from "../src/websiteClass.js";
 import { dedupeKey, parseWebsite, websiteDomain } from "../src/url.js";
 
 const region = resolveConfig({
@@ -162,6 +163,30 @@ describe("draft", () => {
         assert.equal(store.outreach.list("lead_id = ?", ids.shop).length, 0, "nothing left that claims there's no cart");
         assert.ok(!store.outreach.batches().some((b) => b.id === first.batchId), "no empty batch left to approve");
         store.close();
+    });
+
+    it("by default leaves out every business with its own website", () => {
+        const { store, ids } = seeded();
+        const cfg = baseCfg();
+        runDraft(store, region, cfg); // drafted under the old scope
+        setOwnWebsitesInScope(false);
+        try {
+            const s = runDraft(store, region, cfg);
+            assert.ok(s.withdrawn >= 1, "the website business's email draft is withdrawn");
+            const left = store.outreach.list();
+            assert.equal(left.filter((r) => r.lead_id === ids.shop).length, 0, "nothing for the business with a website");
+            assert.ok(left.some((r) => r.lead_id === ids.nosite), "no-website business still drafted");
+            assert.ok(left.some((r) => r.lead_id === ids.insta), "Instagram-only business still drafted");
+            const snap = buildSnapshot(store, region, cfg);
+            assert.ok(!snap.leads.some((l) => l.id === ids.shop || l.id === ids.pending), "website businesses aren't listed");
+            assert.ok(snap.leads.some((l) => l.id === ids.nosite));
+            const csv = join(mkdtempSync(join(tmpdir(), "ls-scope-")), "leads.csv");
+            exportCsv(store, csv);
+            assert.ok(!readFileSync(csv, "utf8").includes("adunnibeauty"), "nor in leads.csv");
+        } finally {
+            setOwnWebsitesInScope(true);
+            store.close();
+        }
     });
 
     it("needs a sender name and respects the do-not-contact list", () => {

@@ -4,12 +4,14 @@ import { errMessage, log } from "../log.js";
 import { dedupeKey, parseWebsite, websiteDomain } from "../url.js";
 import { GooglePlacesSource } from "./googlePlaces.js";
 import { JsonFileSource } from "./jsonFile.js";
+import { BraveSearchSource } from "./brave.js";
 import type { DiscoverySourceFactory } from "./types.js";
 
 /** Register new sources here. The key is the name used in config `sources`. */
 export const SOURCES: Record<string, DiscoverySourceFactory> = {
     google_places: () => new GooglePlacesSource(),
     json_file: () => new JsonFileSource(),
+    brave_search: () => new BraveSearchSource(),
 };
 
 export interface DiscoverySummary {

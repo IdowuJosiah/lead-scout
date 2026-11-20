@@ -1,6 +1,7 @@
 import { approveBatch } from "@/app/actions";
 import { Flash, LoadError, NoData } from "@/components/flash";
 import { SubmitButton } from "@/components/ui";
+import { ActivityLine } from "@/components/activity";
 import { loadDashboard } from "@/lib/data";
 import { STATUS_LABEL, statusTone, when } from "@/lib/format";
 import type { OutreachItem } from "@/lib/types";
@@ -29,6 +30,7 @@ function EmailCard({ it }: { it: OutreachItem }) {
                     </a>
                 ) : null}
             </div>
+            <ActivityLine activity={it.activity} note={it.activity_note} website={it.website} name={it.name} />
             {it.evidence ? (
                 <details>
                     <summary>What the audit measured</summary>

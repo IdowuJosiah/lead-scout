@@ -106,6 +106,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                                 <td className="num">{l.reviews ?? "–"}</td>
                                 <td className="small">
                                     {l.pending ? <span className="badge warn">{l.pending}</span> : null}
+                                    {l.activity === "inactive" ? <span className="badge bad">inactive</span> : l.activity === "active" ? <span className="badge good">active</span> : null}
                                     {l.replied ? <span className="badge good">replied</span> : null}
                                     {l.outreach.map((o, i) => (
                                         <span key={i} className="badge">

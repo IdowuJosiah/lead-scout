@@ -49,6 +49,8 @@ export interface RegionConfig {
     send_window: SendWindow;
     /** Stage 3 only processes leads scoring at least this. */
     contact_min_score: number;
+    /** Also target businesses that already have their own website (default false: no-website businesses only). */
+    include_businesses_with_websites?: boolean;
 }
 
 /** Domains for well-known providers, so config can list plain names. */
@@ -195,5 +197,6 @@ export function resolveConfig(raw: Record<string, unknown>, o: ConfigOverrides =
         timezone,
         send_window: { days: String(sw.days).trim(), start: String(sw.start), end: String(sw.end) },
         contact_min_score: minScore as number,
+        include_businesses_with_websites: merged.include_businesses_with_websites === true,
     };
 }

@@ -21,6 +21,34 @@ web dashboard; **[SETUP.md](SETUP.md)** walks through it step by step. In short:
 - **Scout** (`.github/workflows/scout.yml`, started from the dashboard's **Scout** tab): type any place (a city, area or country). The agent resolves it with one Google Places call (location, search radius, country, timezone, currency, local payment providers, working week), then finds, audits and drafts for it. The place is included in every weekly run from then on.
 - **Dashboard** (`dashboard/`, deployed on Vercel): scout places, approve or edit emails, one-tap WhatsApp, leads, replies.
 
+### Who it targets
+
+By default only **businesses without a website of their own**: no website at all, or
+just an Instagram / Facebook / TikTok page, a link-in-bio page or a WhatsApp link.
+Any business with its own website (working or not, new or old) is left out:
+not audited, not contacted, not listed. Set `"include_businesses_with_websites": true`
+in `config/region.json` to bring them back.
+
+**Sources:** Google Places, plus Brave Search (`brave_search`, needs `BRAVE_API_KEY`):
+`site:instagram.com fashion Lagos`-style searches for social profiles (name, handle
+and any phone number come from the search result; the social networks themselves
+are never fetched), and blog round-ups ("best fashion boutiques in Lagos") whose
+linked Instagram profiles become leads (robots.txt respected). A website named in a
+bio puts that business out of scope. The same business found in several places is
+stored once.
+
+**Still active?** Before anyone is contacted, the agent checks (src/activity.ts):
+closed on Google → skipped; newest Google review within 6 months → active; older →
+inactive, skipped (and any unsent draft withdrawn). No reviews, or found outside
+Google → "not confirmed": drafted, but flagged in the dashboard with a link to their
+socials and a **Business is inactive, skip** button. Google returns up to 5 "most
+relevant" reviews, so the newest one seen can be older than their real newest.
+At most 60 paid Place Details lookups per run, each lead re-checked after 30 days.
+
+**Channels:** WhatsApp (a mobile number) first, then a DM on their Instagram /
+Facebook / TikTok profile (you send it; the dashboard opens the profile and copies
+the message), then a phone call.
+
 ### Places (regions)
 
 `config/region.json` is the home place (region #1). Every place you scout is

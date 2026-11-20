@@ -1,4 +1,5 @@
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
+import { hasOwnWebsite } from "./websiteClass.js";
 import { dirname } from "node:path";
 import type { AuditRow, LeadRow, LeadStore } from "./db.js";
 import { buildEvidence } from "./evidence.js";
@@ -96,6 +97,7 @@ export function exportCsv(store: LeadStore, path: string): number {
     rescoreAll(store);
     const rows = store
         .allLeadsWithAudits()
+        .filter(({ lead }) => !hasOwnWebsite(lead.website_class)) // businesses with their own website are out of scope
         .sort((a, b) => compareLeads(a.lead, b.lead));
     const lines = [COLUMNS.join(",")];
     for (const { lead, audit } of rows) {

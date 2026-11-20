@@ -5,7 +5,7 @@ export interface OutreachItem {
     lead_id: number;
     region_id: number | null;
     region: string | null;
-    channel: "email" | "whatsapp" | "phone";
+    channel: "email" | "whatsapp" | "phone" | "social";
     name: string;
     category: string | null;
     score: number | null;
@@ -25,6 +25,9 @@ export interface OutreachItem {
     verification_status: string | null;
     risk_flag: string | null;
     replied: boolean;
+    /** active | inactive | unknown (not confirmed), or null if not checked yet. */
+    activity?: string | null;
+    activity_note?: string | null;
     /** Set by the dashboard when a click hasn't been applied by the agent yet. */
     pending?: string;
 }
@@ -87,6 +90,9 @@ export interface Lead {
     evidence: string | null;
     outreach: { channel: string; status: string; sent_at: string | null }[];
     replied: boolean;
+    activity?: string | null;
+    activity_note?: string | null;
+    source?: string;
     pending?: string;
 }
 
@@ -136,4 +142,5 @@ export type DashboardAction =
     | { id: string; at: string; type: "skip"; outreach_id: number }
     | { id: string; at: string; type: "do_not_contact"; lead_id: number }
     | { id: string; at: string; type: "set_region_email"; region_id: number; allowed: boolean }
-    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean };
+    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean }
+    | { id: string; at: string; type: "mark_inactive"; lead_id: number };

@@ -8,6 +8,21 @@ import { classifyUrl, parseWebsite, type UrlKind } from "./url.js";
  */
 export type WebsiteClass = "none" | UrlKind | "dead_listing";
 
+/**
+ * Businesses that already have a website of their own (working or not) are
+ * out of scope: they are never scored, audited, contacted or listed.
+ */
+export const OWN_WEBSITE_CLASSES: ReadonlySet<string> = new Set(["owned_site", "hosted_storefront", "dead_listing"]);
+
+let ownWebsitesInScope = false;
+/** config/region.json "include_businesses_with_websites" (default false). */
+export function setOwnWebsitesInScope(include: boolean) {
+    ownWebsitesInScope = include;
+}
+export const ownWebsitesIncluded = () => ownWebsitesInScope;
+/** True when this class is a business with its own website and those are out of scope. */
+export const hasOwnWebsite = (cls: string | null | undefined) => !ownWebsitesInScope && !!cls && OWN_WEBSITE_CLASSES.has(cls);
+
 export function websiteClass(websiteUrl: string | null, audit: Pick<AuditRow, "status" | "final_url"> | null): WebsiteClass {
     const url = parseWebsite(websiteUrl);
     if (!url) return "none";

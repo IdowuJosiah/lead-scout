@@ -24,6 +24,7 @@ import {
 import { lighthouseMobileScore } from "./lighthouse.js";
 import { loadPage } from "./page.js";
 import { RobotsChecker } from "./robots.js";
+import { hasOwnWebsite } from "../websiteClass.js";
 import { probeHttps, type SslResult } from "./ssl.js";
 
 export interface AuditOptions {
@@ -329,7 +330,13 @@ export async function runAudit(
     opts: AuditOptions,
     onLeadDone?: (done: number, total: number) => void,
 ): Promise<AuditSummary> {
-    const leads = store.leadsToAudit({ reaudit: opts.reaudit, upgrade: opts.upgrade, limit: opts.limit, ids: opts.ids, regionId: opts.regionId });
+    // Businesses with their own website are out of scope, so their sites aren't audited.
+    const leads = store
+        .leadsToAudit({ reaudit: opts.reaudit, upgrade: opts.upgrade, limit: opts.limit, ids: opts.ids, regionId: opts.regionId })
+        .filter((l) => {
+            const url = parseWebsite(l.website_url);
+            return !url || !hasOwnWebsite(classifyUrl(url).kind);
+        });
     const summary: AuditSummary = { attempted: 0, byStatus: {} };
     log.info(`audit: ${leads.length} lead(s) to audit`);
     if (!leads.length) return summary;

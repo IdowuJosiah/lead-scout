@@ -42,6 +42,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 | Name | Value |
 |---|---|
 | `GOOGLE_PLACES_API_KEY` | your Google key |
+| `BRAVE_API_KEY` | your Brave Search API key (api-dashboard.search.brave.com). Finds Instagram, Facebook and TikTok businesses and blog round-ups |
 | `HUNTER_API_KEY` | your Hunter key |
 | `ZEROBOUNCE_API_KEY` | optional. ZeroBounce's firewall blocks GitHub's servers, so Hunter verifies instead |
 | `SMTP_USER` | your Zoho address, e.g. `hello@yourstudio.ng` |

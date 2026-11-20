@@ -15,7 +15,8 @@ export type DashboardAction =
     | { id: string; at: string; type: "skip"; outreach_id: number }
     | { id: string; at: string; type: "do_not_contact"; lead_id: number }
     | { id: string; at: string; type: "set_region_email"; region_id: number; allowed: boolean }
-    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean };
+    | { id: string; at: string; type: "set_region_active"; region_id: number; active: boolean }
+    | { id: string; at: string; type: "mark_inactive"; lead_id: number };
 
 const MAX_SUBJECT = 200;
 const MAX_BODY = 5000;
@@ -70,6 +71,15 @@ export function applyAction(store: LeadStore, cfg: OutreachConfig, a: DashboardA
                 if (row.status === "draft" || row.status === "approved") o.update(row.id, { status: "skipped", error: "do not contact" });
             }
             return `lead ${a.lead_id} added to do-not-contact`;
+        }
+        case "mark_inactive": {
+            const lead = store.allLeadsWithAudits().find((x) => x.lead.id === a.lead_id)?.lead;
+            if (!lead) throw new Error(`lead ${a.lead_id} not found`);
+            store.setActivity(lead.id, { activity: "inactive", note: "you marked it inactive in the dashboard", lastReviewAt: null });
+            for (const row of o.forLead(lead.id)) {
+                if (row.status === "draft" || row.status === "approved") o.update(row.id, { status: "skipped", error: "business inactive" });
+            }
+            return `${lead.name} marked inactive`;
         }
         case "set_region_email": {
             const r = store.regions.get(a.region_id);

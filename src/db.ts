@@ -141,6 +141,12 @@ export interface LeadRow {
     website_class?: string | null;
     /** The region (see regions.ts) the lead was found in. */
     region_id?: number | null;
+    /** Is the business still active? active | inactive | unknown (see activity.ts). */
+    activity?: string | null;
+    activity_note?: string | null;
+    /** Newest Google review we saw (ISO date). */
+    last_review_at?: string | null;
+    activity_checked_at?: string | null;
 }
 
 export type AuditStatus =
@@ -306,7 +312,10 @@ export class LeadStore {
                 if (!have.has(name)) this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
             }
         };
-        addColumns("leads", { country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT", region_id: "INTEGER" });
+        addColumns("leads", {
+            country: "TEXT", rating: "REAL", user_ratings_total: "INTEGER", business_status: "TEXT", website_class: "TEXT", region_id: "INTEGER",
+            activity: "TEXT", activity_note: "TEXT", last_review_at: "TEXT", activity_checked_at: "TEXT",
+        });
         const auditCols = new Set((this.db.prepare("PRAGMA table_info(audits)").all() as { name: string }[]).map((c) => c.name));
         addColumns("audits", { password_protected: "INTEGER", password_signal: "TEXT", coming_soon: "INTEGER", coming_soon_signal: "TEXT", commerce_pages: "TEXT", unreachable_runs: "INTEGER", audit_version: "INTEGER" });
         if (!auditCols.has("audit_version")) {
@@ -460,6 +469,12 @@ export class LeadStore {
             (this.db.prepare("SELECT * FROM audits").all() as unknown as AuditRow[]).map((a) => [a.lead_id, a]),
         );
         return leads.map((lead) => ({ lead, audit: audits.get(lead.id) ?? null }));
+    }
+
+    setActivity(id: number, a: { activity: string; note: string; lastReviewAt: string | null }, now = new Date().toISOString()) {
+        this.db
+            .prepare("UPDATE leads SET activity = ?, activity_note = ?, last_review_at = COALESCE(?, last_review_at), activity_checked_at = ? WHERE id = ?")
+            .run(a.activity, a.note, a.lastReviewAt, now, id);
     }
 
     saveScore(id: number, score: number | null, breakdown: string | null, evidence: string, websiteClass: string) {

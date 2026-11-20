@@ -13,7 +13,7 @@
     "audit": "npm run cli -- audit",
     "export": "npm run cli -- export",
     "typecheck": "tsc --noEmit",
-    "test": "node --no-warnings=ExperimentalWarning --import tsx --test test/*.test.ts"
+    "test": "node --no-warnings=ExperimentalWarning --import tsx --import ./test/setup.ts --test test/*.test.ts"
   },
   "dependencies": {
     "country-to-currency": "^3.0.2",

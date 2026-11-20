@@ -149,6 +149,13 @@ export function withPending(snap: Snapshot, actions: DashboardAction[]): Snapsho
             const lead = s.leads.find((l) => l.id === a.lead_id);
             if (lead) lead.pending = "do not contact";
             for (const it of items) if (it.lead_id === a.lead_id && it.status === "draft") it.pending = "do not contact";
+        } else if (a.type === "mark_inactive") {
+            const lead = s.leads.find((l) => l.id === a.lead_id);
+            if (lead) {
+                lead.activity = "inactive";
+                lead.pending = "marked inactive";
+            }
+            for (const it of items) if (it.lead_id === a.lead_id && it.status === "draft") it.pending = "inactive";
         } else if (a.type === "set_region_email") {
             const r = s.regions?.find((x) => x.id === a.region_id);
             if (r) {

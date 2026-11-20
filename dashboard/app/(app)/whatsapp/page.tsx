@@ -2,6 +2,7 @@ import Link from "next/link";
 import { doNotContact, markChat } from "@/app/actions";
 import { Flash, LoadError, NoData } from "@/components/flash";
 import { CopyButton, SubmitButton } from "@/components/ui";
+import { ActivityLine, InactiveButton } from "@/components/activity";
 import { loadDashboard } from "@/lib/data";
 import { CLASS_LABEL, phoneDigits, STATUS_LABEL, when, whatsappHref } from "@/lib/format";
 import type { OutreachItem } from "@/lib/types";
@@ -9,6 +10,8 @@ import type { OutreachItem } from "@/lib/types";
 function ChatCard({ it }: { it: OutreachItem }) {
     const wa = it.channel === "whatsapp" ? whatsappHref(it.recipient, it.body) : null;
     const tel = it.channel === "phone" ? phoneDigits(it.recipient) : null;
+    const profile = it.channel === "social" && it.recipient && /^https:\/\//.test(it.recipient) ? it.recipient : null;
+    const network = profile ? (/instagram/.test(profile) ? "Instagram" : /tiktok/.test(profile) ? "TikTok" : /facebook/.test(profile) ? "Facebook" : "their profile") : null;
     return (
         <div className="card">
             <div className="spread">
@@ -22,13 +25,21 @@ function ChatCard({ it }: { it: OutreachItem }) {
                 {it.website_class ? <span className="badge">{CLASS_LABEL[it.website_class] ?? it.website_class}</span> : null}
                 {it.category ? <span className="badge">{it.category}</span> : null}
                 {it.region ? <span className="badge">{it.region}</span> : null}
-                <span className="muted">{it.channel === "whatsapp" ? "WhatsApp" : "Phone"}: {it.recipient}</span>
+                <span className="muted">
+                    {it.channel === "whatsapp" ? "WhatsApp" : it.channel === "social" ? `${network} DM` : "Phone"}: {it.recipient}
+                </span>
             </div>
+            <ActivityLine activity={it.activity} note={it.activity_note} website={it.website} name={it.name} />
             <div className="message">{it.body}</div>
             <div className="row">
                 {wa ? (
                     <a className="btn" href={wa} target="_blank" rel="noreferrer noopener">
                         Open in WhatsApp
+                    </a>
+                ) : null}
+                {profile ? (
+                    <a className="btn" href={profile} target="_blank" rel="noreferrer noopener">
+                        Open {network} to DM
                     </a>
                 ) : null}
                 {tel ? (
@@ -54,6 +65,7 @@ function ChatCard({ it }: { it: OutreachItem }) {
                     <input type="hidden" name="kind" value="skip" />
                     <SubmitButton className="btn btn-quiet">Skip</SubmitButton>
                 </form>
+                <InactiveButton leadId={it.lead_id} from="/whatsapp" />
                 <form action={doNotContact}>
                     <input type="hidden" name="lead_id" value={it.lead_id} />
                     <input type="hidden" name="from" value="/whatsapp" />
@@ -94,7 +106,9 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
             <p className="muted">
                 WhatsApp doesn&apos;t allow automated cold messages, so this is one tap each: <strong>Open in WhatsApp</strong> opens the chat with the message
                 already typed. Press send there, then come back and tap <strong>I sent it</strong>. Best sent {snap.region.send_window.days}{" "}
-                {snap.region.send_window.start}–{snap.region.send_window.end}.
+                {snap.region.send_window.start}–{snap.region.send_window.end}. Businesses with no number get an <strong>Instagram / Facebook / TikTok DM</strong>:
+                tap <strong>Copy message</strong>, open their profile, and send it there. Check the activity line first; if they look dead, tap{" "}
+                <strong>Business is inactive, skip</strong>.
             </p>
             <div className="row">
                 <Link className={`btn ${show === "done" ? "btn-quiet" : ""}`} href="/whatsapp">

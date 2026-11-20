@@ -17,6 +17,8 @@ export interface DraftSummary {
     emailDrafts: number;
     whatsappDrafts: number;
     phoneDrafts: number;
+    /** Direct messages to send on their Instagram / Facebook / TikTok profile. */
+    socialDrafts: number;
     /** Unsent drafts pulled back because a re-audit no longer supports what they said. */
     withdrawn: number;
     /** Leads skipped because no measured issue could be put into words. */
@@ -44,14 +46,21 @@ const DAY = 24 * 3600 * 1000;
  * Leads that already have outreach, replied, or are on the do-not-contact
  * list are never drafted again. Nothing is sent here.
  */
-export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cfg: OutreachConfig, onlyRegionId: number | null = null): DraftSummary {
+export function runDraft(
+    store: LeadStore,
+    regions: RegionConfig | RegionSet,
+    cfg: OutreachConfig,
+    onlyRegionId: number | null = null,
+    /** Only draft for businesses whose activity was checked and isn't "inactive" (the agent sets this). */
+    opts: { requireActivityCheck?: boolean } = {},
+): DraftSummary {
     assertSenderSet(cfg);
     const set = regions instanceof RegionSet ? regions : singleRegionSet(regions);
     // Each lead is written for, and checked against, its own region's settings.
     const regionOf = (lead: LeadRow) => (onlyRegionId != null && lead.region_id !== onlyRegionId ? null : set.forLead(lead));
     rescoreAll(store);
     const o = store.outreach;
-    const summary: DraftSummary = { batchId: null, emailDrafts: 0, whatsappDrafts: 0, phoneDrafts: 0, noStatableIssue: 0, withdrawn: 0 };
+    const summary: DraftSummary = { batchId: null, emailDrafts: 0, whatsappDrafts: 0, phoneDrafts: 0, socialDrafts: 0, noStatableIssue: 0, withdrawn: 0 };
     const audits = new Map(store.allLeadsWithAudits().map(({ lead, audit }) => [lead.id, { lead, audit }]));
     const results = new Map(store.contactResults().map(({ lead, result }) => [lead.id, result]));
     // A re-audit can change what's true about a site. Unsent drafts that claim
@@ -59,14 +68,18 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
     for (const row of o.list("status = 'draft'")) {
         const entry = audits.get(row.lead_id);
         const claims = row.issues ? (JSON.parse(row.issues) as string[]) : [];
-        if (!entry || !claims.length) continue;
+        if (!entry) continue;
         const supported = new Set(supportedIssues(entry.lead, entry.audit));
         const stale = claims.filter((k) => !supported.has(k));
-        if (!stale.length) continue;
+        const reason = entry.lead.activity === "inactive" ? `business looks inactive (${entry.lead.activity_note})` : stale.length ? `latest audit no longer supports ${stale.join(", ")}` : null;
+        if (!reason) continue;
         o.withdrawDraft(row.id);
         summary.withdrawn++;
-        log.info(`draft: withdrew ${row.channel} draft for ${entry.lead.name}: latest audit no longer supports ${stale.join(", ")}`);
+        log.info(`draft: withdrew ${row.channel} draft for ${entry.lead.name}: ${reason}`);
     }
+    // Inactive businesses are never contacted; unchecked ones wait for the check (agent runs).
+    const activityOk = (lead: LeadRow) => lead.activity !== "inactive" && (!opts.requireActivityCheck || !!lead.activity);
+    const activityRank = (lead: LeadRow) => (lead.activity === "active" ? 0 : 1);
     const blocked = (lead: LeadRow, recipient: string | null) => o.leadHasReplied(lead.id) || o.isSuppressed(recipient) || o.isSuppressed(lead.phone);
 
     // ---- Emails, into a batch awaiting approval ----
@@ -83,8 +96,8 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
                 const region = regionOf(lead);
                 return !!region && emailAllowed(region) && result.outcome === "email" && !!result.email && !stage3Exclusion(lead, result, region);
             })
-            .filter(({ lead, result }) => !o.hasOutreach(lead.id, "email") && !blocked(lead, result.email))
-            .sort((a, b) => compareLeads(a.lead, b.lead));
+            .filter(({ lead, result }) => !o.hasOutreach(lead.id, "email") && !blocked(lead, result.email) && activityOk(lead))
+            .sort((a, b) => activityRank(a.lead) - activityRank(b.lead) || compareLeads(a.lead, b.lead));
         let batchId: number | null = null;
         let room = cfg.limits.batch_size;
         for (const { lead, result } of candidates) {
@@ -105,14 +118,14 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
 
     // ---- WhatsApp / phone, for leads that won't get an email ----
     const weekAgo = new Date(Date.now() - 7 * DAY).toISOString();
-    const recent = o.list("channel IN ('whatsapp', 'phone') AND created_at >= ?", weekAgo).length;
+    const recent = o.list("channel IN ('whatsapp', 'phone', 'social') AND created_at >= ?", weekAgo).length;
     let room = Math.max(0, cfg.limits.whatsapp_drafts_per_week - recent);
     const leads = [...audits.values()]
         .filter(({ lead }) => {
             const region = regionOf(lead);
-            return !!region && lead.lead_score != null && lead.lead_score >= region.contact_min_score;
+            return !!region && lead.lead_score != null && lead.lead_score >= region.contact_min_score && activityOk(lead);
         })
-        .sort((a, b) => compareLeads(a.lead, b.lead));
+        .sort((a, b) => activityRank(a.lead) - activityRank(b.lead) || compareLeads(a.lead, b.lead));
     for (const { lead, audit } of leads) {
         if (room <= 0) break;
         const region = regionOf(lead)!;
@@ -123,21 +136,28 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
         if (cls === "owned_site" && result?.outcome !== "fallback") continue;
         if (result?.outcome === "email" && emailAllowed(region)) continue;
 
-        let channel: "whatsapp" | "phone";
+        // WhatsApp beats a DM on their profile, which beats a phone call.
+        let channel: "whatsapp" | "phone" | "social";
         let recipient: string;
         const listed = parseWebsite(lead.website_url);
+        const profile = listed && (cls === "social" || cls === "link_in_bio") ? listed.href : null;
+        const ch = fallbackChannel(lead.phone, lead.country ?? region.country_code, null);
         if (cls === "messaging" && listed && /wa\.me|whatsapp/.test(listed.hostname)) {
             channel = "whatsapp";
             recipient = waLink(listed.href);
         } else if (result?.channel === "whatsapp" && result.channel_value) {
             channel = "whatsapp";
             recipient = waLink(result.channel_value);
-        } else {
-            const ch = fallbackChannel(lead.phone, lead.country ?? region.country_code, null);
-            if (ch.channel === "none" || !ch.value) continue;
-            channel = ch.channel;
-            recipient = ch.channel === "whatsapp" ? waLink(ch.value) : ch.value;
-        }
+        } else if (ch.channel === "whatsapp" && ch.value) {
+            channel = "whatsapp";
+            recipient = waLink(ch.value);
+        } else if (profile) {
+            channel = "social";
+            recipient = profile;
+        } else if (ch.channel === "phone" && ch.value) {
+            channel = "phone";
+            recipient = ch.value;
+        } else continue;
         if (blocked(lead, recipient)) continue;
         const msg = composeWhatsapp(lead, audit, region, cfg);
         if (!msg) {
@@ -146,6 +166,7 @@ export function runDraft(store: LeadStore, regions: RegionConfig | RegionSet, cf
         }
         if (o.addDraft({ lead_id: lead.id, channel, recipient, subject: null, body: msg.body, issues: msg.issues, batch_id: null })) {
             if (channel === "whatsapp") summary.whatsappDrafts++;
+            else if (channel === "social") summary.socialDrafts++;
             else summary.phoneDrafts++;
             room--;
         }

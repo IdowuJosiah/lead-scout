@@ -1,5 +1,5 @@
 import type { AuditRow, LeadRow } from "./db.js";
-import { websiteClass as websiteClass_, type WebsiteClass } from "./websiteClass.js";
+import { hasOwnWebsite, websiteClass as websiteClass_, type WebsiteClass } from "./websiteClass.js";
 
 /**
  * Lead scoring: all weights and thresholds live here.
@@ -72,6 +72,8 @@ export function scoreLead(lead: LeadForScore, audit: AuditRow | null): ScoreResu
     const websiteClass = websiteClass_(lead.website_url, audit);
     const none = (breakdown: string | null = null): ScoreResult => ({ score: null, breakdown, websiteClass });
     if (lead.business_status === "CLOSED_PERMANENTLY") return none("closed_permanently (not scored)");
+    if (lead.business_status === "CLOSED_TEMPORARILY") return none("closed_temporarily (not scored)");
+    if (hasOwnWebsite(websiteClass)) return none("has_own_website (out of scope)");
     if (websiteClass === "none") return { score: WEIGHTS.noWebsite, breakdown: `no_website=${WEIGHTS.noWebsite}`, websiteClass };
 
     const primary: [string, number][] = [];
