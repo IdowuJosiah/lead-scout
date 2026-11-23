@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated_at": "2026-11-20T16:55:00.992Z",
+ "generated_at": "2026-11-23T16:26:56.225Z",
  "region": {
   "city": "Lagos",
   "country": "Nigeria",
@@ -31,7 +31,7 @@
    "allowed_to_email": true,
    "keywords": null,
    "last_scouted_at": "2026-11-20T12:23:52.248Z",
-   "leads": 297
+   "leads": 303
   },
   {
    "id": 2,
@@ -52,7 +52,7 @@
     "fashion"
    ],
    "last_scouted_at": "2026-11-20T12:23:57.252Z",
-   "leads": 6
+   "leads": 7
   }
  ],
  "sender": {
@@ -70,9 +70,9 @@
   "zerobounce_calls_per_month": 100
  },
  "stats": {
-  "leads": 564,
-  "noWebsite": 237,
-  "audited": 321,
+  "leads": 578,
+  "noWebsite": 242,
+  "audited": 323,
   "failedAudits": 0,
   "failures": 103,
   "emailQueue": 13,
@@ -80,7 +80,7 @@
   "emails_sent": 0,
   "emails_waiting_approval": 0,
   "emails_approved": 0,
-  "chats_to_send": 50,
+  "chats_to_send": 41,
   "replies": 0,
   "opt_outs": 0,
   "bounces": 0
@@ -92,7 +92,7 @@
    "used": 39,
    "limit": 50
   },
-  "google_place_details": 66,
+  "google_place_details": 127,
   "zerobounce": {
    "used": 1,
    "limit": 100
@@ -100,8 +100,8 @@
  },
  "runs": {
   "weekly": {
-   "started_at": "2026-11-20T12:23:42.515Z",
-   "finished_at": "2026-11-20T12:23:57.645Z",
+   "started_at": "2026-11-23T16:26:37.779Z",
+   "finished_at": "2026-11-23T16:26:56.171Z",
    "steps": [
     {
      "step": "actions",
@@ -121,12 +121,12 @@
     {
      "step": "discover Lagos",
      "ok": true,
-     "detail": "354 found, 19 new, 0 failure(s)"
+     "detail": "345 found, 12 new, 0 failure(s)"
     },
     {
      "step": "audit Lagos",
      "ok": true,
-     "detail": "1 audited {\"social_profile\":1}"
+     "detail": "2 audited {\"messaging_link\":2}"
     },
     {
      "step": "contacts Lagos",
@@ -136,12 +136,12 @@
     {
      "step": "activity Lagos",
      "ok": true,
-     "detail": "60 checked: 25 active, 35 inactive (skipped), 0 not confirmed"
+     "detail": "60 checked: 16 active, 44 inactive (skipped), 0 not confirmed"
     },
     {
      "step": "discover ireland",
      "ok": true,
-     "detail": "40 found, 0 new, 0 failure(s)"
+     "detail": "38 found, 2 new, 0 failure(s)"
     },
     {
      "step": "audit ireland",
@@ -156,12 +156,12 @@
     {
      "step": "activity ireland",
      "ok": true,
-     "detail": "6 checked: 2 active, 4 inactive (skipped), 0 not confirmed"
+     "detail": "1 checked: 0 active, 1 inactive (skipped), 0 not confirmed"
     },
     {
      "step": "draft",
      "ok": true,
-     "detail": "0 email(s), 5 WhatsApp, 0 profile DM(s), 0 phone, 36 outdated draft(s) withdrawn"
+     "detail": "0 email(s), 6 WhatsApp, 0 profile DM(s), 0 phone, 15 outdated draft(s) withdrawn"
     }
    ]
   },
@@ -456,7 +456,7 @@
    "name": "Gold store Lagos",
    "category": "jewelry",
    "score": 100,
-   "reviews": 42,
+   "reviews": 45,
    "website": null,
    "website_class": "none",
    "phone": "+234 812 104 7834",
@@ -466,7 +466,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.7 stars from 42 reviews; activity: active (latest Google review 6 Nov 2026)",
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 45 reviews; activity: active (latest Google review 6 Nov 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.677Z",
@@ -476,6 +476,36 @@
    "replied": false,
    "activity": "active",
    "activity_note": "latest Google review 6 Nov 2026"
+  },
+  {
+   "id": 12,
+   "lead_id": 147,
+   "region_id": 1,
+   "region": "Lagos",
+   "channel": "whatsapp",
+   "name": "AMINU GOLD 001",
+   "category": "jewelry",
+   "score": 100,
+   "reviews": 34,
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 723 8821",
+   "recipient": "https://wa.me/2349077238821",
+   "subject": null,
+   "body": "Hi AMINU GOLD 001 team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 34 reviews; activity: active (latest Google review 4 Nov 2026)",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-10T21:23:01.987Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 4 Nov 2026"
   },
   {
    "id": 101,
@@ -506,36 +536,6 @@
    "replied": false,
    "activity": "active",
    "activity_note": "latest Google review 16 Nov 2026"
-  },
-  {
-   "id": 12,
-   "lead_id": 147,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "AMINU GOLD 001",
-   "category": "jewelry",
-   "score": 100,
-   "reviews": 33,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 907 723 8821",
-   "recipient": "https://wa.me/2349077238821",
-   "subject": null,
-   "body": "Hi AMINU GOLD 001 team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 33 reviews; activity: active (latest Google review 4 Nov 2026)",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.987Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": "active",
-   "activity_note": "latest Google review 4 Nov 2026"
   },
   {
    "id": 9,
@@ -808,36 +808,6 @@
    "activity_note": "latest Google review 12 Aug 2026"
   },
   {
-   "id": 23,
-   "lead_id": 37,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "shopkyluxury fashion stores lekki Lagos",
-   "category": "fashion",
-   "score": 100,
-   "reviews": 20,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 708 520 7708",
-   "recipient": "https://wa.me/2347085207708",
-   "subject": null,
-   "body": "Hi shopkyluxury fashion stores lekki Lagos team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for shopkyluxury fashion stores lekki Lagos on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.2 stars from 20 reviews; activity: active (latest Google review 12 Aug 2026)",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.992Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": "active",
-   "activity_note": "latest Google review 12 Aug 2026"
-  },
-  {
    "id": 79,
    "lead_id": 434,
    "region_id": 1,
@@ -1078,126 +1048,6 @@
    "activity_note": "latest Google review 30 Sept 2026"
   },
   {
-   "id": 33,
-   "lead_id": 81,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "Gebeesq Skincare",
-   "category": "skincare",
-   "score": 100,
-   "reviews": 13,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 809 070 4619",
-   "recipient": "https://wa.me/2348090704619",
-   "subject": null,
-   "body": "Hi Gebeesq Skincare team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Gebeesq Skincare on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.996Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 34,
-   "lead_id": 227,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "SaraHair VietNam Official Lagos Branch",
-   "category": "hair extensions",
-   "score": 100,
-   "reviews": 13,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 805 945 4510",
-   "recipient": "https://wa.me/2348059454510",
-   "subject": null,
-   "body": "Hi SaraHair VietNam Official Lagos Branch team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for SaraHair VietNam Official Lagos Branch on your Google listing.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.996Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 85,
-   "lead_id": 439,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "The Perfume Merchant",
-   "category": "perfume",
-   "score": 100,
-   "reviews": 13,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 705 238 9099",
-   "recipient": "https://wa.me/2347052389099",
-   "subject": null,
-   "body": "Hi The Perfume Merchant team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 13 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-19T23:48:02.683Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 35,
-   "lead_id": 77,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "VVGLOW BEAUTY SKINCARE",
-   "category": "skincare",
-   "score": 100,
-   "reviews": 13,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 813 555 7096",
-   "recipient": "https://wa.me/2348135557096",
-   "subject": null,
-   "body": "Hi VVGLOW BEAUTY SKINCARE team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.4 stars from 13 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.997Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
    "id": 86,
    "lead_id": 370,
    "region_id": 1,
@@ -1216,7 +1066,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews; activity: active (latest Google review 3 Aug 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.683Z",
@@ -1224,158 +1074,38 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 3 Aug 2026"
   },
   {
-   "id": 36,
-   "lead_id": 133,
+   "id": 105,
+   "lead_id": 515,
    "region_id": 1,
    "region": "Lagos",
    "channel": "whatsapp",
-   "name": "Jewels by Madeh",
-   "category": "jewelry",
+   "name": "Royal Perfumery",
+   "category": "perfume",
    "score": 100,
    "reviews": 12,
    "website": null,
    "website_class": "none",
-   "phone": "+234 813 002 8628",
-   "recipient": "https://wa.me/2348130028628",
+   "phone": "+234 705 968 4191",
+   "recipient": "https://wa.me/2347059684191",
    "subject": null,
-   "body": "Hello Jewels by Madeh 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Jewels by Madeh on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "body": "Hi Royal Perfumery team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews; activity: active (latest Google review 7 Nov 2026)",
    "status": "draft",
    "error": null,
-   "created_at": "2026-11-10T21:23:01.997Z",
+   "created_at": "2026-11-23T16:26:56.166Z",
    "sent_at": null,
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 87,
-   "lead_id": 337,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "MO Idowu Fashion House Yaba Lagos",
-   "category": "fashion",
-   "score": 100,
-   "reviews": 12,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 905 470 6487",
-   "recipient": "https://wa.me/2349054706487",
-   "subject": null,
-   "body": "Hi MO Idowu Fashion House Yaba Lagos team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.3 stars from 12 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-19T23:48:02.684Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 37,
-   "lead_id": 129,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "The Jewelry Hut",
-   "category": "jewelry",
-   "score": 100,
-   "reviews": 12,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 802 437 6935",
-   "recipient": "https://wa.me/2348024376935",
-   "subject": null,
-   "body": "Hello The Jewelry Hut 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for The Jewelry Hut on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.998Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 38,
-   "lead_id": 220,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "Tojet Beauty Empire, hair extensions and saloon services in Ketu, Lagos",
-   "category": "hair extensions",
-   "score": 100,
-   "reviews": 12,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 916 236 4778",
-   "recipient": "https://wa.me/2349162364778",
-   "subject": null,
-   "body": "Hi Tojet Beauty Empire, hair extensions and saloon services in Ketu, Lagos team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.998Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 39,
-   "lead_id": 42,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "BKL Fashion",
-   "category": "fashion",
-   "score": 100,
-   "reviews": 11,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 705 878 5671",
-   "recipient": "https://wa.me/2347058785671",
-   "subject": null,
-   "body": "Hi BKL Fashion team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-10T21:23:01.998Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 7 Nov 2026"
   },
   {
    "id": 40,
@@ -1396,7 +1126,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews; activity: active (latest Google review 27 Oct 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-10T21:23:01.999Z",
@@ -1404,38 +1134,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 88,
-   "lead_id": 154,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "Customized Empire",
-   "category": "jewelry",
-   "score": 100,
-   "reviews": 11,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 806 897 6640",
-   "recipient": "https://wa.me/2348068976640",
-   "subject": null,
-   "body": "Hello Customized Empire 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Customized Empire on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-19T23:48:02.684Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 27 Oct 2026"
   },
   {
    "id": 89,
@@ -1456,7 +1156,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.5 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 11 reviews; activity: active (latest Google review 25 Jun 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.684Z",
@@ -1464,38 +1164,38 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 25 Jun 2026"
   },
   {
-   "id": 90,
-   "lead_id": 374,
+   "id": 106,
+   "lead_id": 481,
    "region_id": 1,
    "region": "Lagos",
-   "channel": "phone",
-   "name": "Hair Empire",
-   "category": "hair extensions",
+   "channel": "whatsapp",
+   "name": "MAY27 COUTURE",
+   "category": "fashion",
    "score": 100,
    "reviews": 11,
    "website": null,
    "website_class": "none",
-   "phone": "+1 437-255-9886",
-   "recipient": "+14372559886",
+   "phone": "+234 706 922 9702",
+   "recipient": "https://wa.me/2347069229702",
    "subject": null,
-   "body": "Hi Hair Empire team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "body": "Hi MAY27 COUTURE team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 3.2 stars from 11 reviews; activity: active (latest Google review 21 Aug 2026)",
    "status": "draft",
    "error": null,
-   "created_at": "2026-11-19T23:48:02.686Z",
+   "created_at": "2026-11-23T16:26:56.168Z",
    "sent_at": null,
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 21 Aug 2026"
   },
   {
    "id": 92,
@@ -1516,7 +1216,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews; activity: active (latest Google review 17 Jul 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.687Z",
@@ -1524,8 +1224,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 17 Jul 2026"
   },
   {
    "id": 93,
@@ -1546,7 +1246,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.1 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.1 stars from 10 reviews; activity: active (latest Google review 31 Aug 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.687Z",
@@ -1554,38 +1254,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 94,
-   "lead_id": 226,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "Katliya Extensions - Salon",
-   "category": "hair extensions",
-   "score": 100,
-   "reviews": 10,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 708 268 7235",
-   "recipient": "https://wa.me/2347082687235",
-   "subject": null,
-   "body": "Hello Katliya Extensions - Salon 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 4.7 stars from 10 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-19T23:48:02.687Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 31 Aug 2026"
   },
   {
    "id": 95,
@@ -1606,7 +1276,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews; activity: active (latest Google review 13 Jul 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.688Z",
@@ -1614,8 +1284,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 13 Jul 2026"
   },
   {
    "id": 96,
@@ -1636,7 +1306,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews; activity: active (latest Google review 20 Oct 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.688Z",
@@ -1644,38 +1314,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
-  },
-  {
-   "id": 97,
-   "lead_id": 94,
-   "region_id": 1,
-   "region": "Lagos",
-   "channel": "whatsapp",
-   "name": "Skincare by skinadoranaturals",
-   "category": "skincare",
-   "score": 100,
-   "reviews": 10,
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 816 308 5085",
-   "recipient": "https://wa.me/2348163085085",
-   "subject": null,
-   "body": "Hello Skincare by skinadoranaturals 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
-   "issues": [
-    "no_website"
-   ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
-   "status": "draft",
-   "error": null,
-   "created_at": "2026-11-19T23:48:02.688Z",
-   "sent_at": null,
-   "verification_status": null,
-   "risk_flag": null,
-   "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 20 Oct 2026"
   },
   {
    "id": 98,
@@ -1696,7 +1336,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews; activity: active (latest Google review 3 Oct 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.689Z",
@@ -1704,38 +1344,128 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 3 Oct 2026"
   },
   {
-   "id": 99,
-   "lead_id": 275,
+   "id": 107,
+   "lead_id": 531,
    "region_id": 1,
    "region": "Lagos",
    "channel": "whatsapp",
-   "name": "DancingBrushes Wig Revamp & Frontal Installation Lagos Ogudu Ojota",
+   "name": "Hairxtrabylu_",
    "category": "hair extensions",
    "score": 100,
    "reviews": 9,
    "website": null,
    "website_class": "none",
-   "phone": "+234 802 135 8147",
-   "recipient": "https://wa.me/2348021358147",
+   "phone": "+234 902 242 6953",
+   "recipient": "https://wa.me/2349022426953",
    "subject": null,
-   "body": "Hi DancingBrushes Wig Revamp & Frontal Installation Lagos Ogudu Ojota team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for DancingBrushes Wig Revamp & Frontal Installation Lagos Ogudu Ojota on your Google listing.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "body": "Hello Hairxtrabylu_ 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: active (latest Google review 11 Sept 2026)",
    "status": "draft",
    "error": null,
-   "created_at": "2026-11-19T23:48:02.689Z",
+   "created_at": "2026-11-23T16:26:56.169Z",
    "sent_at": null,
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 11 Sept 2026"
+  },
+  {
+   "id": 108,
+   "lead_id": 262,
+   "region_id": 1,
+   "region": "Lagos",
+   "channel": "whatsapp",
+   "name": "Kartys hair/HUMAN HAIR VENDOR IN MAGODO",
+   "category": "hair extensions",
+   "score": 100,
+   "reviews": 9,
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 803 552 8792",
+   "recipient": "https://wa.me/2348035528792",
+   "subject": null,
+   "body": "Hi Kartys hair/HUMAN HAIR VENDOR IN MAGODO team 👋\n\nMy name is Josiah Idowu, I'm a web developer. Your Google listing doesn't link to a website yet.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: active (latest Google review 20 Jul 2026)",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-23T16:26:56.169Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 20 Jul 2026"
+  },
+  {
+   "id": 109,
+   "lead_id": 521,
+   "region_id": 1,
+   "region": "Lagos",
+   "channel": "whatsapp",
+   "name": "Beauty and Fragrance Broad Street Store",
+   "category": "perfume",
+   "score": 100,
+   "reviews": 8,
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 906 245 9360",
+   "recipient": "https://wa.me/2349062459360",
+   "subject": null,
+   "body": "Hi Beauty and Fragrance Broad Street Store team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for Beauty and Fragrance Broad Street Store on your Google listing.\n\nI help brands like yours sell online with their own website, where customers can order and pay directly.\n\nCan I send you a short example of what it could look like?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews; activity: active (latest Google review 23 Jul 2026)",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-23T16:26:56.170Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 23 Jul 2026"
+  },
+  {
+   "id": 110,
+   "lead_id": 572,
+   "region_id": 1,
+   "region": "Lagos",
+   "channel": "whatsapp",
+   "name": "GRACELOOKS Hair Salon - Wig & Braid Stylists in Ayobo",
+   "category": "hair extensions",
+   "score": 100,
+   "reviews": 7,
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 903 285 0756",
+   "recipient": "https://wa.me/2349032850756",
+   "subject": null,
+   "body": "Hi GRACELOOKS Hair Salon - Wig & Braid Stylists in Ayobo team 👋\n\nMy name is Josiah Idowu, I'm a web developer. I couldn't find a website for GRACELOOKS Hair Salon - Wig & Braid Stylists in Ayobo on your Google listing.\n\nI build simple online stores so customers can order and pay (card or transfer) directly, without long back-and-forth chats.\n\nWould you be open to a quick chat about it?\n\n(If you're not interested, just reply \"no\" and I won't message again.)",
+   "issues": [
+    "no_website"
+   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews; activity: active (latest Google review 4 Nov 2026)",
+   "status": "draft",
+   "error": null,
+   "created_at": "2026-11-23T16:26:56.171Z",
+   "sent_at": null,
+   "verification_status": null,
+   "risk_flag": null,
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 4 Nov 2026"
   },
   {
    "id": 91,
@@ -1746,7 +1476,7 @@
    "name": "ZAMANI OF LAGOS",
    "category": "bags",
    "score": 100,
-   "reviews": 9,
+   "reviews": 7,
    "website": null,
    "website_class": "none",
    "phone": "+234 907 710 7367",
@@ -1756,7 +1486,7 @@
    "issues": [
     "no_website"
    ],
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 7 reviews; activity: active (latest Google review 3 Jun 2026)",
    "status": "draft",
    "error": null,
    "created_at": "2026-11-19T23:48:02.686Z",
@@ -1764,8 +1494,8 @@
    "verification_status": null,
    "risk_flag": null,
    "replied": false,
-   "activity": null,
-   "activity_note": null
+   "activity": "active",
+   "activity_note": "latest Google review 3 Jun 2026"
   },
   {
    "id": 54,
@@ -2184,8 +1914,8 @@
    "website_class": "none",
    "phone": "+234 812 104 7834",
    "rating": 4.7,
-   "reviews": 42,
-   "evidence": "No website listed by google_places; Google: 4.7 stars from 42 reviews; activity: active (latest Google review 6 Nov 2026)",
+   "reviews": 45,
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 45 reviews; activity: active (latest Google review 6 Nov 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -2239,6 +1969,32 @@
    "source": "google_places"
   },
   {
+   "id": 147,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "AMINU GOLD 001",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 723 8821",
+   "rating": 4.9,
+   "reviews": 34,
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 34 reviews; activity: active (latest Google review 4 Nov 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 4 Nov 2026",
+   "source": "google_places"
+  },
+  {
    "id": 511,
    "region_id": 1,
    "region": "Lagos",
@@ -2262,32 +2018,6 @@
    "replied": false,
    "activity": "active",
    "activity_note": "latest Google review 16 Nov 2026",
-   "source": "google_places"
-  },
-  {
-   "id": 147,
-   "region_id": 1,
-   "region": "Lagos",
-   "name": "AMINU GOLD 001",
-   "category": "jewelry",
-   "score": 100,
-   "priority": "high",
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 907 723 8821",
-   "rating": 4.9,
-   "reviews": 33,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 33 reviews; activity: active (latest Google review 4 Nov 2026)",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
-   "replied": false,
-   "activity": "active",
-   "activity_note": "latest Google review 4 Nov 2026",
    "source": "google_places"
   },
   {
@@ -2845,29 +2575,23 @@
    "source": "google_places"
   },
   {
-   "id": 37,
+   "id": 571,
    "region_id": 1,
    "region": "Lagos",
-   "name": "shopkyluxury fashion stores lekki Lagos",
-   "category": "fashion",
+   "name": "ajbeautysupplies",
+   "category": "hair extensions",
    "score": 100,
    "priority": "high",
    "website": null,
    "website_class": "none",
-   "phone": "+234 708 520 7708",
-   "rating": 4.2,
+   "phone": "+234 803 645 1907",
+   "rating": 4.5,
    "reviews": 20,
-   "evidence": "No website listed by google_places; Google: 4.2 stars from 20 reviews; activity: active (latest Google review 12 Aug 2026)",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 20 reviews; activity: inactive (latest Google review 28 Mar 2026, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": "active",
-   "activity_note": "latest Google review 12 Aug 2026",
+   "activity": "inactive",
+   "activity_note": "latest Google review 28 Mar 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3058,6 +2782,26 @@
    "replied": false,
    "activity": "active",
    "activity_note": "latest Google review 19 Oct 2026",
+   "source": "google_places"
+  },
+  {
+   "id": 576,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "fabskollexionn",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": null,
+   "rating": 4.7,
+   "reviews": 17,
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 17 reviews; activity: active (latest Google review 17 Jun 2026)",
+   "outreach": [],
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 17 Jun 2026",
    "source": "google_places"
   },
   {
@@ -3271,17 +3015,11 @@
    "phone": "+234 809 070 4619",
    "rating": 4.9,
    "reviews": 13,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews; activity: inactive (latest Google review 2 Jun 2021, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 2 Jun 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3297,17 +3035,11 @@
    "phone": "+234 805 945 4510",
    "rating": 4.9,
    "reviews": 13,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews; activity: inactive (latest Google review 27 May 2025, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 27 May 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3323,17 +3055,11 @@
    "phone": "+234 705 238 9099",
    "rating": 5,
    "reviews": 13,
-   "evidence": "No website listed by google_places; Google: 5 stars from 13 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 13 reviews; activity: inactive (latest Google review 22 Aug 2024, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 22 Aug 2024, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3349,11 +3075,11 @@
    "phone": "+234 803 343 7629",
    "rating": 4.9,
    "reviews": 13,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 13 reviews; activity: inactive (latest Google review 5 Apr 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 5 Apr 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3369,17 +3095,11 @@
    "phone": "+234 813 555 7096",
    "rating": 4.4,
    "reviews": 13,
-   "evidence": "No website listed by google_places; Google: 4.4 stars from 13 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.4 stars from 13 reviews; activity: inactive (latest Google review 1 Apr 2026, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 1 Apr 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3395,11 +3115,11 @@
    "phone": "+234 809 901 3180",
    "rating": 4.8,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 12 reviews",
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 12 reviews; activity: inactive (latest Google review 10 Apr 2026, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 10 Apr 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3415,7 +3135,7 @@
    "phone": "+234 807 083 8324",
    "rating": 4.9,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews; activity: active (latest Google review 3 Aug 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3424,8 +3144,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 3 Aug 2026",
    "source": "google_places"
   },
   {
@@ -3441,17 +3161,11 @@
    "phone": "+234 813 002 8628",
    "rating": 5,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews; activity: inactive (latest Google review 21 Apr 2022, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 21 Apr 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3467,17 +3181,11 @@
    "phone": "+234 905 470 6487",
    "rating": 4.3,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 4.3 stars from 12 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.3 stars from 12 reviews; activity: inactive (latest Google review 26 Feb 2025, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 26 Feb 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3493,11 +3201,17 @@
    "phone": "+234 705 968 4191",
    "rating": 4.9,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
-   "outreach": [],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews; activity: active (latest Google review 7 Nov 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 7 Nov 2026",
    "source": "google_places"
   },
   {
@@ -3513,17 +3227,11 @@
    "phone": "+234 802 437 6935",
    "rating": 4.9,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 12 reviews; activity: inactive (latest Google review 14 Jun 2025, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 14 Jun 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3539,17 +3247,11 @@
    "phone": "+234 916 236 4778",
    "rating": 5,
    "reviews": 12,
-   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 12 reviews; activity: inactive (latest Google review 5 Feb 2026, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 5 Feb 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3565,17 +3267,11 @@
    "phone": "+234 705 878 5671",
    "rating": 4.8,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews; activity: inactive (latest Google review 1 Mar 2021, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 1 Mar 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3591,7 +3287,7 @@
    "phone": "+234 808 923 6605",
    "rating": 4.8,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews; activity: active (latest Google review 27 Oct 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3600,8 +3296,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 27 Oct 2026",
    "source": "google_places"
   },
   {
@@ -3617,17 +3313,11 @@
    "phone": "+234 806 897 6640",
    "rating": 5,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews; activity: inactive (latest Google review 13 Mar 2022, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 13 Mar 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3643,7 +3333,7 @@
    "phone": "+234 806 032 9519",
    "rating": 4.5,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 4.5 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 11 reviews; activity: active (latest Google review 25 Jun 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3652,8 +3342,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 25 Jun 2026",
    "source": "google_places"
   },
   {
@@ -3669,17 +3359,11 @@
    "phone": "+1 437-255-9886",
    "rating": 5,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
-   "outreach": [
-    {
-     "channel": "phone",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews; activity: inactive (latest Google review 16 Nov 2020, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 16 Nov 2020, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3695,11 +3379,17 @@
    "phone": "+234 706 922 9702",
    "rating": 3.2,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 3.2 stars from 11 reviews",
-   "outreach": [],
+   "evidence": "No website listed by google_places; Google: 3.2 stars from 11 reviews; activity: active (latest Google review 21 Aug 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 21 Aug 2026",
    "source": "google_places"
   },
   {
@@ -3715,11 +3405,11 @@
    "phone": "+234 907 500 6103",
    "rating": 4.8,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 4.8 stars from 11 reviews; activity: inactive (latest Google review 4 Apr 2021, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 4 Apr 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3735,11 +3425,11 @@
    "phone": "+234 813 182 1477",
    "rating": 5,
    "reviews": 11,
-   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 11 reviews; activity: inactive (latest Google review 28 Jul 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 28 Jul 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3755,11 +3445,11 @@
    "phone": "+234 816 676 7148",
    "rating": 4.9,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 10 reviews; activity: inactive (latest Google review 25 Feb 2026, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 25 Feb 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3775,7 +3465,7 @@
    "phone": "+234 816 366 2486",
    "rating": 4.6,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews; activity: active (latest Google review 17 Jul 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3784,8 +3474,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 17 Jul 2026",
    "source": "google_places"
   },
   {
@@ -3801,7 +3491,7 @@
    "phone": "+234 816 808 5547",
    "rating": 4.1,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 4.1 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.1 stars from 10 reviews; activity: active (latest Google review 31 Aug 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3810,8 +3500,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 31 Aug 2026",
    "source": "google_places"
   },
   {
@@ -3827,17 +3517,11 @@
    "phone": "+234 708 268 7235",
    "rating": 4.7,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 4.7 stars from 10 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 10 reviews; activity: inactive (latest Google review 30 Sept 2025, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 30 Sept 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3853,7 +3537,7 @@
    "phone": "+234 806 273 2368",
    "rating": 5,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews; activity: active (latest Google review 13 Jul 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3862,8 +3546,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 13 Jul 2026",
    "source": "google_places"
   },
   {
@@ -3879,7 +3563,7 @@
    "phone": "+234 814 039 9778",
    "rating": 4.6,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 4.6 stars from 10 reviews; activity: active (latest Google review 20 Oct 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3888,8 +3572,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 20 Oct 2026",
    "source": "google_places"
   },
   {
@@ -3905,17 +3589,11 @@
    "phone": "+234 816 308 5085",
    "rating": 5,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews; activity: inactive (latest Google review 29 Aug 2024, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 29 Aug 2024, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3931,7 +3609,7 @@
    "phone": "+234 912 461 1099",
    "rating": 5,
    "reviews": 10,
-   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 10 reviews; activity: active (latest Google review 3 Oct 2026)",
    "outreach": [
     {
      "channel": "whatsapp",
@@ -3940,8 +3618,8 @@
     }
    ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 3 Oct 2026",
    "source": "google_places"
   },
   {
@@ -3957,17 +3635,11 @@
    "phone": "+234 802 135 8147",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: inactive (latest Google review 1 Apr 2026, over 6 months ago)",
+   "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 1 Apr 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -3983,11 +3655,11 @@
    "phone": "+234 903 513 8819",
    "rating": 4.2,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 4.2 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 4.2 stars from 9 reviews; activity: inactive (latest Google review 11 Jul 2025, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 11 Jul 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4003,11 +3675,17 @@
    "phone": "+234 902 242 6953",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
-   "outreach": [],
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: active (latest Google review 11 Sept 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 11 Sept 2026",
    "source": "google_places"
   },
   {
@@ -4023,11 +3701,11 @@
    "phone": "+234 816 182 5467",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: inactive (latest Google review 14 May 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 14 May 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4043,11 +3721,17 @@
    "phone": "+234 803 552 8792",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
-   "outreach": [],
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: active (latest Google review 20 Jul 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 20 Jul 2026",
    "source": "google_places"
   },
   {
@@ -4063,11 +3747,11 @@
    "phone": "+234 811 584 7568",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: inactive (latest Google review 23 Dec 2021, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 23 Dec 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4083,11 +3767,11 @@
    "phone": "+234 706 135 9595",
    "rating": 5,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 9 reviews; activity: inactive (latest Google review 6 Sept 2021, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 6 Sept 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4103,37 +3787,11 @@
    "phone": "+234 812 785 6850",
    "rating": 4,
    "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 4 stars from 9 reviews",
+   "evidence": "No website listed by google_places; Google: 4 stars from 9 reviews; activity: inactive (latest Google review 19 Jun 2020, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
-   "source": "google_places"
-  },
-  {
-   "id": 295,
-   "region_id": 1,
-   "region": "Lagos",
-   "name": "ZAMANI OF LAGOS",
-   "category": "bags",
-   "score": 100,
-   "priority": "high",
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 907 710 7367",
-   "rating": 4.8,
-   "reviews": 9,
-   "evidence": "No website listed by google_places; Google: 4.8 stars from 9 reviews",
-   "outreach": [
-    {
-     "channel": "whatsapp",
-     "status": "draft",
-     "sent_at": null
-    }
-   ],
-   "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 19 Jun 2020, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4149,11 +3807,11 @@
    "phone": "+234 802 307 5978",
    "rating": 3.9,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 3.9 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 3.9 stars from 8 reviews; activity: inactive (latest Google review 29 Feb 2024, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 29 Feb 2024, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4169,11 +3827,17 @@
    "phone": "+234 906 245 9360",
    "rating": 4.5,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews",
-   "outreach": [],
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews; activity: active (latest Google review 23 Jul 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "active",
+   "activity_note": "latest Google review 23 Jul 2026",
    "source": "google_places"
   },
   {
@@ -4189,11 +3853,11 @@
    "phone": "+234 907 919 0753",
    "rating": 4.9,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews; activity: inactive (latest Google review 4 Feb 2021, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 4 Feb 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4209,11 +3873,11 @@
    "phone": "+234 816 644 4234",
    "rating": 4.4,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.4 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.4 stars from 8 reviews; activity: inactive (latest Google review 4 Jul 2019, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 4 Jul 2019, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4229,11 +3893,11 @@
    "phone": "+234 706 373 6609",
    "rating": 4.5,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.5 stars from 8 reviews; activity: inactive (latest Google review 21 Feb 2024, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 21 Feb 2024, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4249,11 +3913,11 @@
    "phone": "+234 810 514 9828",
    "rating": 4.4,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.4 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.4 stars from 8 reviews; activity: inactive (latest Google review 30 Nov 2021, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 30 Nov 2021, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4269,11 +3933,11 @@
    "phone": "+234 916 775 0326",
    "rating": 5,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 5 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 8 reviews; activity: inactive (latest Google review 16 Dec 2025, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 16 Dec 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4289,11 +3953,11 @@
    "phone": "+234 811 210 7246",
    "rating": 5,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 5 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 8 reviews; activity: inactive (latest Google review 6 Jul 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 6 Jul 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4309,11 +3973,11 @@
    "phone": "+234 809 064 5722",
    "rating": 4.9,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews; activity: inactive (latest Google review 5 Sept 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 5 Sept 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4349,11 +4013,11 @@
    "phone": "+234 816 495 7001",
    "rating": 4.9,
    "reviews": 8,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 8 reviews; activity: inactive (latest Google review 14 Aug 2023, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 14 Aug 2023, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4369,11 +4033,11 @@
    "phone": "+234 818 413 2718",
    "rating": 5,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews; activity: inactive (latest Google review 9 Jan 2026, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 9 Jan 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4389,11 +4053,11 @@
    "phone": "+234 802 442 4102",
    "rating": 3.9,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 3.9 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 3.9 stars from 7 reviews; activity: inactive (latest Google review 9 Mar 2020, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 9 Mar 2020, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4409,11 +4073,11 @@
    "phone": "+234 803 316 0436",
    "rating": 4.1,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.1 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.1 stars from 7 reviews; activity: inactive (latest Google review 21 Apr 2024, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 21 Apr 2024, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4429,11 +4093,37 @@
    "phone": "+234 906 478 1188",
    "rating": 4.9,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews; activity: inactive (latest Google review 1 Jun 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 1 Jun 2022, over 6 months ago",
+   "source": "google_places"
+  },
+  {
+   "id": 572,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "GRACELOOKS Hair Salon - Wig & Braid Stylists in Ayobo",
+   "category": "hair extensions",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 903 285 0756",
+   "rating": 5,
+   "reviews": 7,
+   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews; activity: active (latest Google review 4 Nov 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 4 Nov 2026",
    "source": "google_places"
   },
   {
@@ -4449,11 +4139,11 @@
    "phone": "+234 806 725 0979",
    "rating": 5,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 5 stars from 7 reviews; activity: inactive (latest Google review 10 Oct 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 10 Oct 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4469,11 +4159,11 @@
    "phone": "+234 813 555 5455",
    "rating": 4.9,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews; activity: inactive (latest Google review 29 Dec 2020, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 29 Dec 2020, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4489,11 +4179,11 @@
    "phone": "+234 803 873 2257",
    "rating": 4.9,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews; activity: inactive (latest Google review 9 May 2023, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 9 May 2023, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4509,11 +4199,11 @@
    "phone": "+234 703 539 5088",
    "rating": 3.6,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 3.6 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 3.6 stars from 7 reviews; activity: inactive (latest Google review 13 Apr 2025, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 13 Apr 2025, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4529,11 +4219,11 @@
    "phone": "+234 812 328 9019",
    "rating": 4.9,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.9 stars from 7 reviews; activity: inactive (latest Google review 17 Oct 2022, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 17 Oct 2022, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -4549,11 +4239,37 @@
    "phone": "+234 805 383 2519",
    "rating": 4.4,
    "reviews": 7,
-   "evidence": "No website listed by google_places; Google: 4.4 stars from 7 reviews",
+   "evidence": "No website listed by google_places; Google: 4.4 stars from 7 reviews; activity: inactive (latest Google review 3 Sept 2024, over 6 months ago)",
    "outreach": [],
    "replied": false,
-   "activity": null,
-   "activity_note": null,
+   "activity": "inactive",
+   "activity_note": "latest Google review 3 Sept 2024, over 6 months ago",
+   "source": "google_places"
+  },
+  {
+   "id": 295,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "ZAMANI OF LAGOS",
+   "category": "bags",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 907 710 7367",
+   "rating": 4.7,
+   "reviews": 7,
+   "evidence": "No website listed by google_places; Google: 4.7 stars from 7 reviews; activity: active (latest Google review 3 Jun 2026)",
+   "outreach": [
+    {
+     "channel": "whatsapp",
+     "status": "draft",
+     "sent_at": null
+    }
+   ],
+   "replied": false,
+   "activity": "active",
+   "activity_note": "latest Google review 3 Jun 2026",
    "source": "google_places"
   },
   {
@@ -5027,6 +4743,26 @@
    "website": null,
    "website_class": "none",
    "phone": "+234 706 878 9710",
+   "rating": 5,
+   "reviews": 4,
+   "evidence": "No website listed by google_places; Google: 5 stars from 4 reviews",
+   "outreach": [],
+   "replied": false,
+   "activity": null,
+   "activity_note": null,
+   "source": "google_places"
+  },
+  {
+   "id": 566,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "Flourish Fashion Designer",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 802 583 3283",
    "rating": 5,
    "reviews": 4,
    "evidence": "No website listed by google_places; Google: 5 stars from 4 reviews",
@@ -5557,6 +5293,26 @@
    "source": "google_places"
   },
   {
+   "id": 574,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "Bloomhairs",
+   "category": "hair extensions",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 905 365 4410",
+   "rating": 5,
+   "reviews": 2,
+   "evidence": "No website listed by google_places; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false,
+   "activity": null,
+   "activity_note": null,
+   "source": "google_places"
+  },
+  {
    "id": 385,
    "region_id": 2,
    "region": "ireland",
@@ -5943,26 +5699,6 @@
    "source": "google_places"
   },
   {
-   "id": 85,
-   "region_id": 1,
-   "region": "Lagos",
-   "name": "Angels Beauty Lounge | Cosmetic Store, beauty house,Beauty Store, Beauty Shop, Spa, Wellness, female Hygiene store, body whitening cream, lotion, soap, beauty injection & Supplement, Skincare Products, Bleaching Black Soap, Beauty Products in Lagos, Abuja, Nigeria",
-   "category": "skincare",
-   "score": 100,
-   "priority": "high",
-   "website": null,
-   "website_class": "none",
-   "phone": "+234 813 589 3560",
-   "rating": 5,
-   "reviews": 1,
-   "evidence": "No website listed by google_places; Google: 5 stars from 1 reviews",
-   "outreach": [],
-   "replied": false,
-   "activity": null,
-   "activity_note": null,
-   "source": "google_places"
-  },
-  {
    "id": 267,
    "region_id": 1,
    "region": "Lagos",
@@ -6240,6 +5976,26 @@
    "replied": false,
    "activity": null,
    "activity_note": null,
+   "source": "google_places"
+  },
+  {
+   "id": 577,
+   "region_id": 2,
+   "region": "ireland",
+   "name": "M&F's Stores",
+   "category": "fashion",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+353 42 966 7295",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "No website listed by google_places; Google: 5 stars from 1 reviews; activity: inactive (latest Google review 13 Jan 2026, over 6 months ago)",
+   "outreach": [],
+   "replied": false,
+   "activity": "inactive",
+   "activity_note": "latest Google review 13 Jan 2026, over 6 months ago",
    "source": "google_places"
   },
   {
@@ -6573,6 +6329,26 @@
    "website": null,
    "website_class": "none",
    "phone": "+234 703 468 6831",
+   "rating": null,
+   "reviews": null,
+   "evidence": "No website listed by google_places",
+   "outreach": [],
+   "replied": false,
+   "activity": null,
+   "activity_note": null,
+   "source": "google_places"
+  },
+  {
+   "id": 569,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "Diamond Jewelry, Beads and accessories",
+   "category": "jewelry",
+   "score": 100,
+   "priority": "high",
+   "website": null,
+   "website_class": "none",
+   "phone": "+234 813 483 4509",
    "rating": null,
    "reviews": null,
    "evidence": "No website listed by google_places",
@@ -8069,6 +7845,26 @@
    "source": "google_places"
   },
   {
+   "id": 573,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "DEKKY WIGS NG | Natural hair salon in lagos | Beauty Salon | Nail salon in lagos | barber shop | human hair wigs for sale",
+   "category": "hair extensions",
+   "score": 90,
+   "priority": "high",
+   "website": "https://wa.me/2348141989174",
+   "website_class": "messaging",
+   "phone": "+234 814 198 9174",
+   "rating": 4.8,
+   "reviews": 6,
+   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 4.8 stars from 6 reviews",
+   "outreach": [],
+   "replied": false,
+   "activity": null,
+   "activity_note": null,
+   "source": "google_places"
+  },
+  {
    "id": 102,
    "region_id": 1,
    "region": "Lagos",
@@ -8149,19 +7945,19 @@
    "source": "google_places"
   },
   {
-   "id": 76,
+   "id": 570,
    "region_id": 1,
    "region": "Lagos",
-   "name": "Elight Glow Skincare Lagos",
-   "category": "skincare, jewelry, perfume, bags, hair extensions, fashion",
+   "name": "Milan Hair Vietnam Supplier Lagos",
+   "category": "hair extensions",
    "score": 90,
    "priority": "high",
-   "website": "https://wa.me/message/UZBEBQGMLBXHD1",
+   "website": "http://wa.me/2347067210481",
    "website_class": "messaging",
-   "phone": "+234 802 436 9335",
-   "rating": 5,
+   "phone": "+234 706 721 0481",
+   "rating": 4.5,
    "reviews": 2,
-   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 5 stars from 2 reviews",
+   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 4.5 stars from 2 reviews",
    "outreach": [],
    "replied": false,
    "activity": null,
@@ -8182,6 +7978,26 @@
    "rating": 5,
    "reviews": 2,
    "evidence": "Listed website is a chat link (chat.whatsapp.com); not loaded; Google: 5 stars from 2 reviews",
+   "outreach": [],
+   "replied": false,
+   "activity": null,
+   "activity_note": null,
+   "source": "google_places"
+  },
+  {
+   "id": 76,
+   "region_id": 1,
+   "region": "Lagos",
+   "name": "Elight Glow Skincare Lagos",
+   "category": "skincare, jewelry, perfume, bags, hair extensions, fashion",
+   "score": 90,
+   "priority": "high",
+   "website": "https://wa.me/message/UZBEBQGMLBXHD1",
+   "website_class": "messaging",
+   "phone": "+234 802 436 9335",
+   "rating": 5,
+   "reviews": 1,
+   "evidence": "Listed website is a chat link (wa.me); not loaded; Google: 5 stars from 1 reviews",
    "outreach": [],
    "replied": false,
    "activity": null,
